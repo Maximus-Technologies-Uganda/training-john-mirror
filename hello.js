@@ -1,2 +1,3 @@
-console.log ('Hello, World!');
+hello.js
+console.log('Hello, World!');
 
