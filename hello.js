@@ -1,16 +1,23 @@
-// Get the third item from the command line arguments, or default to "World"
-const name = process.argv[2] || "World";
+// Filter out the node and script paths to get only the real arguments
+const args = process.argv.slice(2);
 
-// Check if the --shout flag exists
-const shouldShout = process.argv.includes('--shout');
+// Find the --shout flag and remove it from the arguments list
+const shoutIndex = args.indexOf('--shout');
+let shouldShout = false;
+if (shoutIndex > -1) {
+    shouldShout = true;
+    args.splice(shoutIndex, 1); // Remove the flag from the array
+}
+
+// The first remaining argument is the name, or default to "World"
+const name = args[0] || "World";
 
 // Create the greeting message
 let message = `Hello, ${name}!`;
 
-// If the --shout flag is present, make the message uppercase
+// If the --shout flag was present, make the message uppercase
 if (shouldShout) {
-  message = message.toUpperCase();
+    message = message.toUpperCase();
 }
 
-// Print the final message
 console.log(message);

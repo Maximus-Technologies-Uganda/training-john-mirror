@@ -1,0 +1,10 @@
+[
+  {
+    "task": "Buy groceries",
+    "status": "done"
+  },
+  {
+    "task": "Finish project report",
+    "status": "pending"
+  }
+]
