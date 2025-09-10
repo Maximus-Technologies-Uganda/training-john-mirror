@@ -1,0 +1,13 @@
+name: Review Packet
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  review-packet:
+    if: contains(github.event.pull_request.labels.*.name, 'needs-review-packet')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder check
+        run: echo "Review Packet created"
