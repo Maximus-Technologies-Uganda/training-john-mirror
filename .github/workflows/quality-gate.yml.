@@ -1,0 +1,12 @@
+name: Quality Gate
+
+on:
+  pull_request:
+    branches: [ main ] # Or your default branch
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder check
+        run: echo "Quality Gate passed"

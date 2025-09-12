@@ -1,0 +1,16 @@
+name: Mirror to Public Repo
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: pixta-dev/repository-mirroring-action@v1
+Looking at the file context, I can see there's a formatting issue with the YAML indentation. The `with:` block is not properly aligned under the action step. Let me fix the indentation:
