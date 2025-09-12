@@ -1,0 +1,11 @@
+{
+  "name": "training-john",
+  "version": "1.0.0",
+  "description": "My first week of CLI development.",
+  "main": "hello.js",
+  "scripts": {
+    "test": "node hello.test.js"
+  },
+  "author": "John Kayiira",
+  "license": "ISC"
+}
