@@ -1,0 +1,8 @@
+# Dependencies
+node_modules
+
+# Logs
+npm-debug.log*
+
+# Misc
+.DS_Store
