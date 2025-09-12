@@ -3,7 +3,7 @@ name: Mirror to Public Repo
 on:
   push:
     branches:
-      - main # Or whichever your default branch is
+      - development
 
 jobs:
   mirror:
