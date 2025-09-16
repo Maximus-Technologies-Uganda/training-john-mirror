@@ -1,16 +1,45 @@
+# In .github/workflows/mirror.yml
+
 name: Mirror to Public Repo
 
 on:
   push:
     branches:
       - development
+      - feature/fix-mirroring-action
 
 jobs:
   mirror:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
+          # Fetches all history, branches, and tags, which is crucial for mirroring
           fetch-depth: 0
-      - uses: pixta-dev/repository-mirroring-action@v1
-Looking at the file context, I can see there's a formatting issue with the YAML indentation. The `with:` block is not properly aligned under the action step. Let me fix the indentation:
+
+      - name: Configure Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Verify PAT Token is available
+        run: |
+          if [ -z "${{ secrets.MIRROR_PAT }}" ]; then
+            echo "ERROR: The MIRROR_PAT secret is not set in the repository settings."
+            exit 1
+          else
+            echo "Successfully found the MIRROR_PAT secret."
+          fi
+
+      - name: Push to mirror repository
+        run: |
+          # Add the mirror remote using the PAT for authentication
+          git remote add mirror https://x-access-token:${{ secrets.MIRROR_PAT }}@github.com/johnkayiira-jpg/training-john-mirror.git
+
+          # Push all branches and tags. The --force flag ensures the mirror matches the source.
+          # The '&&' ensures that tags are only pushed if branches are pushed successfully.
+          echo "Pushing all branches and tags to the mirror..."
+          git push mirror --all --force && git push mirror --tags --force
+
+          echo "Mirroring completed successfully!"
