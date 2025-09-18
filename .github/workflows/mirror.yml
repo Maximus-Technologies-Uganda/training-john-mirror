@@ -1,24 +1,22 @@
-name: Mirror to Another Repository
+name: Mirror to Public Repo
 
 on:
   push:
     branches:
-      - main # Or your default branch, like 'development'
+      - development
 
 jobs:
-  mirroring:
+  mirror:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Mirror Repository
-        uses: pixta-dev/repository-mirroring-action@v1
+      - name: Mirror to public repository
+        uses: wearerequired/git-mirror-action@v1
         with:
-          # This is the corrected SSH URL
-          target_repo_url: git@github.com:johnkayiira-jpg/training-john-mirror.git
-
-          # This uses the secret you created for the private key
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source-repo: 'git@github.com:Maximus-Technologies-Uganda/training-john.git'
+          destination-repo: 'git@github.com:Maximus-Technologies-Uganda/training-john-mirror.git'
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
