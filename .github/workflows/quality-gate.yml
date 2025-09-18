@@ -2,11 +2,10 @@ name: Quality Gate
 
 on:
   pull_request:
-    branches: [ main ] # Or your default branch
+    branches: [ development ]
 
 jobs:
-  quality-gate:
+  placeholder-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Placeholder check
-        run: echo "Quality Gate passed"
+      - run: echo "Quality Gate check is running..."
