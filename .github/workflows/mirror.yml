@@ -1,0 +1,22 @@
+name: Mirror to Public Repo
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Mirror to public repository
+        uses: wearerequired/git-mirror-action@v1
+        with:
+          source-repo: 'git@github.com:Maximus-Technologies-Uganda/training-john.git'
+          destination-repo: 'git@github.com:Maximus-Technologies-Uganda/training-john-mirror.git'
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
