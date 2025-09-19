@@ -1,4 +1,4 @@
-// Filter out node and script paths to get the real arguments
+// Displays a greeting to// Displays a greeting to the user the user
 const args = process.argv.slice(2);
 
 // Find and remove the --shout flag

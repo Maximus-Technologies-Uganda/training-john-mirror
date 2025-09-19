@@ -31,7 +31,14 @@ jobs:
           git config --global credential.helper ""
           auth=$(printf "x-access-token:%s" "$token" | base64 -w0 2>/dev/null || printf "x-access-token:%s" "$token" | base64)
           git config --global http.https://github.com/.extraheader "AUTHORIZATION: basic $auth"
+          # Fetch all branches and tags so we mirror everything, not just the checked-out ref
+          git fetch --all --tags --prune
           git remote remove mirror 2>/dev/null || true
           git remote add mirror https://github.com/Maximus-Technologies-Uganda/training-john-mirror.git
-          git push --mirror --prune mirror
+          # Push all tags
+          git push --force --tags mirror
+          # Push all branches from origin tracking refs to the mirror without pruning (avoids deleting default branch)
+          while read -r branch; do
+            git push --force mirror "refs/remotes/origin/${branch}:refs/heads/${branch}"
+          done < <(git for-each-ref --format='%(refname:strip=3)' refs/remotes/origin)
 
