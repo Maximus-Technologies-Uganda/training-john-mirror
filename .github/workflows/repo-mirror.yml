@@ -8,8 +8,6 @@ on:
 jobs:
   mirror:
     runs-on: ubuntu-latest
-    env:
-      MIRROR_TOKEN: ${{ secrets.MIRROR_RAT || secrets.MIRROR_PAT }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,11 +17,15 @@ jobs:
       - name: Mirror to GitHub
         shell: bash
         run: |
-          if [ -z "${MIRROR_TOKEN}" ]; then
+          token="${{ secrets.MIRROR_RAT }}"
+          if [ -z "$token" ]; then
+            token="${{ secrets.MIRROR_PAT }}"
+          fi
+          if [ -z "$token" ]; then
             echo "Error: Neither MIRROR_RAT nor MIRROR_PAT secrets are set." >&2
             exit 1
           fi
           git remote remove mirror 2>/dev/null || true
-          git remote add mirror https://x-access-token:${MIRROR_TOKEN}@github.com/Maximus-Technologies-Uganda/training-john-mirror.git
+          git remote add mirror https://x-access-token:$token@github.com/Maximus-Technologies-Uganda/training-john-mirror.git
           git push --mirror --prune mirror
 
