@@ -25,6 +25,8 @@ jobs:
             echo "Error: Neither MIRROR_RAT nor MIRROR_PAT secrets are set." >&2
             exit 1
           fi
+          # Use our PAT for github.com instead of the checkout's GITHUB_TOKEN
+          git config --global --unset-all http.https://github.com/.extraheader || true
           git remote remove mirror 2>/dev/null || true
           git remote add mirror https://x-access-token:$token@github.com/Maximus-Technologies-Uganda/training-john-mirror.git
           git push --mirror --prune mirror
