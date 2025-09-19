@@ -1,17 +1,11 @@
-name: Mirror GitHub Repository
+name: Deprecated Mirror (disabled)
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
-  mirror:
+  disabled:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the source repo
-        uses: actions/checkout@v2
-
-<<<<<<< Updated upstream
-     
+      - run: echo "This workflow is deprecated and intentionally disabled."
