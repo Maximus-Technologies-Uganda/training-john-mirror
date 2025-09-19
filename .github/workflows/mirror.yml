@@ -1,6 +1,7 @@
 name: Mirror GitHub Repository
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -12,9 +13,31 @@ jobs:
       - name: Checkout the source repo
         uses: actions/checkout@v2
 
+<<<<<<< Updated upstream
       - name: Mirror repository
         uses: wearerequired/git-mirror-action@v1
         with:
           source-repo: 'git@github.com:Maximus-Technologies-Uganda/training-john.git'
           destination-repo: 'git@github.com:Maximus-Technologies-Uganda/training-john-mirror.git'
           dry-run: 'false'
+=======
+      - name: Configure git safe.directory
+        run: git config --global --add safe.directory /github/workspace
+
+      - name: Setup SSH
+        shell: bash
+        run: |
+          mkdir -p /github/home/.ssh
+          key="${{ secrets.DEPLOY_KEY }}"
+          key=${key//$'\r'/}
+          key="${key//'\\n'/$'\n'}"
+          printf "%s" "$key" > /github/home/.ssh/id_rsa
+          chmod 600 /github/home/.ssh/id_rsa
+          ssh-keyscan -t rsa,ecdsa,ed25519 github.com >> /github/home/.ssh/known_hosts
+
+      - name: Mirror Repository
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: git@github.com:Maximus-Technologies-Uganda/training-john-mirror.git
+          ssh_username: git
+>>>>>>> Stashed changes
