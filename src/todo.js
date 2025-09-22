@@ -1,74 +1,34 @@
 const fs = require('fs');
-const path = require('path');
-const todoFile = path.join(__dirname, '../data/todo.json');
+const yargs = require('yargs/yargs');
+const { hideBin } = require('yargs/helpers');
 
-// Helper function to read the to-do list
-function getTodos() {
-    if (fs.existsSync(todoFile)) {
-        const content = fs.readFileSync(todoFile);
-        return JSON.parse(content);
-    }
-    return [];
+const argv = yargs(hideBin(process.argv)).argv;
+const command = argv._[0]; // Gets the command, e.g., 'add' or 'list'
+const task = argv._[1]; // Gets the argument, e.g., the task text
+const dbPath = './todos.json'; // The path to our data file
+
+function listTasks() {
+  const todos = JSON.parse(fs.readFileSync(dbPath));
+  console.log('--- Your Todos ---');
+  todos.forEach((todo, index) => {
+    console.log(`${index + 1}. ${todo}`);
+  });
+  console.log('------------------');
 }
 
-// Helper function to save the to-do list
-function saveTodos(todos) {
-    fs.writeFileSync(todoFile, JSON.stringify(todos, null, 2));
+function addTask(newTask) {
+  const todos = JSON.parse(fs.readFileSync(dbPath));
+  todos.push(newTask);
+  fs.writeFileSync(dbPath, JSON.stringify(todos, null, 2));
+  console.log(`Added new task: "${newTask}"`);
+  listTasks();
 }
 
-// Main logic
-const command = process.argv[2];
-const argument = process.argv[3];
-switch (command) {
-    case 'add':
-        if (!argument) {
-            console.log('Error: Please provide a task to add.');
-            break;
-        }
-        const todos = getTodos();
-        todos.push({ task: argument, status: 'pending' });
-        saveTodos(todos);
-        console.log(`Added task: "${argument}"`);
-        break;
-
-    case 'list':
-        const allTodos = getTodos();
-        if (allTodos.length === 0) {
-            console.log('Your to-do list is empty.');
-        } else {
-            console.log('To-Do List:');
-            allTodos.forEach((item, index) => {
-                const status = item.status === 'done' ? '[x]' : '[ ]';
-                console.log(`${index + 1}. ${status} ${item.task}`);
-            });
-        }
-        break;
-
-    case 'done':
-        const taskNumber = parseInt(argument, 10) - 1;
-        let existingTodos = getTodos();
-        if (existingTodos[taskNumber]) {
-            existingTodos[taskNumber].status = 'done';
-            saveTodos(existingTodos);
-            console.log(`Marked task "${existingTodos[taskNumber].task}" as done.`);
-        } else {
-            console.log('Error: Invalid task number.');
-        }
-        break;
-
-    case 'remove':
-        const removeNumber = parseInt(argument, 10) - 1;
-        let currentTodos = getTodos();
-        if(currentTodos[removeNumber]) {
-            const removed = currentTodos.splice(removeNumber, 1);
-            saveTodos(currentTodos);
-            console.log(`Removed task: "${removed[0].task}"`);
-        } else {
-            console.log('Error: Invalid task number.');
-        }
-        break;
-
-    default:
-        console.log('Unknown command. Available commands: add, list, done, remove');
-        break;
+// Main logic to decide which function to run
+if (command === 'list') {
+  listTasks();
+} else if (command === 'add' && task) {
+  addTask(task);
+} else {
+  console.log("Welcome to Todo CLI. Available commands: list, add '<task>'");
 }
