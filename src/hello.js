@@ -1,21 +1,16 @@
-// Displays a greeting to the user
-const args = process.argv.slice(2);
+// Use the yargs library to handle command-line arguments
+const yargs = require('yargs/yargs');
+const { hideBin } = require('yargs/helpers');
+const argv = yargs(hideBin(process.argv)).argv;
 
-// Find and remove the --shout flag
-const shoutIndex = args.indexOf('--shout');
-let shouldShout = false;
-if (shoutIndex > -1) {
-    shouldShout = true;
-    args.splice(shoutIndex, 1);
-}
-
-// Use the first remaining argument as the name, or default to "World"
-const name = args[0] || "World";
+// yargs makes it easy to get arguments by name
+const name = argv.name || 'World';
+const shout = argv.shout || false;
 
 let message = `Hello, ${name}!`;
 
-if (shouldShout) {
-    message = message.toUpperCase();
+if (shout) {
+  message = message.toUpperCase();
 }
 
 console.log(message);
