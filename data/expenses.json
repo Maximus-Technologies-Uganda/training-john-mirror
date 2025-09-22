@@ -14,5 +14,21 @@
   {
     "description": "Smoke expense",
     "amount": 2
+  },
+  {
+    "description": "Test expense",
+    "amount": 15.5
+  },
+  {
+    "description": "Test expense",
+    "amount": 15.5
+  },
+  {
+    "description": "Test expense",
+    "amount": 15.5
+  },
+  {
+    "description": "Test expense",
+    "amount": 15.5
   }
 ]
