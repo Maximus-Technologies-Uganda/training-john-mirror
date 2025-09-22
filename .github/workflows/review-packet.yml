@@ -55,40 +55,40 @@ jobs:
               const files = await github.paginate(github.rest.pulls.listFiles, { owner, repo, pull_number: prNumber, per_page: 100 });
               const commits = await github.paginate(github.rest.pulls.listCommits, { owner, repo, pull_number: prNumber, per_page: 100 });
 
-            const dir = path.join(process.cwd(), 'review-packet');
-            fs.mkdirSync(dir, { recursive: true });
+              const dir = path.join(process.cwd(), 'review-packet');
+              fs.mkdirSync(dir, { recursive: true });
 
-            const summaryLines = [];
-            summaryLines.push(`# Review Packet for PR #${pr.number} - ${pr.title}`);
-            summaryLines.push('');
-            summaryLines.push(`- Author: @${pr.user.login}`);
-            summaryLines.push(`- State: ${pr.state}`);
-            summaryLines.push(`- Base: ${pr.base.ref}`);
-            summaryLines.push(`- Head: ${pr.head.ref}`);
-            summaryLines.push(`- Labels: ${pr.labels.map(l => l.name).join(', ') || 'none'}`);
-            summaryLines.push(`- URL: ${pr.html_url}`);
-            summaryLines.push('');
-            summaryLines.push('## Changes');
-            for (const f of files) {
-              summaryLines.push(`- ${f.status.toUpperCase()}: ${f.filename} (+${f.additions} / -${f.deletions})`);
-            }
-            summaryLines.push('');
-            summaryLines.push('## Commits');
-            for (const c of commits) {
-              const msg = c.commit.message.split('\n')[0];
-              summaryLines.push(`- ${c.sha.substring(0,7)} ${msg} (@${c.author && c.author.login ? c.author.login : c.commit.author.name})`);
-            }
+              const summaryLines = [];
+              summaryLines.push(`# Review Packet for PR #${pr.number} - ${pr.title}`);
+              summaryLines.push('');
+              summaryLines.push(`- Author: @${pr.user.login}`);
+              summaryLines.push(`- State: ${pr.state}`);
+              summaryLines.push(`- Base: ${pr.base.ref}`);
+              summaryLines.push(`- Head: ${pr.head.ref}`);
+              summaryLines.push(`- Labels: ${pr.labels.map(l => l.name).join(', ') || 'none'}`);
+              summaryLines.push(`- URL: ${pr.html_url}`);
+              summaryLines.push('');
+              summaryLines.push('## Changes');
+              for (const f of files) {
+                summaryLines.push(`- ${f.status.toUpperCase()}: ${f.filename} (+${f.additions} / -${f.deletions})`);
+              }
+              summaryLines.push('');
+              summaryLines.push('## Commits');
+              for (const c of commits) {
+                const msg = c.commit.message.split('\n')[0];
+                summaryLines.push(`- ${c.sha.substring(0,7)} ${msg} (@${c.author && c.author.login ? c.author.login : c.commit.author.name})`);
+              }
 
-            const mdPath = path.join(dir, 'review-packet.md');
-            fs.writeFileSync(mdPath, summaryLines.join('\n'));
+              const mdPath = path.join(dir, 'review-packet.md');
+              fs.writeFileSync(mdPath, summaryLines.join('\n'));
 
-            // Save raw JSON as well
-            fs.writeFileSync(path.join(dir, 'pr.json'), JSON.stringify(pr, null, 2));
-            fs.writeFileSync(path.join(dir, 'files.json'), JSON.stringify(files, null, 2));
-            fs.writeFileSync(path.join(dir, 'commits.json'), JSON.stringify(commits, null, 2));
+              // Save raw JSON as well
+              fs.writeFileSync(path.join(dir, 'pr.json'), JSON.stringify(pr, null, 2));
+              fs.writeFileSync(path.join(dir, 'files.json'), JSON.stringify(files, null, 2));
+              fs.writeFileSync(path.join(dir, 'commits.json'), JSON.stringify(commits, null, 2));
 
-            core.setOutput('packet_dir', dir);
-            
+              core.setOutput('packet_dir', dir);
+              
             } catch (error) {
               core.setFailed(`Failed to generate review packet: ${error.message}`);
               return;
