@@ -55,18 +55,50 @@ This was the foundational day focused on setting up the entire repository with p
 - Test the automated mirror sync to ensure it's working correctly
 - Start on the first development tasks
 
-### Day 1 - [Date]
+### Day 1: Bootstrap Repository Setup
+**Date:** 12th September, 2025  
+**Project:** training-john  
+**Today's Goal:** Bootstrap the repository with initial project files (package.json, hello.js, etc) and merge them into the development branch via a pull request.
+
 **What I accomplished:**
-- 
+- **Branch Creation:** Created a new branch `chore/bootstrap` for the initial setup using `git switch -c chore/bootstrap`
+- **Project Files Setup:** Added five essential files to bootstrap the Node.js project:
+  - `package.json` for project metadata and scripts
+  - `.gitignore` to exclude unnecessary files from version control
+  - `README.md` for project documentation
+  - `hello.js` as the main application file
+  - `hello.test.js` for unit testing
+- **Git Workflow:** Committed the new files and opened a pull request to merge them into the development branch
+- **Version Control:** Successfully pushed changes to the remote repository after resolving sync issues
 
 **What I learned:**
-- 
+- **Project Initialization:** Understood that a standard Node.js project begins with files like `package.json` for metadata and scripts, and `.gitignore` to exclude unnecessary files
+- **Basic Unit Testing:** Learned how to create a simple, separate test file to automatically verify that the main application code works as expected
+- **Git Workflow:** Practiced the full feature branch workflow: creating a branch, committing work, and opening a pull request for review and merging
+- **Git Synchronization:** Learned how to resolve conflicts when local and remote branches are out of sync using `git pull --rebase`
 
 **Challenges faced:**
-- 
+- **Git Push Rejection:** My first `git push` attempt was rejected because my local branch was out of sync with the remote repository
+- **Branch Synchronization:** Had to learn how to handle situations where the remote repository had changes that weren't reflected in my local branch
+
+**Solutions Applied:**
+- **Git Rebase:** Used `git pull --rebase` to download the remote changes and reapply my local commits on top, which fixed the sync issue and allowed me to push successfully
+- **Proper Git Commands:** Applied the correct sequence: `git switch -c chore/bootstrap`, `git add .`, `git commit -m "..."`, and `git push`
+
+**Commands Used:**
+- `git switch -c chore/bootstrap` - Created and switched to new branch
+- `git add .` - Staged all new files
+- `git commit -m "..."` - Committed changes with descriptive message
+- `git push` - Pushed to remote repository
+- `git pull --rebase` - Synchronized with remote changes
+
+**Reflection:**
+Today was a good start, focusing on setting up the project structure correctly. Creating all the initial files and a simple test made the project feel real. The push error was a good learning experience, as it taught me how to resolve conflicts when the local and remote branches are out of sync. This foundational work sets up the project for future development tasks.
 
 **Tomorrow's focus:**
-- 
+- Review and merge the pull request for the bootstrap files
+- Begin working on the next development task
+- Continue practicing the feature branch workflow
 
 ### Day 2 - [Date]
 **What I accomplished:**
