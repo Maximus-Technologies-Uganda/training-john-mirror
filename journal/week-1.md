@@ -149,18 +149,61 @@ Today felt like a big step up from just setting things up. Getting stuck on the 
 - Practice more advanced Git workflows
 - Explore additional Node.js command-line features
 
-### Day 3 - [Date]
+### Day 3: Stopwatch CLI & State Persistence
+**Timestamp:** Friday, September 19, 2025
+
+**Summary:**
+The goal for Day 3 was to build a Stopwatch CLI. This project was more complex than the "Hello, World!" app because it required managing state (e.g., remembering the start time across different commands like lap and stop).
+
+I successfully built the core logic for the stopwatch. More importantly, I took the initiative to add a more advanced feature: state persistence. Instead of just storing the start time in a variable that would be lost when the program ended, I taught myself how to use Node.js's fs (File System) module to save the start time to a starttime.json file. This made the stopwatch much more robust and useful.
+
+This was a big step because I learned how to make my programs save and read data, which is a fundamental skill for building real applications.
+
 **What I accomplished:**
-- 
+- **Stopwatch CLI Development:** Built a complete stopwatch command-line application with core functionality
+- **State Management:** Implemented proper state management to remember start time across different commands (lap, stop)
+- **File System Integration:** Added advanced state persistence using Node.js fs (File System) module
+- **JSON Data Handling:** Learned to save start time to `starttime.json` file for persistent storage
+- **Advanced Feature Implementation:** Took initiative to add state persistence beyond basic requirements
+- **Robust Application Design:** Created a more useful and practical stopwatch that maintains state between sessions
 
 **What I learned:**
-- 
+- **File System Operations:** Learned how to work with Node.js fs module for reading and writing files
+- **JSON Data Format:** Mastered JSON.stringify (to save) and JSON.parse (to read) for data serialization
+- **State Persistence:** Understood how to make programs save and read data, a fundamental skill for real applications
+- **Server-side Logic:** Gained introduction to server-side programming concepts and data management
+- **Advanced CLI Development:** Progressed from simple CLI apps to more complex stateful applications
+- **Data Storage Patterns:** Learned common patterns for persisting application state between sessions
 
 **Challenges faced:**
-- 
+- **State Management Complexity:** Managing state across different commands (lap, stop) was more complex than previous simple apps
+- **File System Learning Curve:** Learning how to work with the file system and handle data in JSON format
+- **Data Serialization:** Understanding how to properly save and read data using JSON.stringify and JSON.parse
+- **Application Architecture:** Designing a robust application that maintains state between program executions
+
+**Solutions Applied:**
+- **File System Module:** Used Node.js fs module to implement persistent data storage
+- **JSON File Storage:** Created `starttime.json` file to store application state
+- **Proper Data Handling:** Implemented JSON.stringify for saving and JSON.parse for reading data
+- **State Persistence Design:** Built a system that maintains stopwatch state across different command executions
+
+**Technical Implementation:**
+- Built core stopwatch logic with start, lap, and stop functionality
+- Implemented state persistence using `fs.writeFileSync()` and `fs.readFileSync()`
+- Used JSON format for data storage in `starttime.json` file
+- Created robust error handling for file operations
+
+**Evidence:**
+- Pull Request for Stopwatch Refactor: [link-to-pr]
+- The stopwatch.js file with fs implementation: [link-to-stopwatch.js]
+
+**Reflection:**
+This was a significant step up in complexity from the "Hello, World!" application. Learning how to work with the file system and implement state persistence felt like a real breakthrough in understanding how applications work. The ability to save and read data is fundamental to building real applications, and this project gave me hands-on experience with these core concepts.
 
 **Tomorrow's focus:**
-- 
+- Continue building on state persistence concepts
+- Explore more advanced file system operations
+- Consider adding more features to the stopwatch CLI
 
 ### Day 4 - [Date]
 **What I accomplished:**
