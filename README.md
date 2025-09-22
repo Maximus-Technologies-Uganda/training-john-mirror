@@ -75,3 +75,7 @@ A tool to manage a to-do list.
     ```bash
     node src/todo.js remove 1
     ```
+
+## Journals
+
+-   Week 1: [Week 1 Journal](journals/week-1.md)
