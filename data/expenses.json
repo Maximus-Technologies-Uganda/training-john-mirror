@@ -10,5 +10,9 @@
   {
     "description": "Test expense",
     "amount": 1
+  },
+  {
+    "description": "Smoke expense",
+    "amount": 2
   }
 ]
