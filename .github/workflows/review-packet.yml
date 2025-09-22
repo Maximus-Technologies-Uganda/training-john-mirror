@@ -58,19 +58,70 @@ jobs:
               const dir = path.join(process.cwd(), 'review-packet');
               fs.mkdirSync(dir, { recursive: true });
 
+              const totalAdditions = files.reduce((n, f) => n + (f.additions || 0), 0);
+              const totalDeletions = files.reduce((n, f) => n + (f.deletions || 0), 0);
+              const totalChanges = files.reduce((n, f) => n + (f.changes || 0), 0);
+              const changedFiles = files.length;
+
+              const byStatus = files.reduce((acc, f) => {
+                const k = (f.status || 'modified').toLowerCase();
+                acc[k] = (acc[k] || 0) + 1;
+                return acc;
+              }, {});
+
+              const byTopDir = files.reduce((acc, f) => {
+                const top = (f.filename || '').split('/')[0] || '';
+                acc[top] = acc[top] || { files: 0, additions: 0, deletions: 0 };
+                acc[top].files += 1;
+                acc[top].additions += (f.additions || 0);
+                acc[top].deletions += (f.deletions || 0);
+                return acc;
+              }, {});
+
+              const risky = [];
+              for (const f of files) {
+                const changes = (f.additions || 0) + (f.deletions || 0);
+                if (changes >= 200) {
+                  risky.push(`Large change (${changes}): ${f.filename}`);
+                }
+                if (/\.github\/workflows\//.test(f.filename)) {
+                  risky.push(`Workflow change: ${f.filename}`);
+                }
+                if (/package\.json$|package-lock\.json$/.test(f.filename)) {
+                  risky.push(`Dependency change: ${f.filename}`);
+                }
+              }
+
               const summaryLines = [];
-              summaryLines.push(`# Review Packet for PR #${pr.number} - ${pr.title}`);
+              summaryLines.push(`# Review Packet for PR #${pr.number} — ${pr.title}`);
               summaryLines.push('');
               summaryLines.push(`- Author: @${pr.user.login}`);
-              summaryLines.push(`- State: ${pr.state}`);
+              summaryLines.push(`- State: ${pr.state}${pr.draft ? ' (draft)' : ''}`);
               summaryLines.push(`- Base: ${pr.base.ref}`);
               summaryLines.push(`- Head: ${pr.head.ref}`);
               summaryLines.push(`- Labels: ${pr.labels.map(l => l.name).join(', ') || 'none'}`);
               summaryLines.push(`- URL: ${pr.html_url}`);
+              summaryLines.push(`- Files: ${changedFiles}  |  +${totalAdditions} / -${totalDeletions}  (Δ ${totalChanges})`);
               summaryLines.push('');
               summaryLines.push('## Changes');
               for (const f of files) {
                 summaryLines.push(`- ${f.status.toUpperCase()}: ${f.filename} (+${f.additions} / -${f.deletions})`);
+              }
+              summaryLines.push('');
+              summaryLines.push('## Summary by status');
+              for (const k of Object.keys(byStatus).sort()) {
+                summaryLines.push(`- ${k}: ${byStatus[k]}`);
+              }
+              summaryLines.push('');
+              summaryLines.push('## Summary by top-level directory');
+              for (const k of Object.keys(byTopDir).sort()) {
+                const e = byTopDir[k];
+                summaryLines.push(`- ${k || '(root)'}: ${e.files} files (+${e.additions} / -${e.deletions})`);
+              }
+              if (risky.length) {
+                summaryLines.push('');
+                summaryLines.push('## Review focus (auto-detected)');
+                for (const r of risky) summaryLines.push(`- ${r}`);
               }
               summaryLines.push('');
               summaryLines.push('## Commits');
@@ -88,6 +139,7 @@ jobs:
               fs.writeFileSync(path.join(dir, 'commits.json'), JSON.stringify(commits, null, 2));
 
               core.setOutput('packet_dir', dir);
+              core.setOutput('packet_md', mdPath);
               
             } catch (error) {
               core.setFailed(`Failed to generate review packet: ${error.message}`);
@@ -100,21 +152,35 @@ jobs:
           name: review-packet-${{ steps.resolve.outputs.pr_number }}
           path: ${{ steps.generate.outputs.packet_dir }}
 
-      - name: Comment with artifact hint (if labeled trigger)
+      - name: Append review packet to job summary
+        shell: bash
+        run: |
+          if [ -f "${{ steps.generate.outputs.packet_md }}" ]; then
+            {
+              echo "# Review Packet"
+              echo
+              cat "${{ steps.generate.outputs.packet_md }}"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Comment review packet on PR
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         env:
           PR_NUMBER: ${{ steps.resolve.outputs.pr_number }}
+          PACKET_MD: ${{ steps.generate.outputs.packet_md }}
         with:
           script: |
-            const prNumber = process.env.PR_NUMBER;
+            const fs = require('fs');
+            const prNumber = Number(process.env.PR_NUMBER);
             try {
+              const body = fs.readFileSync(process.env.PACKET_MD, 'utf8');
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: Number(prNumber),
-                body: 'Review packet artifact has been generated and attached to this workflow run.'
+                issue_number: prNumber,
+                body
               });
             } catch (error) {
-              core.warning(`Failed to create comment: ${error.message}`);
+              core.warning(`Failed to comment review packet: ${error.message}`);
             }
