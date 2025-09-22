@@ -6,20 +6,45 @@ const timeFile = path.join(__dirname, '../data/time.json');
 
 // Helper function to read the start time
 function getStartTime() {
-    if (fs.existsSync(timeFile)) {
-        const content = fs.readFileSync(timeFile);
-        const data = JSON.parse(content);
-        return data.startTime;
+    try {
+        if (fs.existsSync(timeFile)) {
+            const content = fs.readFileSync(timeFile, 'utf8');
+            const data = JSON.parse(content);
+            return data.startTime;
+        }
+    } catch (error) {
+        console.error('Error reading time file:', error.message);
+        return null;
     }
     return null;
-}if (!startTime) {
-    console.error("Error: Stopwatch has not been started. Use the 'start' command first.");
-    return; // Exit the function
-  }
+}
 
 // Helper function to write the start time
 function setStartTime(time) {
-    fs.writeFileSync(timeFile, JSON.stringify({ startTime: time }));
+    try {
+        const data = { startTime: time };
+        fs.writeFileSync(timeFile, JSON.stringify(data, null, 2));
+    } catch (error) {
+        console.error('Error writing time file:', error.message);
+    }
+}
+
+// Helper function to format elapsed time
+function formatElapsedTime(milliseconds) {
+    const seconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    
+    const remainingSeconds = seconds % 60;
+    const remainingMinutes = minutes % 60;
+    
+    if (hours > 0) {
+        return `${hours}h ${remainingMinutes}m ${remainingSeconds}s`;
+    } else if (minutes > 0) {
+        return `${minutes}m ${remainingSeconds}s`;
+    } else {
+        return `${remainingSeconds}s`;
+    }
 }
 
 // Main logic
@@ -27,22 +52,55 @@ switch (command) {
     case 'start':
         const now = Date.now();
         setStartTime(now);
-        console.log('Stopwatch started.');
+        console.log('Stopwatch started at', new Date(now).toLocaleTimeString());
         break;
 
-    case 'stop':
-        const startTime = getStartTime();
-        if (startTime) {
-            const endTime = Date.now();
-            const elapsed = ((endTime - startTime) / 1000).toFixed(2);
-            console.log(`Stopwatch stopped. Elapsed time: ${elapsed} seconds.`);
-            setStartTime(null); // Reset the start time
+    case 'lap':
+        const startTimeForLap = getStartTime();
+        if (startTimeForLap) {
+            const currentTime = Date.now();
+            const elapsed = currentTime - startTimeForLap;
+            console.log(`Lap time: ${formatElapsedTime(elapsed)}`);
         } else {
-            console.log('Stopwatch has not been started.');
+            console.log('Stopwatch has not been started. Use the "start" command first.');
         }
         break;
 
+    case 'stop':
+        const startTimeForStop = getStartTime();
+        if (startTimeForStop) {
+            const endTime = Date.now();
+            const elapsed = endTime - startTimeForStop;
+            console.log(`Stopwatch stopped. Total elapsed time: ${formatElapsedTime(elapsed)}`);
+            setStartTime(null); // Reset the start time
+        } else {
+            console.log('Stopwatch has not been started. Use the "start" command first.');
+        }
+        break;
+
+    case 'status':
+        const startTimeForStatus = getStartTime();
+        if (startTimeForStatus) {
+            const currentTime = Date.now();
+            const elapsed = currentTime - startTimeForStatus;
+            console.log(`Stopwatch is running. Elapsed time: ${formatElapsedTime(elapsed)}`);
+        } else {
+            console.log('Stopwatch is not running.');
+        }
+        break;
+
+    case 'reset':
+        setStartTime(null);
+        console.log('Stopwatch reset.');
+        break;
+
     default:
-        console.log('Unknown command. Use "start" or "stop".');
+        console.log('Usage: node stopwatch.js <command>');
+        console.log('Commands:');
+        console.log('  start  - Start the stopwatch');
+        console.log('  lap    - Show current elapsed time');
+        console.log('  stop   - Stop the stopwatch and show total time');
+        console.log('  status - Show current status and elapsed time');
+        console.log('  reset  - Reset the stopwatch');
         break;
 }
