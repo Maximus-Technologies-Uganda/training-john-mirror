@@ -12,7 +12,10 @@ function getStartTime() {
         return data.startTime;
     }
     return null;
-}
+}if (!startTime) {
+    console.error("Error: Stopwatch has not been started. Use the 'start' command first.");
+    return; // Exit the function
+  }
 
 // Helper function to write the start time
 function setStartTime(time) {
