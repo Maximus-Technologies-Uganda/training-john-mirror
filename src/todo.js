@@ -19,8 +19,6 @@ function saveTodos(todos) {
 // Main logic
 const command = process.argv[2];
 const argument = process.argv[3];
-function calculateTotal(expenses) {
-}
 switch (command) {
     case 'add':
         if (!argument) {
