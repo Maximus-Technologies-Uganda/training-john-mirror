@@ -205,18 +205,67 @@ This was a significant step up in complexity from the "Hello, World!" applicatio
 - Explore more advanced file system operations
 - Consider adding more features to the stopwatch CLI
 
-### Day 4 - [Date]
+### Day 4: Temperature Converter & Test-Driven Development (TDD)
+**Timestamp:** Monday, September 22, 2025
+
+**Summary:**
+Today's project was to build a Temperature Converter CLI. The main goal was to create a tool that could convert values between Celsius and Fahrenheit and to practice a new workflow: Test-Driven Development (TDD).
+
+Instead of writing the application code first, I started by writing a test file (temp-converter.test.js). I created a simple test case for converting 0°C to 32°F and ran it, watching it fail as expected (the "Red" phase). Then, I wrote the minimal amount of code in temp-converter.js required to make that test pass (the "Green" phase). We repeated this cycle to add the Fahrenheit-to-Celsius functionality.
+
+The TDD approach was a new way of thinking. It felt backward at first, but I quickly saw the benefit. It forces you to think clearly about what your code needs to do before you write it, and it gives you immediate confidence that your logic is correct. It was also a good exercise in making my code modular by exporting functions from one file (temp-converter.js) and importing them into another (temp-converter.test.js).
+
 **What I accomplished:**
-- 
+- **Temperature Converter CLI:** Built a complete temperature conversion tool that converts between Celsius and Fahrenheit
+- **Test-Driven Development:** Practiced TDD workflow by writing tests first, then implementing code
+- **Red-Green Cycle:** Successfully implemented the TDD cycle: Red (failing test) → Green (passing test) → Refactor
+- **Modular Code Design:** Created separate files for implementation (temp-converter.js) and testing (temp-converter.test.js)
+- **Function Export/Import:** Learned to export functions from one file and import them into another for testing
+- **Bidirectional Conversion:** Implemented both Celsius-to-Fahrenheit and Fahrenheit-to-Celsius conversion functionality
 
 **What I learned:**
-- 
+- **Test-Driven Development (TDD):** Understood the TDD workflow: write failing test first, then write minimal code to pass
+- **Red-Green-Refactor Cycle:** Learned the three phases of TDD: Red (failing test), Green (passing test), Refactor (improve code)
+- **Modular Programming:** Gained experience with exporting and importing functions between files
+- **Test-First Thinking:** Learned to think about what code should do before writing it, leading to clearer requirements
+- **Immediate Feedback:** Discovered how TDD provides instant confidence that logic is correct
+- **Code Organization:** Understood the importance of separating implementation from testing code
 
 **Challenges faced:**
-- 
+- **Backward Thinking:** The TDD approach felt counterintuitive at first - writing tests before code seemed backward
+- **Workflow Adjustment:** Had to adapt to a new development workflow that was different from previous approaches
+- **Test Writing:** Learning to write effective test cases that properly validate the expected behavior
+- **Code Modularity:** Understanding how to structure code for testing by exporting functions
+
+**Solutions Applied:**
+- **TDD Workflow Adoption:** Embraced the Red-Green cycle: wrote failing test, then minimal code to pass
+- **Modular Design:** Created separate files for implementation and testing with proper export/import
+- **Iterative Development:** Repeated the TDD cycle for each new feature (Celsius-to-Fahrenheit, then Fahrenheit-to-Celsius)
+- **Clear Requirements:** Used test cases to define exactly what the code should do before implementation
+
+**TDD Process Followed:**
+1. **Red Phase:** Wrote test for converting 0°C to 32°F, watched it fail
+2. **Green Phase:** Wrote minimal code in temp-converter.js to make test pass
+3. **Refactor Phase:** Improved code while keeping tests passing
+4. **Repeat:** Applied same cycle for Fahrenheit-to-Celsius functionality
+
+**Technical Implementation:**
+- Created `temp-converter.test.js` with test cases for temperature conversion
+- Built `temp-converter.js` with conversion functions
+- Used proper export/import syntax for modular code
+- Implemented bidirectional temperature conversion logic
+
+**Evidence:**
+- Pull Request for the Temperature Converter: [link-to-pr]
+- The final temp-converter.js and temp-converter.test.js files: [link-to-code-files]
+
+**Reflection:**
+The TDD approach was a significant shift in how I think about writing code. At first, it felt unnatural to write tests before implementation, but I quickly realized the benefits. It forces you to think clearly about requirements and gives you immediate confidence that your code works correctly. The modular approach of separating implementation from testing also made the code more organized and maintainable.
 
 **Tomorrow's focus:**
-- 
+- Continue practicing TDD workflow with more complex features
+- Explore additional testing patterns and best practices
+- Consider adding more temperature conversion features using TDD
 
 ### Day 5 - [Date]
 **What I accomplished:**
