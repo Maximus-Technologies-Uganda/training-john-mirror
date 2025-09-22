@@ -100,18 +100,54 @@ Today was a good start, focusing on setting up the project structure correctly. 
 - Begin working on the next development task
 - Continue practicing the feature branch workflow
 
-### Day 2 - [Date]
+### Day 2: Dev Environment Setup & First CLI
+**Date:** Tuesday 9th September, 2025  
+**Project:** Week 1 - Dev Environment Setup & First CLI  
+**Today's Goal:** Create .gitignore with AI, add README.md, modify Hello World and Git branching
+
 **What I accomplished:**
-- 
+- **File Creation with AI:** Created `.gitignore` and `README.md` files using AI assistance and pushed them to GitHub
+- **CLI Enhancement:** Modified `hello.js` to accept a name as an argument and a `--shout` flag for enhanced functionality
+- **Git Branching Workflow:** Created a new branch, added a default "World" greeting, and merged it back into main using a Pull Request
+- **Authentication Setup:** Successfully configured GitHub Personal Access Token (PAT) for secure repository access
 
 **What I learned:**
-- 
+- **`.gitignore`:** Learned that it tells Git to ignore files like node_modules and other unnecessary files from version control
+- **`process.argv`:** Discovered that this Node.js variable holds command-line arguments as an array, enabling CLI functionality
+- **Git Branching:** Understood how to create a new branch with `git checkout -b` to work on changes safely without affecting the main branch
+- **Pull Request (PR):** Learned that PRs are a way to propose and review changes before merging them into the main branch
+- **GitHub Authentication:** Gained experience with Personal Access Tokens and their required scopes for repository access
 
 **Challenges faced:**
-- 
+- **Git Push Authentication Failure:** Git push failed due to authentication issues with GitHub
+- **Branch Creation Error:** Encountered "fatal: a branch named x already exists" error when trying to create a branch that already existed
+- **Repository Access Issues:** Faced "Repository not found" errors when pushing, related to authentication problems
+
+**Solutions Applied:**
+- **Personal Access Token:** Created a GitHub PAT with the repo scope and used it as the password for command line authentication
+- **Branch Management:** Used `git checkout 'branch name'` (without -b) to switch to existing branches instead of trying to create them again
+- **Authentication Configuration:** Properly configured Git credentials using the PAT for secure repository access
+
+**Prompts That Helped Most:**
+1. "How do I use a super prompt to create a file in Cursor?"
+2. "What does 'fatal: The current branch main has no upstream branch' mean?"
+3. "What scopes do I need for a GitHub Personal Access Token?"
+4. "Why am I getting 'Repository not found' when I push?"
+
+**Commands and Workflow:**
+- Created `.gitignore` and `README.md` files with AI assistance
+- Modified `hello.js` to accept command-line arguments and flags
+- Used `git checkout -b` for new branch creation
+- Used `git checkout 'branch name'` for switching to existing branches
+- Created and merged Pull Request for code review workflow
+
+**Reflection:**
+Today felt like a big step up from just setting things up. Getting stuck on the GitHub authentication was frustrating, but solving it by creating a Personal Access Token felt like a real developer task. The branching workflow makes a lot of sense, and I can see why it's so important for working on features safely.
 
 **Tomorrow's focus:**
-- 
+- Continue building on the CLI functionality
+- Practice more advanced Git workflows
+- Explore additional Node.js command-line features
 
 ### Day 3 - [Date]
 **What I accomplished:**
