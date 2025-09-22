@@ -267,18 +267,70 @@ The TDD approach was a significant shift in how I think about writing code. At f
 - Explore additional testing patterns and best practices
 - Consider adding more temperature conversion features using TDD
 
-### Day 5 - [Date]
+### Day 5: Consolidation & Capstone PR
+**Timestamp:** Friday, September 19, 2025
+
+**Summary:**
+Day 5 was focused on bringing all the work from the week together into a final Capstone Pull Request. The goal was to consolidate my projects, improve the overall documentation, and demonstrate a key piece of CI/CD automation.
+
+I started by creating a new branch (chore/week1-wrap) for this final task. The main focus was creating a high-quality, professional README.md file for the project's root directory. I wrote a clear summary of the project and added detailed "Usage" examples for each of the CLIs I had built.
+
+The most important part of the day was learning how to trigger a specific workflow based on a label. After creating the Capstone PR, I applied the needs-review-packet label. This successfully triggered the special "Review Packet" workflow, which was the final objective for the week.
+
+This was a great lesson in the power of GitHub Actions. Learning that you can control which workflows run based on labels is a powerful concept for managing complex projects. It felt great to see all the different pieces of the puzzle—branching, coding, documentation, and CI/CD—come together in one final, successful merge.
+
 **What I accomplished:**
-- 
+- **Week Consolidation:** Brought together all the work from the week into a final Capstone Pull Request
+- **Professional Documentation:** Created a high-quality, comprehensive README.md file for the project root directory
+- **Usage Examples:** Added detailed usage examples for each CLI tool built during the week
+- **Branch Management:** Created `chore/week1-wrap` branch for the final consolidation task
+- **CI/CD Automation:** Successfully triggered the "Review Packet" workflow using label-based automation
+- **Label-Based Workflow:** Applied the `needs-review-packet` label to trigger specific GitHub Actions workflow
+- **Project Integration:** Demonstrated how all components (branching, coding, documentation, CI/CD) work together
 
 **What I learned:**
-- 
+- **GitHub Actions Power:** Discovered how to control which workflows run based on labels, a powerful concept for complex projects
+- **Label-Based Automation:** Learned that labels can trigger specific workflows, enabling sophisticated CI/CD pipelines
+- **Professional Documentation:** Understood the importance of comprehensive README files with clear usage examples
+- **Project Consolidation:** Gained experience in bringing together multiple components into a cohesive final deliverable
+- **CI/CD Integration:** Saw how different pieces (branching, coding, documentation, automation) integrate into a complete workflow
+- **Workflow Management:** Learned to use labels as triggers for different types of automated processes
 
 **Challenges faced:**
-- 
+- **Project Integration:** Bringing together multiple separate projects into one cohesive final deliverable
+- **Documentation Quality:** Creating professional-grade documentation that clearly explains all the CLI tools
+- **Workflow Understanding:** Learning how label-based workflow triggers work in GitHub Actions
+- **Final Consolidation:** Ensuring all components work together properly in the final merge
+
+**Solutions Applied:**
+- **Structured Approach:** Created dedicated branch (`chore/week1-wrap`) for final consolidation work
+- **Comprehensive Documentation:** Wrote detailed README with clear project summary and usage examples
+- **Label-Based Triggering:** Applied `needs-review-packet` label to trigger the Review Packet workflow
+- **Systematic Integration:** Methodically brought together all week's work into final Capstone PR
+
+**Technical Implementation:**
+- Created `chore/week1-wrap` branch for final consolidation
+- Enhanced root README.md with professional documentation and usage examples
+- Applied `needs-review-packet` label to trigger specific GitHub Actions workflow
+- Successfully demonstrated label-based CI/CD automation
+
+**CI/CD Workflow Demonstrated:**
+- **Label Trigger:** Applied `needs-review-packet` label to PR
+- **Automated Response:** GitHub Actions detected label and triggered Review Packet workflow
+- **Workflow Execution:** Successfully ran the special workflow designed for review processes
+- **Integration Success:** Demonstrated how labels control workflow execution in complex projects
+
+**Evidence:**
+- Capstone Pull Request (#12): [link-to-pr-12]
+- Successful Review Packet workflow run: [link-to-ci-run]
+
+**Reflection:**
+This was an excellent culmination of the week's learning. Seeing all the different pieces—branching, coding, documentation, and CI/CD automation—come together in one final, successful merge was incredibly satisfying. Learning about label-based workflow triggers opened my eyes to the power of GitHub Actions for managing complex projects. The ability to control which workflows run based on labels is a sophisticated concept that will be valuable for larger projects.
 
 **Tomorrow's focus:**
-- 
+- Begin Week 2 with new learning objectives
+- Apply the CI/CD and documentation practices learned this week
+- Continue building on the foundation established in Week 1
 
 ## Week 1 Summary
 **Key Achievements:**
