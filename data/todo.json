@@ -1,0 +1,10 @@
+[
+  {
+    "task": "Test task",
+    "status": "pending"
+  },
+  {
+    "task": "Smoke task",
+    "status": "pending"
+  }
+]

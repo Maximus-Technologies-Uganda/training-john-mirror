@@ -1,4 +1,4 @@
-// Displays a greeting to// Displays a greeting to the user the user
+// Displays a greeting to the user
 const args = process.argv.slice(2);
 
 // Find and remove the --shout flag

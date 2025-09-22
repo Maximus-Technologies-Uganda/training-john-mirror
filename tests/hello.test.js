@@ -20,6 +20,6 @@ function runTest(command, expectedOutput) {
 }
 
 // Test cases
-runTest('node hello.js', 'Hello, World!');
-runTest('node hello.js Preston', 'Hello, Preston!');
-runTest('node hello.js Preston --shout', 'HELLO, PRESTON!');
+runTest('node src/hello.js', 'Hello, World!');
+runTest('node src/hello.js Preston', 'Hello, Preston!');
+runTest('node src/hello.js Preston --shout', 'HELLO, PRESTON!');

@@ -1,5 +1,6 @@
 const fs = require('fs');
-const todoFile = 'todo.json';
+const path = require('path');
+const todoFile = path.join(__dirname, '../data/todo.json');
 
 // Helper function to read the to-do list
 function getTodos() {
@@ -18,8 +19,6 @@ function saveTodos(todos) {
 // Main logic
 const command = process.argv[2];
 const argument = process.argv[3];
-function calculateTotal(expenses) {
-}
 switch (command) {
     case 'add':
         if (!argument) {

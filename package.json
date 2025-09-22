@@ -1,0 +1,19 @@
+{
+  "name": "training-john",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "node tests/hello.test.js",
+    "hello": "node src/hello.js",
+    "stopwatch:start": "node src/stopwatch.js start",
+    "stopwatch:stop": "node src/stopwatch.js stop",
+    "expense:add": "node src/expense.js add",
+    "expense:list": "node src/expense.js list",
+    "expense:total": "node src/expense.js total",
+    "todo:add": "node src/todo.js add",
+    "todo:list": "node src/todo.js list",
+    "todo:done": "node src/todo.js done",
+    "todo:remove": "node src/todo.js remove"
+  }
+}

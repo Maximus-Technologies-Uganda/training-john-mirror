@@ -6,5 +6,13 @@
   {
     "description": "Morning coffee",
     "amount": 4.25
+  },
+  {
+    "description": "Test expense",
+    "amount": 1
+  },
+  {
+    "description": "Smoke expense",
+    "amount": 2
   }
 ]
