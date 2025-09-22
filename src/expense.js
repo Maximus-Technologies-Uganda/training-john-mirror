@@ -1,9 +1,10 @@
 const fs = require('fs');
+const path = require('path');
 
 const command = process.argv[2];
 const amount = parseFloat(process.argv[3]);
 const description = process.argv[4];
-const expenseFile = 'expenses.json';
+const expenseFile = path.join(__dirname, '../data/expenses.json');
 
 // Helper function to read expenses
 function getExpenses() {
@@ -23,7 +24,7 @@ function saveExpenses(expenses) {
 switch (command) {
     case 'add':
         if (!amount || !description) {
-            console.log('Usage: node expense.js add <amount> <description>');
+            console.log('Usage: node src/expense.js add <amount> <description>');
             break;
         }
         const expenses = getExpenses();
