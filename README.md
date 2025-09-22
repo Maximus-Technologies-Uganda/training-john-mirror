@@ -78,4 +78,4 @@ A tool to manage a to-do list.
 
 ## Journals
 
--   Week 1: [Week 1 Journal](journals/week-1.md)
+-   Week 1: [Week 1 Journal](journal/week-1.md)
