@@ -35,10 +35,52 @@ jobs:
           git fetch --all --tags --prune
           git remote remove mirror 2>/dev/null || true
           git remote add mirror https://github.com/Maximus-Technologies-Uganda/training-john-mirror.git
-          # Push all tags
-          git push --force --tags mirror
-          # Push all branches from origin tracking refs to the mirror without pruning (avoids deleting default branch)
+          
+          # Fetch from mirror to sync with remote state
+          git fetch mirror --prune || true
+          
+          # Push all tags with retry logic
+          echo "Pushing tags..."
+          for i in {1..3}; do
+            if git push --force --tags mirror; then
+              echo "Tags pushed successfully"
+              break
+            else
+              echo "Tag push attempt $i failed, retrying..."
+              sleep 2
+            fi
+          done
+          
+          # Push all branches with better error handling
+          echo "Pushing branches..."
           while read -r branch; do
-            git push --force mirror "refs/remotes/origin/${branch}:refs/heads/${branch}"
+            echo "Pushing branch: $branch"
+            # Try multiple approaches for each branch
+            success=false
+            
+            # Method 1: Direct force push
+            if git push --force mirror "refs/remotes/origin/${branch}:refs/heads/${branch}" 2>/dev/null; then
+              echo "Successfully pushed $branch (method 1)"
+              success=true
+            else
+              echo "Method 1 failed for $branch, trying method 2..."
+              
+              # Method 2: Delete and recreate the branch
+              if git push mirror --delete "refs/heads/${branch}" 2>/dev/null; then
+                echo "Deleted remote branch $branch"
+                sleep 1
+                if git push mirror "refs/remotes/origin/${branch}:refs/heads/${branch}"; then
+                  echo "Successfully pushed $branch (method 2)"
+                  success=true
+                fi
+              fi
+            fi
+            
+            if [ "$success" = false ]; then
+              echo "Warning: Failed to push branch $branch after all attempts"
+              # Continue with other branches instead of failing the entire job
+            fi
           done < <(git for-each-ref --format='%(refname:strip=3)' refs/remotes/origin)
+          
+          echo "Mirroring completed"
 
