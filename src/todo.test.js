@@ -1,13 +1,7 @@
-// A simple test for the todo application's add functionality
+// Import the function we want to test from todo.js
+const { addTask } = require('./todo.js');
 
 console.log("Running tests for the 'add' feature...");
-
-// This is a simple function that mimics adding a task.
-// In a real application, you would import this from your todo.js file.
-function addTask(tasks, newTask) {
-  const newTasks = [...tasks, newTask];
-  return newTasks;
-}
 
 // Test Case 1: Should add a new task to an empty list.
 let initialTasks = [];
