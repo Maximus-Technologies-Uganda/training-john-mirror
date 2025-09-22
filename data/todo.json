@@ -1,10 +1,10 @@
 [
   {
-    "task": "Finish project report",
+    "task": "Test task",
     "status": "pending"
   },
   {
-    "task": "Test task",
+    "task": "Smoke task",
     "status": "pending"
   }
 ]
