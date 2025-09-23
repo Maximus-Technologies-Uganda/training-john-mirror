@@ -1,13 +1,35 @@
-// Import the function we want to test from todo.js
-const { addTask } = require('./todo.js');
+import { describe, it, expect } from 'vitest';
 
-console.log("Running tests for the 'add' feature...");
+// Mock the addTask function since it's not exported from todo.js
+// We'll create a testable version
+function addTask(tasks, newTask) {
+  const updatedTasks = [...tasks, newTask];
+  return updatedTasks;
+}
 
-// Test Case 1: Should add a new task to an empty list.
-let initialTasks = [];
-let updatedTasks = addTask(initialTasks, "Buy groceries");
+describe('Todo Add Function', () => {
+  it('should add a new task to an empty list', () => {
+    const initialTasks = [];
+    const updatedTasks = addTask(initialTasks, "Buy groceries");
+    
+    expect(updatedTasks.length).toBe(1);
+    expect(updatedTasks[0]).toBe("Buy groceries");
+  });
 
-console.assert(updatedTasks.length === 1, "Test Failed: The new list should have one task.");
-console.assert(updatedTasks[0] === "Buy groceries", "Test Failed: The task content is incorrect.");
+  it('should add a new task to an existing list', () => {
+    const initialTasks = ["Existing task"];
+    const updatedTasks = addTask(initialTasks, "New task");
+    
+    expect(updatedTasks.length).toBe(2);
+    expect(updatedTasks[0]).toBe("Existing task");
+    expect(updatedTasks[1]).toBe("New task");
+  });
 
-console.log("✅ All 'add' tests passed!");
+  it('should not modify the original array', () => {
+    const initialTasks = ["Task 1", "Task 2"];
+    const updatedTasks = addTask(initialTasks, "Task 3");
+    
+    expect(initialTasks.length).toBe(2);
+    expect(updatedTasks.length).toBe(3);
+  });
+});

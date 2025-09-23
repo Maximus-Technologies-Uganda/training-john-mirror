@@ -22,7 +22,7 @@ async function getJoke() {
       // The API sends an error field if the category is bad
       console.error('Error: Could not find jokes for that category.');
     } else {
-      console.log('\n' + response.data.joke);
+      console.log(`\n${response.data.joke}`);
     }
   } catch (error) {
     console.error("Sorry, there was a problem connecting to the API.", error.message);

@@ -1,110 +1,101 @@
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 
-console.log('Running tests for stopwatch.js...');
+const timeFile = path.join(process.cwd(), 'data/time.json');
 
-const timeFile = path.join(__dirname, '../data/time.json');
-
-function runTest(command, expectedOutput, description) {
-  try {
-    const output = execSync(command).toString().trim();
-    if (output.includes(expectedOutput)) {
-      console.log(`✅ PASS: ${description}`);
-    } else {
-      console.error(`❌ FAIL: ${description}`);
-      console.error(`  - Expected to contain: "${expectedOutput}"`);
-      console.error(`  - Actual output: "${output}"`);
-      process.exit(1);
+describe('Stopwatch CLI', () => {
+  beforeEach(() => {
+    // Reset stopwatch before each test
+    try {
+      execSync('node src/stopwatch.js reset');
+    } catch (error) {
+      // Ignore errors during reset
     }
-  } catch (error) {
-    console.error(`❌ ERROR: Command failed: '${command}'`);
-    console.error(`  - Error: ${error.message}`);
-    process.exit(1);
-  }
-}
+  });
 
-function resetStopwatch() {
-  try {
-    // Reset the stopwatch state
-    execSync('node src/stopwatch.js reset');
-  } catch (error) {
-    // Ignore errors during reset
-  }
-}
+  afterEach(() => {
+    // Clean up after each test
+    try {
+      execSync('node src/stopwatch.js reset');
+    } catch (error) {
+      // Ignore errors during cleanup
+    }
+  });
 
-function checkTimeFile(expectedStartTime) {
-  try {
+  it('should show usage message', () => {
+    const output = execSync('node src/stopwatch.js').toString().trim();
+    expect(output).toContain('Usage: node stopwatch.js <command>');
+  });
+
+  it('should reset stopwatch', () => {
+    const output = execSync('node src/stopwatch.js reset').toString().trim();
+    expect(output).toContain('Stopwatch reset');
+    
+    // Check that time file is reset
     const content = fs.readFileSync(timeFile, 'utf8');
     const data = JSON.parse(content);
-    if (data.startTime === expectedStartTime) {
-      console.log(`✅ PASS: Time file state correct`);
-    } else {
-      console.error(`❌ FAIL: Time file state incorrect`);
-      console.error(`  - Expected startTime: ${expectedStartTime}`);
-      console.error(`  - Actual startTime: ${data.startTime}`);
-      process.exit(1);
-    }
-  } catch (error) {
-    console.error(`❌ ERROR: Could not read time file: ${error.message}`);
-    process.exit(1);
-  }
-}
+    expect(data.startTime).toBeNull();
+  });
 
-// Test 1: Help/Usage message
-console.log('\n--- Test 1: Help/Usage message ---');
-runTest('node src/stopwatch.js', 'Usage: node stopwatch.js <command>', 'Shows usage message');
+  it('should start stopwatch', () => {
+    const output = execSync('node src/stopwatch.js start').toString().trim();
+    expect(output).toContain('Stopwatch started at');
+    
+    // Check that startTime is recorded
+    const content = fs.readFileSync(timeFile, 'utf8');
+    const data = JSON.parse(content);
+    expect(data.startTime).not.toBeNull();
+    expect(typeof data.startTime).toBe('number');
+  });
 
-// Test 2: Reset stopwatch
-console.log('\n--- Test 2: Reset stopwatch ---');
-runTest('node src/stopwatch.js reset', 'Stopwatch reset', 'Reset command works');
-checkTimeFile(null);
+  it('should show running status', () => {
+    // Start the stopwatch first
+    execSync('node src/stopwatch.js start');
+    
+    const output = execSync('node src/stopwatch.js status').toString().trim();
+    expect(output).toContain('Stopwatch is running');
+  });
 
-// Test 3: Start stopwatch
-console.log('\n--- Test 3: Start stopwatch ---');
-runTest('node src/stopwatch.js start', 'Stopwatch started at', 'Start command works');
-// Check that startTime is not null (we can't predict the exact value)
-try {
-  const content = fs.readFileSync(timeFile, 'utf8');
-  const data = JSON.parse(content);
-  if (data.startTime !== null && typeof data.startTime === 'number') {
-    console.log(`✅ PASS: Start time recorded in file`);
-  } else {
-    console.error(`❌ FAIL: Start time not recorded properly`);
-    process.exit(1);
-  }
-} catch (error) {
-  console.error(`❌ ERROR: Could not verify start time: ${error.message}`);
-  process.exit(1);
-}
+  it('should record lap time', () => {
+    // Start the stopwatch first
+    execSync('node src/stopwatch.js start');
+    
+    const output = execSync('node src/stopwatch.js lap').toString().trim();
+    expect(output).toContain('Lap time:');
+  });
 
-// Test 4: Status when running
-console.log('\n--- Test 4: Status when running ---');
-runTest('node src/stopwatch.js status', 'Stopwatch is running', 'Status shows running');
+  it('should stop stopwatch', () => {
+    // Start the stopwatch first
+    execSync('node src/stopwatch.js start');
+    
+    const output = execSync('node src/stopwatch.js stop').toString().trim();
+    expect(output).toContain('Stopwatch stopped');
+    
+    // Check that time file is reset
+    const content = fs.readFileSync(timeFile, 'utf8');
+    const data = JSON.parse(content);
+    expect(data.startTime).toBeNull();
+  });
 
-// Test 5: Lap time
-console.log('\n--- Test 5: Lap time ---');
-runTest('node src/stopwatch.js lap', 'Lap time:', 'Lap command works');
+  it('should show not running status when stopped', () => {
+    const output = execSync('node src/stopwatch.js status').toString().trim();
+    expect(output).toContain('Stopwatch is not running');
+  });
 
-// Test 6: Stop stopwatch
-console.log('\n--- Test 6: Stop stopwatch ---');
-runTest('node src/stopwatch.js stop', 'Stopwatch stopped', 'Stop command works');
-checkTimeFile(null);
+  it('should show error for lap without start', () => {
+    const output = execSync('node src/stopwatch.js lap').toString().trim();
+    expect(output).toContain('Stopwatch has not been started');
+  });
 
-// Test 7: Status when stopped
-console.log('\n--- Test 7: Status when stopped ---');
-runTest('node src/stopwatch.js status', 'Stopwatch is not running', 'Status shows not running');
+  it('should show error for stop without start', () => {
+    const output = execSync('node src/stopwatch.js stop').toString().trim();
+    expect(output).toContain('Stopwatch has not been started');
+  });
 
-// Test 8: Error handling - lap without start
-console.log('\n--- Test 8: Error handling - lap without start ---');
-runTest('node src/stopwatch.js lap', 'Stopwatch has not been started', 'Lap without start shows error');
-
-// Test 9: Error handling - stop without start
-console.log('\n--- Test 9: Error handling - stop without start ---');
-runTest('node src/stopwatch.js stop', 'Stopwatch has not been started', 'Stop without start shows error');
-
-// Test 10: Invalid command
-console.log('\n--- Test 10: Invalid command ---');
-runTest('node src/stopwatch.js invalid', 'Usage: node stopwatch.js <command>', 'Invalid command shows usage');
-
-console.log('\n🎉 All stopwatch tests passed!');
+  it('should show usage for invalid command', () => {
+    const output = execSync('node src/stopwatch.js invalid').toString().trim();
+    expect(output).toContain('Usage: node stopwatch.js <command>');
+  });
+});

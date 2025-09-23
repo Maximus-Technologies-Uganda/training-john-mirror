@@ -1,25 +1,19 @@
-const { execSync } = require('child_process');
+import { describe, it, expect } from 'vitest';
+import { execSync } from 'child_process';
 
-console.log('Running tests for hello.js...');
+describe('Hello CLI', () => {
+  it('should output default greeting', () => {
+    const output = execSync('node src/hello.js').toString().trim();
+    expect(output).toBe('Hello, World!');
+  });
 
-function runTest(command, expectedOutput) {
-  try {
-    const output = execSync(command).toString().trim();
-    if (output === expectedOutput) {
-      console.log(`✅ PASS: '${command}'`);
-    } else {
-      console.error(`❌ FAIL: '${command}'`);
-      console.error(`  - Expected: "${expectedOutput}"`);
-      console.error(`  - Actual:   "${output}"`);
-      process.exit(1);
-    }
-  } catch (error) {
-    console.error(`❌ ERROR: Command failed: '${command}'`);
-    process.exit(1);
-  }
-}
+  it('should output personalized greeting', () => {
+    const output = execSync('node src/hello.js Preston').toString().trim();
+    expect(output).toBe('Hello, Preston!');
+  });
 
-// Test cases
-runTest('node src/hello.js', 'Hello, World!');
-runTest('node src/hello.js Preston', 'Hello, Preston!');
-runTest('node src/hello.js Preston --shout', 'HELLO, PRESTON!');
+  it('should output shouted greeting with --shout flag', () => {
+    const output = execSync('node src/hello.js Preston --shout').toString().trim();
+    expect(output).toBe('HELLO, PRESTON!');
+  });
+});

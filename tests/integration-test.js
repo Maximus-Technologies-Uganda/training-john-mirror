@@ -1,6 +1,5 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
-const path = require('path');
 
 console.log("=== WEEK 1 CLI TOOLS INTEGRATION TEST ===");
 console.log("Testing all CLI tools to ensure they work together properly\n");
@@ -143,7 +142,7 @@ allTestsPassed &= checkFileExists('data/todo.json', 'To-do data file exists');
 
 // Test 9: Verify JSON files are valid
 try {
-    const timeData = JSON.parse(fs.readFileSync('data/time.json', 'utf8'));
+    JSON.parse(fs.readFileSync('data/time.json', 'utf8'));
     console.log('✅ PASS: Stopwatch state file is valid JSON');
 } catch (error) {
     console.error('❌ FAIL: Stopwatch state file is not valid JSON');
@@ -151,7 +150,7 @@ try {
 }
 
 try {
-    const expenseData = JSON.parse(fs.readFileSync('data/expenses.json', 'utf8'));
+    JSON.parse(fs.readFileSync('data/expenses.json', 'utf8'));
     console.log('✅ PASS: Expense data file is valid JSON');
 } catch (error) {
     console.error('❌ FAIL: Expense data file is not valid JSON');
@@ -159,7 +158,7 @@ try {
 }
 
 try {
-    const todoData = JSON.parse(fs.readFileSync('data/todo.json', 'utf8'));
+    JSON.parse(fs.readFileSync('data/todo.json', 'utf8'));
     console.log('✅ PASS: To-do data file is valid JSON');
 } catch (error) {
     console.error('❌ FAIL: To-do data file is not valid JSON');
@@ -171,7 +170,7 @@ console.log("\n=== PROJECT CONFIGURATION VERIFICATION ===");
 // Test 10: Check package.json exists and is valid
 allTestsPassed &= checkFileExists('package.json', 'Package.json exists');
 try {
-    const packageData = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+    JSON.parse(fs.readFileSync('package.json', 'utf8'));
     console.log('✅ PASS: Package.json is valid JSON');
 } catch (error) {
     console.error('❌ FAIL: Package.json is not valid JSON');
