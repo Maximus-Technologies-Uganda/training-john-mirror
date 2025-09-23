@@ -4,10 +4,9 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-  "test": "vitest --ui",
-  "test:ci": "vitest run --reporter=junit --coverage",
-  "lint": "eslint ."
-},
+    "test": "vitest --ui",
+    "test:ci": "vitest run --reporter=junit --coverage",
+    "lint": "eslint .",
     "todo:remove": "node src/todo.js remove"
   },
   "dependencies": {

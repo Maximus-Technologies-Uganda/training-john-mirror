@@ -62,3 +62,11 @@ Thumbs.db
 # Project specific
 data/*.json
 !data/example.json
+
+# CI/CD artifacts
+review-packet/
+*.tgz
+
+# Test artifacts
+test-results/
+junit.xml
