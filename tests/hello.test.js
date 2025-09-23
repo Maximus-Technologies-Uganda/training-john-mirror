@@ -1,19 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { execSync } from 'child_process';
+import { formatGreeting } from '../src/hello-core.js'; // We import the function here
 
-describe('Hello CLI', () => {
-  it('should output default greeting', () => {
-    const output = execSync('node src/hello.js').toString().trim();
-    expect(output).toBe('Hello, World!');
+describe('formatGreeting', () => {
+  it('defaults to World when no name is given', () => {
+    expect(formatGreeting()).toBe('Hello, World!');
   });
 
-  it('should output personalized greeting', () => {
-    const output = execSync('node src/hello.js Preston').toString().trim();
-    expect(output).toBe('Hello, Preston!');
+  it('uses a custom name when provided', () => {
+    expect(formatGreeting('John')).toBe('Hello, John!');
   });
 
-  it('should output shouted greeting with --shout flag', () => {
-    const output = execSync('node src/hello.js Preston --shout').toString().trim();
-    expect(output).toBe('HELLO, PRESTON!');
+  it('shouts when the shout flag is true', () => {
+    expect(formatGreeting('John', true)).toBe('HELLO, JOHN!');
   });
 });
