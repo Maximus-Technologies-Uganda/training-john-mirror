@@ -4,20 +4,19 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "test": "node tests/hello.test.js",
-    "hello": "node src/hello.js",
-    "stopwatch:start": "node src/stopwatch.js start",
-    "stopwatch:stop": "node src/stopwatch.js stop",
-    "expense:add": "node src/expense.js add",
-    "expense:list": "node src/expense.js list",
-    "expense:total": "node src/expense.js total",
-    "todo:add": "node src/todo.js add",
-    "todo:list": "node src/todo.js list",
-    "todo:done": "node src/todo.js done",
+  "test": "vitest --ui",
+  "test:ci": "vitest run --reporter=junit --coverage",
+  "lint": "eslint ."
+},
     "todo:remove": "node src/todo.js remove"
   },
   "dependencies": {
     "axios": "^1.12.2",
     "yargs": "^18.0.0"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "vitest": "^3.2.4"
   }
 }
