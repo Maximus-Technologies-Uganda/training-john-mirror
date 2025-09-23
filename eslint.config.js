@@ -23,7 +23,7 @@ module.exports = [
       'linebreak-style': 'off', // Disable linebreak-style for Windows compatibility
       'quotes': 'off', // Disable strict quote enforcement for existing code
       'semi': ['error', 'always'],
-      'no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
+      'no-unused-vars': ['warn', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }],
       'no-console': 'off', // Allow console statements in CLI tools
       'prefer-const': 'warn',
       'no-var': 'warn',

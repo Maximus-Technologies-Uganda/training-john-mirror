@@ -10,7 +10,7 @@ describe('Stopwatch CLI', () => {
     // Reset stopwatch before each test
     try {
       execSync('node src/stopwatch.js reset');
-    } catch (error) {
+    } catch {
       // Ignore errors during reset
     }
   });
@@ -19,7 +19,7 @@ describe('Stopwatch CLI', () => {
     // Clean up after each test
     try {
       execSync('node src/stopwatch.js reset');
-    } catch (error) {
+    } catch {
       // Ignore errors during cleanup
     }
   });
