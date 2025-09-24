@@ -7,20 +7,20 @@
  * Creates a new stopwatch state
  * @returns {Object} Initial stopwatch state
  */
-function createStopwatch() {
+const createStopwatch = () => {
     return {
         startTime: null,
         isRunning: false,
         totalElapsed: 0
     };
-}
+};
 
 /**
  * Starts the stopwatch
  * @param {Object} stopwatch - Current stopwatch state
  * @returns {Object} Updated stopwatch state
  */
-function startStopwatch(stopwatch) {
+const startStopwatch = (stopwatch) => {
     if (stopwatch.isRunning) {
         throw new Error('Stopwatch is already running');
     }
@@ -30,16 +30,16 @@ function startStopwatch(stopwatch) {
         startTime: Date.now(),
         isRunning: true
     };
-}
+};
 
 /**
  * Stops the stopwatch
  * @param {Object} stopwatch - Current stopwatch state
  * @returns {Object} Updated stopwatch state with total elapsed time
  */
-function stopStopwatch(stopwatch) {
+const stopStopwatch = (stopwatch) => {
     if (!stopwatch.isRunning) {
-        throw new Error('Stopwatch is not running');
+        throw new Error('Stopwatch has not been started');
     }
     
     const currentTime = Date.now();
@@ -52,14 +52,14 @@ function stopStopwatch(stopwatch) {
         startTime: null,
         totalElapsed: newTotalElapsed
     };
-}
+};
 
 /**
  * Gets the current elapsed time
  * @param {Object} stopwatch - Current stopwatch state
  * @returns {number} Elapsed time in milliseconds
  */
-function getElapsedTime(stopwatch) {
+const getElapsedTime = (stopwatch) => {
     if (!stopwatch.isRunning) {
         return stopwatch.totalElapsed;
     }
@@ -67,23 +67,27 @@ function getElapsedTime(stopwatch) {
     const currentTime = Date.now();
     const currentElapsed = currentTime - stopwatch.startTime;
     return stopwatch.totalElapsed + currentElapsed;
-}
+};
 
 /**
  * Resets the stopwatch
  * @param {Object} stopwatch - Current stopwatch state
  * @returns {Object} Reset stopwatch state
  */
-function resetStopwatch(stopwatch) {
-    return createStopwatch();
-}
+const resetStopwatch = (stopwatch) => {
+    return {
+        startTime: null,
+        isRunning: false,
+        totalElapsed: 0
+    };
+};
 
 /**
  * Formats elapsed time in a human-readable format
  * @param {number} milliseconds - Time in milliseconds
  * @returns {string} Formatted time string
  */
-function formatElapsedTime(milliseconds) {
+const formatElapsedTime = (milliseconds) => {
     const seconds = Math.floor(milliseconds / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
@@ -98,21 +102,21 @@ function formatElapsedTime(milliseconds) {
     } else {
         return `${remainingSeconds}s`;
     }
-}
+};
 
 /**
  * Gets the current status of the stopwatch
  * @param {Object} stopwatch - Current stopwatch state
  * @returns {Object} Status information
  */
-function getStopwatchStatus(stopwatch) {
+const getStopwatchStatus = (stopwatch) => {
     const elapsed = getElapsedTime(stopwatch);
     return {
         isRunning: stopwatch.isRunning,
         elapsedTime: elapsed,
         formattedTime: formatElapsedTime(elapsed)
     };
-}
+};
 
 module.exports = {
     createStopwatch,

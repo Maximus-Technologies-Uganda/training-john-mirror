@@ -5,7 +5,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const { createStopwatch } = require('./stopwatch-core.js');
 
 /**
  * Creates a storage manager for stopwatch state
@@ -38,7 +37,11 @@ function createStopwatchStorage(storagePath) {
             }
             
             // Return default state if loading fails
-            return createStopwatch();
+            return {
+                startTime: null,
+                isRunning: false,
+                totalElapsed: 0
+            };
         },
 
         /**

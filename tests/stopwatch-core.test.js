@@ -39,8 +39,10 @@ describe('stopwatch-core', () => {
     });
 
     describe('stopStopwatch', () => {
-        it('stops a running stopwatch', () => {
+        it('stops a running stopwatch', async () => {
             const started = startStopwatch(stopwatch);
+            // Add small delay to ensure measurable elapsed time
+            await new Promise(resolve => setTimeout(resolve, 10));
             const stopped = stopStopwatch(started);
             
             expect(stopped.isRunning).toBe(false);
@@ -49,16 +51,20 @@ describe('stopwatch-core', () => {
         });
 
         it('throws error when stopping a non-running stopwatch', () => {
-            expect(() => stopStopwatch(stopwatch)).toThrow('Stopwatch is not running');
+            expect(() => stopStopwatch(stopwatch)).toThrow('Stopwatch has not been started');
         });
 
-        it('accumulates elapsed time correctly', () => {
+        it('accumulates elapsed time correctly', async () => {
             const started = startStopwatch(stopwatch);
+            // Add small delay to ensure measurable elapsed time
+            await new Promise(resolve => setTimeout(resolve, 10));
             const stopped = stopStopwatch(started);
             const totalElapsed = stopped.totalElapsed;
             
             // Start again and stop
             const started2 = startStopwatch(stopped);
+            // Add small delay to ensure measurable elapsed time
+            await new Promise(resolve => setTimeout(resolve, 10));
             const stopped2 = stopStopwatch(started2);
             
             expect(stopped2.totalElapsed).toBeGreaterThan(totalElapsed);
@@ -73,8 +79,10 @@ describe('stopwatch-core', () => {
             expect(getElapsedTime(stopped)).toBe(stopped.totalElapsed);
         });
 
-        it('returns current elapsed time when running', () => {
+        it('returns current elapsed time when running', async () => {
             const started = startStopwatch(stopwatch);
+            // Add small delay to ensure measurable elapsed time
+            await new Promise(resolve => setTimeout(resolve, 10));
             const elapsed = getElapsedTime(started);
             
             expect(elapsed).toBeGreaterThan(0);
@@ -123,8 +131,10 @@ describe('stopwatch-core', () => {
             expect(status.formattedTime).toBe('0s');
         });
 
-        it('returns correct status for running stopwatch', () => {
+        it('returns correct status for running stopwatch', async () => {
             const started = startStopwatch(stopwatch);
+            // Add small delay to ensure measurable elapsed time
+            await new Promise(resolve => setTimeout(resolve, 10));
             const status = getStopwatchStatus(started);
             
             expect(status.isRunning).toBe(true);

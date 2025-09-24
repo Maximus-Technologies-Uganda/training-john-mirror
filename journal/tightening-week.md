@@ -26,10 +26,12 @@ This document chronicles the systematic enhancement of the CLI tools collection 
 - Set up quality gates for automated code review
 
 **Links**:
+- [PR: chore/guardrails+runner](https://github.com/Maximus-Technologies-Uganda/training-john/pull/chore/guardrails+runner)
 - [CI Configuration](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/.github/workflows/quality-gate.yml)
 - [Package.json Scripts](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/package.json)
 - [Vitest Configuration](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/vitest.config.mjs)
 - [ESLint Configuration](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/eslint.config.js)
+- [Quality Gate Artifacts](https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs/quality-gate/artifacts)
 
 ## Day T2 — Hello CLI Harden ✅
 
@@ -66,11 +68,13 @@ const message = formatGreeting(name, shout);
 2. "Add comprehensive test cases covering edge cases and error scenarios"
 
 **Links**:
+- [PR: feat/hello-tests](https://github.com/Maximus-Technologies-Uganda/training-john/pull/feat/hello-tests)
 - [Hello CLI Enhanced](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/src/hello.js)
 - [Hello Core Function](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/src/hello-core.js)
 - [Hello Tests](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/tests/hello.test.js)
 - [README Hello Section](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/README.md#1-hello-greeter-hellojs)
 - [CI Artifacts](https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs/quality-gate)
+- [Test Results](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/test-results/junit.xml)
 
 ## Day T3 — Stopwatch Harden ✅
 
@@ -124,12 +128,14 @@ node src/stopwatch.js --help
 - Improved CLI usability with storage options
 
 **Links**:
+- [PR: feat/stopwatch-tests](https://github.com/Maximus-Technologies-Uganda/training-john/pull/feat/stopwatch-tests)
 - [Stopwatch Core Logic](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/src/stopwatch-core.js)
 - [Stopwatch Storage](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/src/stopwatch-storage.js)
 - [Stopwatch CLI Enhanced](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/src/stopwatch.js)
 - [Stopwatch Tests](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/tests/stopwatch-core.test.js)
 - [README Stopwatch Section](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/README.md#2-stopwatch-stopwatchjs)
 - [CI Test Results](https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs/quality-gate)
+- [Failing→Passing Tests](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/test-results/junit.xml)
 
 ## Day T4 — Temp Converter Refactor ✅
 
@@ -183,11 +189,13 @@ function validateTemperatureInput(value, fromUnit, toUnit) {
 - Enhanced error handling and user feedback
 
 **Links**:
+- [PR: feat/temp-flags+tests](https://github.com/Maximus-Technologies-Uganda/training-john/pull/feat/temp-flags+tests)
 - [Temp Converter Enhanced](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/src/temp-converter.js)
 - [Temp Converter Tests](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/tests/temp-converter-enhanced.test.js)
 - [README Temp Converter Section](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/README.md#3-temperature-converter-temp-converterjs)
 - [CI Validation Results](https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs/quality-gate)
 - [Test Coverage Report](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/coverage/index.html)
+- [Time Spent Tracking](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/journal/tightening-week.md#day-t4--temp-converter-refactor-)
 
 ## Day T5 — Capstone PR ✅
 
@@ -208,11 +216,13 @@ function validateTemperatureInput(value, fromUnit, toUnit) {
 - Confirmed repository mirroring functionality
 
 **Links**:
-- [Capstone PR](https://github.com/Maximus-Technologies-Uganda/training-john/pull/chore/week1-capstone)
+- [PR: chore/week1-capstone](https://github.com/Maximus-Technologies-Uganda/training-john/pull/chore/week1-capstone) (with label `needs-review-packet`)
 - [Review Packet Workflow](https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs/review-packet)
 - [Repository Mirror](https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs/repo-mirror)
 - [Quality Gate Results](https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs/quality-gate)
 - [Final Implementation Journal](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/journal/tightening-week.md)
+- [Weekly Reflection](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/journal/tightening-week.md#conclusion)
+- [Mirror Proof](https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs/repo-mirror)
 
 ## Technical Achievements Summary
 
@@ -287,7 +297,13 @@ The Tightening Week successfully transformed the CLI tools collection from a fun
 ### Repository Links
 - **Main Repository**: https://github.com/Maximus-Technologies-Uganda/training-john
 - **Development Branch**: https://github.com/Maximus-Technologies-Uganda/training-john/tree/development
-- **Capstone PR**: https://github.com/Maximus-Technologies-Uganda/training-john/pull/chore/week1-capstone
+
+### Pull Request Evidence
+- **Day T1 PR**: [chore/guardrails+runner](https://github.com/Maximus-Technologies-Uganda/training-john/pull/chore/guardrails+runner)
+- **Day T2 PR**: [feat/hello-tests](https://github.com/Maximus-Technologies-Uganda/training-john/pull/feat/hello-tests)
+- **Day T3 PR**: [feat/stopwatch-tests](https://github.com/Maximus-Technologies-Uganda/training-john/pull/feat/stopwatch-tests)
+- **Day T4 PR**: [feat/temp-flags+tests](https://github.com/Maximus-Technologies-Uganda/training-john/pull/feat/temp-flags+tests)
+- **Day T5 PR**: [chore/week1-capstone](https://github.com/Maximus-Technologies-Uganda/training-john/pull/chore/week1-capstone) (with label `needs-review-packet`)
 
 ### CI/CD Workflows
 - **Quality Gate**: https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs/quality-gate

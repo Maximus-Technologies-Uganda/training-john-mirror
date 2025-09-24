@@ -1,13 +1,7 @@
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 const path = require('path');
-const { 
-    startStopwatch, 
-    stopStopwatch, 
-    getElapsedTime, 
-    resetStopwatch, 
-    getStopwatchStatus 
-} = require('./stopwatch-core.js');
+const stopwatchCore = require('./stopwatch-core.js');
 const { createStopwatchStorage } = require('./stopwatch-storage.js');
 
 // Parse command line arguments
@@ -30,12 +24,14 @@ const storagePath = argv.storage;
 // Create storage manager
 const storage = createStopwatchStorage(storagePath);
 
-// Main logic
-switch (command) {
+// Only execute main logic if this file is run directly
+if (require.main === module) {
+    // Main logic
+    switch (command) {
     case 'start':
         try {
             const stopwatch = storage.load();
-            const updatedStopwatch = startStopwatch(stopwatch);
+            const updatedStopwatch = stopwatchCore.startStopwatch(stopwatch);
             storage.save(updatedStopwatch);
             console.log('Stopwatch started at', new Date(updatedStopwatch.startTime).toLocaleTimeString());
         } catch (error) {
@@ -46,7 +42,7 @@ switch (command) {
     case 'lap':
         try {
             const stopwatch = storage.load();
-            const status = getStopwatchStatus(stopwatch);
+            const status = stopwatchCore.getStopwatchStatus(stopwatch);
             if (status.isRunning) {
                 console.log(`Lap time: ${status.formattedTime}`);
             } else {
@@ -60,19 +56,19 @@ switch (command) {
     case 'stop':
         try {
             const stopwatch = storage.load();
-            const updatedStopwatch = stopStopwatch(stopwatch);
+            const updatedStopwatch = stopwatchCore.stopStopwatch(stopwatch);
             storage.save(updatedStopwatch);
-            const status = getStopwatchStatus(updatedStopwatch);
+            const status = stopwatchCore.getStopwatchStatus(updatedStopwatch);
             console.log(`Stopwatch stopped. Total elapsed time: ${status.formattedTime}`);
         } catch (error) {
-            console.error('Error stopping stopwatch:', error.message);
+            console.log('Error stopping stopwatch:', error.message);
         }
         break;
 
     case 'status':
         try {
             const stopwatch = storage.load();
-            const status = getStopwatchStatus(stopwatch);
+            const status = stopwatchCore.getStopwatchStatus(stopwatch);
             if (status.isRunning) {
                 console.log(`Stopwatch is running. Elapsed time: ${status.formattedTime}`);
             } else {
@@ -86,7 +82,7 @@ switch (command) {
     case 'reset':
         try {
             const stopwatch = storage.load();
-            const resetStopwatch = resetStopwatch(stopwatch);
+            const resetStopwatch = stopwatchCore.resetStopwatch(stopwatch);
             storage.save(resetStopwatch);
             console.log('Stopwatch reset.');
         } catch (error) {
@@ -107,4 +103,5 @@ switch (command) {
         console.log('  --storage <path>  - Specify custom storage file path');
         console.log('  --help            - Show this help message');
         break;
+    }
 }
