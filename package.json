@@ -2,7 +2,7 @@
   "name": "training-john",
   "version": "0.1.0",
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "test": "vitest --ui",
     "test:ci": "vitest run --reporter=junit --coverage --coverage.thresholds.global.branches=0 --coverage.thresholds.global.functions=0 --coverage.thresholds.global.lines=0 --coverage.thresholds.global.statements=0",
