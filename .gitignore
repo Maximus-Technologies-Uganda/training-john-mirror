@@ -12,6 +12,7 @@ pids
 
 # Coverage directory used by tools like istanbul
 coverage/
+build/artifacts/coverage/
 *.lcov
 
 # nyc test coverage
@@ -69,4 +70,5 @@ review-packet/
 
 # Test artifacts
 test-results/
+build/artifacts/test-results/
 junit.xml
