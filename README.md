@@ -188,20 +188,81 @@ node src/todo.js remove 1
 # Output: Task 1 removed
 ```
 
-### 6. Joke Generator (`joke.js`)
-A simple entertainment tool that fetches random jokes from an external API.
+### 6. Joke Generator (`jokes.js`)
+An enhanced entertainment tool that fetches random jokes from an external API with comprehensive features.
 
 **Features:**
-- Random joke generation
-- API integration
-- Error handling
+- Random joke generation with category selection
+- Multiple joke types (single-line and two-part jokes)
+- Comprehensive error handling and validation
+- Help system with usage examples
+- Network error resilience
+- Category and type listing
 
 **Usage:**
 ```bash
 # Get a random joke
-node src/joke.js
-# Output: Fetching a joke from the 'Any' category...
+node src/jokes.js
+# Output: Fetching a twopart joke from the 'Any' category...
+# ==================================================
 # [Random joke content]
+# ==================================================
+
+# Get a programming joke
+node src/jokes.js --category Programming
+# Output: Fetching a twopart joke from the 'Programming' category...
+
+# Get a single-line dark joke
+node src/jokes.js --category Dark --type single
+# Output: Fetching a single joke from the 'Dark' category...
+
+# List available categories
+node src/jokes.js --categories
+# Output: Available joke categories:
+#   - Any
+#   - Programming
+#   - Misc
+#   - Dark
+#   - Pun
+#   - Spooky
+#   - Christmas
+
+# List available types
+node src/jokes.js --types
+# Output: Available joke types:
+#   - single
+#   - twopart
+
+# Show help
+node src/jokes.js --help
+# Output: Usage information and examples
+
+# Error handling with helpful suggestions
+node src/jokes.js --category InvalidCategory
+# Output: Error: Invalid category. Must be one of: Any, Programming, Misc, Dark, Pun, Spooky, Christmas
+# Available categories:
+#   - Any
+#   - Programming
+#   - Misc
+#   - Dark
+#   - Pun
+#   - Spooky
+#   - Christmas
+```
+
+### 7. Legacy Joke Generator (`jokes-cli.js`)
+A simple backward-compatible joke generator for basic usage.
+
+**Features:**
+- Simple random joke generation
+- Basic error handling
+- Backward compatibility
+
+**Usage:**
+```bash
+# Get a random joke (simple version)
+node jokes-cli.js
+# Output: [Random joke content]
 ```
 
 ## 🧪 Testing
@@ -232,28 +293,37 @@ node tests/temp-converter-tdd-demo.js
 training-john/
 ├── src/                    # Source code
 │   ├── hello.js           # Hello greeter CLI
+│   ├── hello-core.js      # Hello core logic
 │   ├── stopwatch.js       # Stopwatch with state persistence
+│   ├── stopwatch-core.js  # Stopwatch core logic
+│   ├── stopwatch-storage.js # Stopwatch storage abstraction
 │   ├── temp-converter.js  # Temperature converter (TDD)
 │   ├── temp-converter.test.js # Temperature converter tests
 │   ├── expense.js         # Expense tracker
 │   ├── todo.js            # To-do list manager
 │   ├── todo.test.js       # To-do list tests
-│   └── joke.js            # Joke generator
+│   ├── joke.js            # Legacy joke generator
+│   ├── jokes.js           # Enhanced joke generator CLI
+│   └── jokes-core.js      # Jokes core logic
 ├── tests/                 # Test files
 │   ├── hello.test.js      # Hello greeter tests
 │   ├── stopwatch.test.js  # Stopwatch tests
+│   ├── stopwatch-core.test.js # Stopwatch core tests
+│   ├── jokes.test.js      # Jokes tests
 │   └── temp-converter-tdd-demo.js # TDD demonstration
 ├── data/                  # Data persistence files
 │   ├── time.json          # Stopwatch state
 │   ├── expenses.json      # Expense data
 │   └── todo.json          # To-do list data
 ├── journal/               # Learning journal
-│   └── week-1.md          # Week 1 development journal
+│   ├── week-1.md          # Week 1 development journal
+│   └── tightening-week.md # Tightening week journal
 ├── .github/               # GitHub Actions workflows
 │   └── workflows/
 │       ├── quality-gate.yml
 │       ├── review-packet.yml
 │       └── repo-mirror.yml
+├── jokes-cli.js          # Legacy jokes CLI
 ├── package.json           # Project configuration
 ├── .gitignore            # Git ignore rules
 └── README.md             # This file

@@ -7,7 +7,9 @@ on:
         description: Pull request number to generate packet for
         required: true
   pull_request:
-    types: [opened, reopened, synchronize, labeled]
+    types: [opened, reopened, synchronize, labeled, ready_for_review]
+  issues:
+    types: [labeled]
 
 jobs:
   review-packet:
@@ -148,9 +150,11 @@ jobs:
 
       - name: Upload review packet artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: review-packet-${{ steps.resolve.outputs.pr_number }}
           path: ${{ steps.generate.outputs.packet_dir }}
+          retention-days: 30
 
       - name: Append review packet to job summary
         shell: bash
