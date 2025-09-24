@@ -1,35 +1,47 @@
 import { describe, it, expect } from 'vitest';
+import { addTask, markTaskDone } from '../src/todo-core.js';
 
-// Mock the addTask function since it's not exported from todo.js
-// We'll create a testable version
-function addTask(tasks, newTask) {
-  const updatedTasks = [...tasks, newTask];
-  return updatedTasks;
-}
+describe('addTask function', () => {
 
-describe('Todo Add Function', () => {
   it('should add a new task to an empty list', () => {
     const initialTasks = [];
-    const updatedTasks = addTask(initialTasks, "Buy groceries");
-    
-    expect(updatedTasks.length).toBe(1);
-    expect(updatedTasks[0]).toBe("Buy groceries");
+    const newTaskName = 'Buy milk';
+
+    const newTasks = addTask(initialTasks, newTaskName);
+
+    // 1. Check that the new list has one item
+    expect(newTasks).toHaveLength(1);
+
+    // 2. Check that the new item has the correct text
+    expect(newTasks[0].text).toBe(newTaskName);
+
+    // 3. Check that the original list is still empty
+    expect(initialTasks).toHaveLength(0);
   });
 
-  it('should add a new task to an existing list', () => {
-    const initialTasks = ["Existing task"];
-    const updatedTasks = addTask(initialTasks, "New task");
-    
-    expect(updatedTasks.length).toBe(2);
-    expect(updatedTasks[0]).toBe("Existing task");
-    expect(updatedTasks[1]).toBe("New task");
+});
+
+describe('markTaskDone function', () => {
+  it('should mark the correct task as done', () => {
+    const initialTasks = [
+      { id: 1, text: 'First task', done: false },
+      { id: 2, text: 'Second task', done: false }
+    ];
+
+    const updatedTasks = markTaskDone(initialTasks, 2);
+
+    // Check the updated task
+    expect(updatedTasks[1].done).toBe(true);
+
+    // Check that the other task was not changed
+    expect(updatedTasks[0].done).toBe(false);
   });
 
-  it('should not modify the original array', () => {
-    const initialTasks = ["Task 1", "Task 2"];
-    const updatedTasks = addTask(initialTasks, "Task 3");
-    
-    expect(initialTasks.length).toBe(2);
-    expect(updatedTasks.length).toBe(3);
+  it('should return a new array', () => {
+    const initialTasks = [{ id: 1, text: 'First task', done: false }];
+    const updatedTasks = markTaskDone(initialTasks, 1);
+
+    // Check that the returned array is a different one in memory
+    expect(updatedTasks).not.toBe(initialTasks);
   });
 });

@@ -1,5 +1,5 @@
-const { describe, it, expect, vi } = require('vitest');
-const { getJoke, getJokeString, getAvailableCategories, getAvailableTypes } = require('../src/jokes-core.js');
+import { describe, it, expect, vi } from 'vitest';
+import { getJoke, getJokeString, getAvailableCategories, getAvailableTypes } from '../src/jokes-core.js';
 
 // Mock the global fetch function
 global.fetch = vi.fn();
