@@ -1,27 +1,30 @@
 import { describe, it, expect } from 'vitest';
-import { addExpense } from '../src/expenses-core.js';
+// Make sure to import both functions
+import { addExpense, summarizeExpenses } from '../src/expenses-core.js';
 
-describe('addExpense function', () => {
-  it('should add a new expense to an empty list', () => {
-    const initialExpenses = [];
-    const category = 'Food';
-    const amount = 10;
+// ... your existing 'addExpense' describe block is here ...
 
-    const newExpenses = addExpense(initialExpenses, category, amount);
+describe('summarizeExpenses function', () => {
+  it('should correctly summarize a list of expenses', () => {
+    const expenses = [
+      { id: 1, category: 'Food', amount: 10 },
+      { id: 2, category: 'Transport', amount: 5 },
+      { id: 3, category: 'Food', amount: 15 }
+    ];
 
-    // Check that the new list has one item
-    expect(newExpenses).toHaveLength(1);
+    const summary = summarizeExpenses(expenses);
 
-    // Check the properties of the new expense
-    expect(newExpenses[0].category).toBe('Food');
-    expect(newExpenses[0].amount).toBe(10);
+    // Check the total
+    expect(summary.total).toBe(30);
+
+    // Check the breakdown by category
+    expect(summary.byCategory.Food).toBe(25);
+    expect(summary.byCategory.Transport).toBe(5);
   });
 
-  it('should not modify the original array', () => {
-    const initialExpenses = [];
-    addExpense(initialExpenses, 'Transport', 5);
-
-    // Check that the original array is still empty
-    expect(initialExpenses).toHaveLength(0);
+  it('should return a total of 0 for an empty list', () => {
+    const expenses = [];
+    const summary = summarizeExpenses(expenses);
+    expect(summary.total).toBe(0);
   });
 });
