@@ -28,46 +28,86 @@ function convertTemperature(value, fromUnit, toUnit) {
     }
 }
 
+// Enhanced validation function
+function validateTemperatureInput(value, fromUnit, toUnit) {
+    const errors = [];
+    
+    // Validate value
+    if (value === undefined || value === null || value === '') {
+        errors.push('Temperature value is required');
+    } else if (isNaN(parseFloat(value))) {
+        errors.push('Temperature value must be a valid number');
+    } else if (parseFloat(value) < -273.15 && fromUnit.toUpperCase() === 'C') {
+        errors.push('Temperature cannot be below absolute zero (-273.15°C)');
+    } else if (parseFloat(value) < -459.67 && fromUnit.toUpperCase() === 'F') {
+        errors.push('Temperature cannot be below absolute zero (-459.67°F)');
+    }
+    
+    // Validate from unit
+    if (!fromUnit || typeof fromUnit !== 'string') {
+        errors.push('Source unit (--from) is required');
+    } else if (!['C', 'F', 'c', 'f'].includes(fromUnit)) {
+        errors.push('Source unit must be C or F');
+    }
+    
+    // Validate to unit
+    if (!toUnit || typeof toUnit !== 'string') {
+        errors.push('Target unit (--to) is required');
+    } else if (!['C', 'F', 'c', 'f'].includes(toUnit)) {
+        errors.push('Target unit must be C or F');
+    }
+    
+    // Check if units are the same
+    if (fromUnit && toUnit && fromUnit.toUpperCase() === toUnit.toUpperCase()) {
+        errors.push('Source and target units cannot be the same');
+    }
+    
+    return errors;
+}
+
 // CLI functionality
 function runCLI() {
     const argv = yargs(hideBin(process.argv))
-        .usage('Usage: $0 <value> <from-unit> <to-unit>')
-        .example('$0 0 C F', 'Convert 0°C to Fahrenheit')
-        .example('$0 32 F C', 'Convert 32°F to Celsius')
+        .usage('Usage: $0 --value <number> --from <unit> --to <unit>')
+        .example('$0 --value 0 --from C --to F', 'Convert 0°C to Fahrenheit')
+        .example('$0 --value 32 --from F --to C', 'Convert 32°F to Celsius')
         .option('value', {
             type: 'number',
-            description: 'Temperature value to convert'
+            description: 'Temperature value to convert',
+            demandOption: true
         })
         .option('from', {
             type: 'string',
-            description: 'Source temperature unit (C or F)'
+            description: 'Source temperature unit (C or F)',
+            choices: ['C', 'F', 'c', 'f'],
+            demandOption: true
         })
         .option('to', {
             type: 'string',
-            description: 'Target temperature unit (C or F)'
+            description: 'Target temperature unit (C or F)',
+            choices: ['C', 'F', 'c', 'f'],
+            demandOption: true
         })
         .help('h')
         .alias('h', 'help')
+        .strict()
         .argv;
 
-    // Get arguments from positional parameters
-    const value = argv._[0];
-    const fromUnit = argv._[1];
-    const toUnit = argv._[2];
-
     // Validate inputs
-    if (value === undefined || fromUnit === undefined || toUnit === undefined) {
-        console.error('Error: Missing required arguments');
-        console.log('Usage: node temp-converter.js <value> <from-unit> <to-unit>');
-        console.log('Example: node temp-converter.js 0 C F');
+    const validationErrors = validateTemperatureInput(argv.value, argv.from, argv.to);
+    if (validationErrors.length > 0) {
+        console.error('Validation errors:');
+        validationErrors.forEach(error => console.error(`  - ${error}`));
+        console.log('\nUsage: node temp-converter.js --value <number> --from <unit> --to <unit>');
+        console.log('Example: node temp-converter.js --value 0 --from C --to F');
         process.exit(1);
     }
 
     try {
-        const result = convertTemperature(parseFloat(value), fromUnit, toUnit);
-        console.log(`${value}°${fromUnit.toUpperCase()} = ${result}°${toUnit.toUpperCase()}`);
+        const result = convertTemperature(argv.value, argv.from, argv.to);
+        console.log(`${argv.value}°${argv.from.toUpperCase()} = ${result}°${argv.to.toUpperCase()}`);
     } catch (error) {
-        console.error('Error:', error.message);
+        console.error('Conversion error:', error.message);
         process.exit(1);
     }
 }
