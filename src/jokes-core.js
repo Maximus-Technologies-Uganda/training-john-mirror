@@ -1,3 +1,4 @@
+/* eslint-env browser */
 /**
  * Fetches a random joke from the API with enhanced functionality.
  * @param {string} category - The joke category (optional)
@@ -23,6 +24,7 @@ async function getJoke(category = 'Any', type = 'single') {
     
     try {
         // Make a request to the joke API
+        // eslint-disable-next-line no-undef
         const response = await fetch(apiUrl);
         
         // Check if the request was successful

@@ -1,6 +1,6 @@
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
-const { getJoke, getJokeString, getAvailableCategories, getAvailableTypes } = require('./jokes-core.js');
+const { getJoke, getAvailableCategories, getAvailableTypes } = require('./jokes-core.js');
 
 /**
  * Enhanced Jokes CLI with modern command-line interface
@@ -72,7 +72,7 @@ function runCLI() {
             
             const joke = await getJoke(argv.category, argv.type);
             
-            console.log('\n' + '='.repeat(50));
+            console.log(`\n${'='.repeat(50)}`);
             console.log(joke.formatted);
             console.log('='.repeat(50));
             

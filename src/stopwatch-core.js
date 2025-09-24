@@ -74,7 +74,7 @@ const getElapsedTime = (stopwatch) => {
  * @param {Object} stopwatch - Current stopwatch state
  * @returns {Object} Reset stopwatch state
  */
-const resetStopwatch = (stopwatch) => {
+const resetStopwatch = (_stopwatch) => {
     return {
         startTime: null,
         isRunning: false,
