@@ -22,6 +22,12 @@ function getStartTime() {
 // Helper function to write the start time
 function setStartTime(time) {
     try {
+        // Ensure the data directory exists
+        const dataDir = path.dirname(timeFile);
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
+        }
+        
         const data = { startTime: time };
         fs.writeFileSync(timeFile, JSON.stringify(data, null, 2));
     } catch (error) {

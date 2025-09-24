@@ -144,7 +144,7 @@ allTestsPassed &= checkFileExists('data/todo.json', 'To-do data file exists');
 try {
     JSON.parse(fs.readFileSync('data/time.json', 'utf8'));
     console.log('✅ PASS: Stopwatch state file is valid JSON');
-} catch (error) {
+} catch {
     console.error('❌ FAIL: Stopwatch state file is not valid JSON');
     allTestsPassed = false;
 }
@@ -152,7 +152,7 @@ try {
 try {
     JSON.parse(fs.readFileSync('data/expenses.json', 'utf8'));
     console.log('✅ PASS: Expense data file is valid JSON');
-} catch (error) {
+} catch {
     console.error('❌ FAIL: Expense data file is not valid JSON');
     allTestsPassed = false;
 }
@@ -160,7 +160,7 @@ try {
 try {
     JSON.parse(fs.readFileSync('data/todo.json', 'utf8'));
     console.log('✅ PASS: To-do data file is valid JSON');
-} catch (error) {
+} catch {
     console.error('❌ FAIL: To-do data file is not valid JSON');
     allTestsPassed = false;
 }
@@ -172,7 +172,7 @@ allTestsPassed &= checkFileExists('package.json', 'Package.json exists');
 try {
     JSON.parse(fs.readFileSync('package.json', 'utf8'));
     console.log('✅ PASS: Package.json is valid JSON');
-} catch (error) {
+} catch {
     console.error('❌ FAIL: Package.json is not valid JSON');
     allTestsPassed = false;
 }

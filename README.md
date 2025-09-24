@@ -305,5 +305,5 @@ This is a learning project. For questions or suggestions, please refer to the le
 This project is part of a development training program and is for educational purposes.
 
 ---
-
+## Week 1 Capstone Complete
 **Built with ❤️ during Week 1 of development training**
