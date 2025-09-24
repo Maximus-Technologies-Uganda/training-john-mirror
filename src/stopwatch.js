@@ -1,8 +1,13 @@
-const yargs = require('yargs/yargs');
-const { hideBin } = require('yargs/helpers');
-const path = require('path');
-const stopwatchCore = require('./stopwatch-core.js');
-const { createStopwatchStorage } = require('./stopwatch-storage.js');
+import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import * as stopwatchCore from './stopwatch-core.js';
+import { createStopwatchStorage } from './stopwatch-storage.js';
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Parse command line arguments
 const argv = yargs(hideBin(process.argv))
@@ -25,7 +30,7 @@ const storagePath = argv.storage;
 const storage = createStopwatchStorage(storagePath);
 
 // Only execute main logic if this file is run directly
-if (require.main === module) {
+if (import.meta.url.endsWith('stopwatch.js')) {
     // Main logic
     switch (command) {
     case 'start':

@@ -118,7 +118,7 @@ const getStopwatchStatus = (stopwatch) => {
     };
 };
 
-module.exports = {
+export {
     createStopwatch,
     startStopwatch,
     stopStopwatch,

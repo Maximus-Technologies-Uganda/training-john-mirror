@@ -3,8 +3,8 @@
  * Handles persistence of stopwatch data to JSON files
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 /**
  * Creates a storage manager for stopwatch state
@@ -84,4 +84,4 @@ function createStopwatchStorage(storagePath) {
     };
 }
 
-module.exports = { createStopwatchStorage };
+export { createStopwatchStorage };
