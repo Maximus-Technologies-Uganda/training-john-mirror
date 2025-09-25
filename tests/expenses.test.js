@@ -12,8 +12,9 @@ describe('addExpense function', () => {
       category: 'Food',
       amount: 10
     });
-    expect(newExpense[0]).toHaveProperty('id');
-    expect(typeof newExpense[0].id).toBe('number');
+    expect(newExpense[0]).toHaveProperty('date');
+    expect(typeof newExpense[0].date).toBe('string');
+    expect(newExpense[0].date).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
   });
 });
 
