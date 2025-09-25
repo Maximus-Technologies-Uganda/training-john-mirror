@@ -8,7 +8,7 @@ import {
     resetStopwatch,
     formatElapsedTime,
     getStopwatchStatus
-} from '../src/stopwatch-core.js';
+} from '../../src/stopwatch-core.js';
 
 describe('stopwatch-core', () => {
     let stopwatch;

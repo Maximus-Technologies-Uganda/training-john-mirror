@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { convertTemperature } from '../src/temp-converter.js';
+import { convertTemperature } from '../../src/temp-converter.js';
 
 describe('Temperature Converter Enhanced Tests', () => {
     describe('Basic conversions', () => {

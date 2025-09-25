@@ -311,6 +311,60 @@ node src/jokes.js --help                           # Show help
 - **Event Triggers**: Added `ready_for_review` and `issues` event types
 - **Final Integration**: Verified all enhancements work together seamlessly
 
+## Day T8 — CLI File Paths Refactor & Code Organization ✅
+
+### Completed Tasks
+- **File Path Updates**: Updated CLI scripts to use centralized 'core' directory for imports
+- **Package.json Updates**: Modified package.json to reflect new path for todo removal script
+- **Persistence Directory**: Adjusted expense and stopwatch CLI scripts to point to new persistence directory
+- **Code Structure**: Enhanced overall code organization for better maintainability and clarity
+
+### Key Improvements
+
+#### Centralized Core Logic
+```javascript
+// Before: Scattered imports
+import * as stopwatchCore from '../src/stopwatch-core.js';
+
+// After: Centralized core directory
+import * as stopwatchCore from '../core/stopwatch-core.js';
+```
+
+#### Updated Package.json Scripts
+```json
+{
+  "scripts": {
+    "remove-todo": "node cli/remove-todo.js"
+  }
+}
+```
+
+#### Enhanced Data Persistence
+- Updated stopwatch CLI to use `data/persistence/time.json`
+- Updated expenses CLI to use `data/persistence/expenses.json`
+- Improved modularity with centralized core logic imports
+
+### Journal Entry
+**Timestamp**: 2024-01-16 10:30:00  
+**Time Spent**: 2 hours  
+**Key Achievements**:
+- Improved code organization with centralized core directory
+- Enhanced modularity and maintainability
+- Updated all CLI scripts to use consistent file paths
+- Streamlined package.json configuration
+
+**Technical Implementation**:
+- Moved core logic imports to centralized 'core' directory
+- Updated CLI scripts to reference new import paths
+- Modified package.json to reflect new script locations
+- Enhanced data persistence with organized directory structure
+
+**Links**:
+- [Commit: refactor: update CLI file paths and enhance code organization](https://github.com/Maximus-Technologies-Uganda/training-john/commit/refactor-cli-paths)
+- [Core Directory Structure](https://github.com/Maximus-Technologies-Uganda/training-john/tree/development/core)
+- [Updated CLI Scripts](https://github.com/Maximus-Technologies-Uganda/training-john/tree/development/cli)
+- [Package.json Updates](https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/package.json)
+
 ### Key Improvements
 
 #### Enhanced Workflow Triggers
@@ -423,12 +477,13 @@ on:
 
 The Tightening Week successfully transformed the CLI tools collection from a functional prototype into a production-ready, well-tested, and maintainable codebase. The systematic approach to code quality, testing, and architecture improvements has created a solid foundation for future development.
 
-**Total Time Invested**: ~17 hours  
+**Total Time Invested**: ~19 hours  
 **Test Cases Added**: 50+  
-**Files Enhanced**: 12  
-**Architecture Improvements**: 6 major refactors  
+**Files Enhanced**: 15  
+**Architecture Improvements**: 7 major refactors  
 **Documentation Updates**: Comprehensive README enhancements  
-**CI/CD Enhancements**: Workflow reliability and automation improvements
+**CI/CD Enhancements**: Workflow reliability and automation improvements  
+**Code Organization**: Centralized core directory structure with improved modularity
 
 ## 📋 Complete Link Reference
 

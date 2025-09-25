@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 // Make sure to import both functions
-import { addExpense, summarizeExpenses } from '../src/expenses-core.js';
+import { addExpense, summarizeExpenses } from '../../src/expenses-core.js';
 
 describe('addExpense function', () => {
   it('should add an expense to the list', () => {
