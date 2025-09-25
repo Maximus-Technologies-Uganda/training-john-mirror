@@ -2,7 +2,20 @@ import { describe, it, expect } from 'vitest';
 // Make sure to import both functions
 import { addExpense, summarizeExpenses } from '../src/expenses-core.js';
 
-// ... your existing 'addExpense' describe block is here ...
+describe('addExpense function', () => {
+  it('should add an expense to the list', () => {
+    const expenses = [];
+    const newExpense = addExpense(expenses, 'Food', 10);
+    
+    expect(newExpense).toHaveLength(1);
+    expect(newExpense[0]).toMatchObject({
+      category: 'Food',
+      amount: 10
+    });
+    expect(newExpense[0]).toHaveProperty('id');
+    expect(typeof newExpense[0].id).toBe('number');
+  });
+});
 
 describe('summarizeExpenses function', () => {
   it('should correctly summarize a list of expenses', () => {
