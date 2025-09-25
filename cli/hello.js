@@ -1,7 +1,7 @@
 // Use the yargs library to handle command-line arguments
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
-const { formatGreeting } = require('./hello-core.js');
+const { formatGreeting } = require('../core/hello-core.js');
 
 const argv = yargs(hideBin(process.argv))
   .option('shout', {

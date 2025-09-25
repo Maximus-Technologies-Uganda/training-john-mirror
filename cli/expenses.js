@@ -4,7 +4,7 @@ const path = require('path');
 const command = process.argv[2];
 const amount = parseFloat(process.argv[3]);
 const description = process.argv[4];
-const expenseFile = path.join(__dirname, '../data/expenses.json');
+const expenseFile = path.join(__dirname, '../data/persistence/expenses.json');
 
 // Helper function to read expenses
 function getExpenses() {

@@ -2,8 +2,8 @@ import yargs from 'yargs/yargs';
 import { hideBin } from 'yargs/helpers';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import * as stopwatchCore from './stopwatch-core.js';
-import { createStopwatchStorage } from './stopwatch-storage.js';
+import * as stopwatchCore from '../core/stopwatch-core.js';
+import { createStopwatchStorage } from '../core/stopwatch-storage.js';
 
 // ES module equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 const argv = yargs(hideBin(process.argv))
     .option('storage', {
         type: 'string',
-        default: path.join(__dirname, '../data/time.json'),
+        default: path.join(__dirname, '../data/persistence/time.json'),
         description: 'Path to storage file for stopwatch state'
     })
     .help('h')

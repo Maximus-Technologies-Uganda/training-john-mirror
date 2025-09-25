@@ -1,6 +1,6 @@
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
-const { getJoke, getAvailableCategories, getAvailableTypes } = require('./jokes-core.js');
+const { getJoke, getAvailableCategories, getAvailableTypes } = require('../core/jokes-core.js');
 
 /**
  * Enhanced Jokes CLI with modern command-line interface

@@ -5,7 +5,7 @@ const { hideBin } = require('yargs/helpers');
 const argv = yargs(hideBin(process.argv)).argv;
 const command = argv._[0]; // Gets the command, e.g., 'add' or 'list'
 const task = argv._[1]; // Gets the argument, e.g., the task text
-const dbPath = './todos.json'; // The path to our data file
+const dbPath = '../data/persistence/todos.json'; // The path to our data file
 
 function listTasks() {
   const todos = JSON.parse(fs.readFileSync(dbPath));
