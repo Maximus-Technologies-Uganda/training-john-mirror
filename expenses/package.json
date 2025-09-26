@@ -1,0 +1,26 @@
+{
+  "name": "expenses-cli",
+  "version": "1.0.0",
+  "description": "A CLI tool for managing personal expenses",
+  "main": "src/expenses-core.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "test:ci": "jest --coverage --ci",
+    "lint": "eslint .",
+    "start": "node src/expenses-core.js"
+  },
+  "keywords": ["cli", "expenses", "finance", "budget"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "yargs": "^18.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.36.0",
+    "jest": "^29.7.0"
+  },
+  "bin": {
+    "expenses": "./src/expenses-core.js"
+  }
+}

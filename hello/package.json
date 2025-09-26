@@ -1,0 +1,26 @@
+{
+  "name": "hello-cli",
+  "version": "1.0.0",
+  "description": "A simple CLI tool for generating greetings",
+  "main": "src/hello-core.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "test:ci": "jest --coverage --ci",
+    "lint": "eslint .",
+    "start": "node src/hello-core.js"
+  },
+  "keywords": ["cli", "greeting", "hello"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "yargs": "^18.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.36.0",
+    "jest": "^29.7.0"
+  },
+  "bin": {
+    "hello": "./src/hello-core.js"
+  }
+}
