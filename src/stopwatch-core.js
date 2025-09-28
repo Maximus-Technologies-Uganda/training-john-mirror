@@ -88,7 +88,10 @@ const resetStopwatch = (_stopwatch) => {
  * @returns {string} Formatted time string
  */
 const formatElapsedTime = (milliseconds) => {
-    const seconds = Math.floor(milliseconds / 1000);
+    // Handle negative values by treating them as zero
+    const safeMilliseconds = Math.max(0, milliseconds);
+    
+    const seconds = Math.floor(safeMilliseconds / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
     

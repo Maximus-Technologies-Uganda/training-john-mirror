@@ -16,63 +16,46 @@ import {
     formatElapsedTime,
     getStopwatchStatus
 } from './stopwatch-core.js';
+import { createStopwatchStorage } from './stopwatch-storage.js';
 
-const timeFile = path.join(process.cwd(), 'data/time.json');
+// Default storage path
+const defaultTimeFile = path.join(process.cwd(), 'data/time.json');
 
-// Helper function to load stopwatch state
-function loadStopwatchState() {
-    try {
-        if (fs.existsSync(timeFile)) {
-            const data = JSON.parse(fs.readFileSync(timeFile, 'utf8'));
-            return {
-                startTime: data.startTime,
-                isRunning: data.isRunning || false,
-                totalElapsed: data.totalElapsed || 0
-            };
-        }
-    } catch (error) {
-        console.error('Error loading stopwatch state:', error.message);
-    }
-    return createStopwatch();
-}
-
-// Helper function to save stopwatch state
-function saveStopwatchState(stopwatch) {
-    try {
-        const dataDir = path.dirname(timeFile);
-        if (!fs.existsSync(dataDir)) {
-            fs.mkdirSync(dataDir, { recursive: true });
-        }
-        
-        const data = {
-            startTime: stopwatch.startTime,
-            isRunning: stopwatch.isRunning,
-            totalElapsed: stopwatch.totalElapsed
-        };
-        
-        fs.writeFileSync(timeFile, JSON.stringify(data, null, 2));
-    } catch (error) {
-        console.error('Error saving stopwatch state:', error.message);
-    }
-}
 
 // Main CLI logic
 function main() {
     const args = process.argv.slice(2);
-    const command = args[0];
+    
+    // Parse --storage flag
+    let storagePath = defaultTimeFile;
+    let commandIndex = 0;
+    
+    for (let i = 0; i < args.length; i++) {
+        if (args[i] === '--storage' && i + 1 < args.length) {
+            storagePath = args[i + 1];
+            commandIndex = i + 2;
+            break;
+        }
+    }
+    
+    const command = args[commandIndex];
 
     if (!command) {
-        console.log('Usage: node stopwatch.js <command>');
+        console.log('Usage: node stopwatch.js [--storage <path>] <command>');
         console.log('Commands:');
         console.log('  start   - Start the stopwatch');
         console.log('  stop    - Stop the stopwatch');
         console.log('  status  - Show current status');
         console.log('  lap     - Record a lap time');
         console.log('  reset   - Reset the stopwatch');
+        console.log('Options:');
+        console.log('  --storage <path> - Specify storage file path');
         return;
     }
 
-    let stopwatch = loadStopwatchState();
+    // Create storage manager
+    const storage = createStopwatchStorage(storagePath);
+    let stopwatch = storage.load();
 
     try {
         switch (command) {
@@ -82,7 +65,7 @@ function main() {
                     return;
                 }
                 stopwatch = startStopwatch(stopwatch);
-                saveStopwatchState(stopwatch);
+                storage.save(stopwatch);
                 console.log(`Stopwatch started at ${new Date().toLocaleTimeString()}`);
                 break;
 
@@ -92,7 +75,7 @@ function main() {
                     return;
                 }
                 stopwatch = stopStopwatch(stopwatch);
-                saveStopwatchState(stopwatch);
+                storage.save(stopwatch);
                 console.log('Stopwatch stopped');
                 break;
 
@@ -120,18 +103,20 @@ function main() {
 
             case 'reset':
                 stopwatch = resetStopwatch(stopwatch);
-                saveStopwatchState(stopwatch);
+                storage.save(stopwatch);
                 console.log('Stopwatch reset');
                 break;
 
             default:
-                console.log('Usage: node stopwatch.js <command>');
+                console.log('Usage: node stopwatch.js [--storage <path>] <command>');
                 console.log('Commands:');
                 console.log('  start   - Start the stopwatch');
                 console.log('  stop    - Stop the stopwatch');
                 console.log('  status  - Show current status');
                 console.log('  lap     - Record a lap time');
                 console.log('  reset   - Reset the stopwatch');
+                console.log('Options:');
+                console.log('  --storage <path> - Specify storage file path');
                 break;
         }
     } catch (error) {

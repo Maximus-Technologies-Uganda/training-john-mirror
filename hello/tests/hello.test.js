@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'jest';
+import { describe, it, expect } from 'vitest';
 import { formatGreeting } from '../src/hello-core.js';
 
 describe('formatGreeting', () => {
