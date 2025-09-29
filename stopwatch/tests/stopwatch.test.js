@@ -2,11 +2,7 @@ import { describe, it, expect } from 'jest';
 import {
     createStopwatch,
     startStopwatch,
-    stopStopwatch,
-    getElapsedTime,
-    resetStopwatch,
-    formatElapsedTime,
-    getStopwatchStatus
+    formatElapsedTime
 } from '../src/stopwatch-core.js';
 
 describe('stopwatch-core', () => {

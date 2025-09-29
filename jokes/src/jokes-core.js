@@ -24,7 +24,6 @@ async function getJoke(category = 'Any', type = 'single') {
     
     try {
         // Make a request to the joke API
-        // eslint-disable-next-line no-undef
         const response = await fetch(apiUrl);
         
         // Check if the request was successful

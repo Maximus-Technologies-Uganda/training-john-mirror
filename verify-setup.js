@@ -45,7 +45,7 @@ function makeGitHubRequest(path, token = null) {
           } else {
             reject(new Error(`GitHub API error: ${res.statusCode} - ${parsed.message || responseData}`));
           }
-        } catch (e) {
+        } catch {
           reject(new Error(`Failed to parse response: ${responseData}`));
         }
       });

@@ -9,7 +9,7 @@
  */
 
 import https from 'https';
-import fs from 'fs';
+// import fs from 'fs'; // Unused import
 
 // Configuration
 const REPO_OWNER = 'Maximus-Technologies-Uganda';
@@ -32,7 +32,7 @@ function makeGitHubRequest(path, method = 'GET', data = null) {
       hostname: GITHUB_API_BASE,
       port: 443,
       path: `/repos/${REPO_OWNER}/${REPO_NAME}${path}`,
-      method: method,
+      method,
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': `application/vnd.github+json`,
@@ -62,7 +62,7 @@ function makeGitHubRequest(path, method = 'GET', data = null) {
           } else {
             reject(new Error(`GitHub API error: ${res.statusCode} - ${parsed.message || responseData}`));
           }
-        } catch (e) {
+        } catch {
           reject(new Error(`Failed to parse response: ${responseData}`));
         }
       });

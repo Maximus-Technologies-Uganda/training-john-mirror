@@ -6,7 +6,6 @@ import { getJoke, getJokeString, getAvailableCategories, getAvailableTypes } fro
 global.fetch = vi.fn();
 
 describe('Jokes Core Functions', () => {
-  // eslint-disable-next-line no-undef
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -19,7 +18,6 @@ describe('Jokes Core Functions', () => {
         delivery: 'Because he was outstanding in his field!',
         category: 'Misc'
       };
-      // eslint-disable-next-line no-undef
       fetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve(mockJokeData),
@@ -39,7 +37,6 @@ describe('Jokes Core Functions', () => {
         joke: 'Why did the chicken cross the road?',
         category: 'Misc'
       };
-      // eslint-disable-next-line no-undef
       fetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve(mockJokeData),
@@ -55,7 +52,6 @@ describe('Jokes Core Functions', () => {
 
     it('should throw an error on a failed API call', async () => {
       // Create a fake failed response
-      // eslint-disable-next-line no-undef
       fetch.mockResolvedValue({
         ok: false,
         status: 500,
@@ -79,7 +75,6 @@ describe('Jokes Core Functions', () => {
         error: true,
         message: 'No jokes found for this category'
       };
-      // eslint-disable-next-line no-undef
       fetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve(mockErrorData),
@@ -89,7 +84,6 @@ describe('Jokes Core Functions', () => {
     });
 
     it('should handle network errors', async () => {
-      // eslint-disable-next-line no-undef
       fetch.mockRejectedValue(new TypeError('fetch failed'));
 
       await expect(getJoke()).rejects.toThrow('Network error: Unable to connect to the joke API. Please check your internet connection.');
@@ -103,7 +97,6 @@ describe('Jokes Core Functions', () => {
         delivery: 'Because he was outstanding in his field!',
         category: 'Misc'
       };
-      // eslint-disable-next-line no-undef
       fetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve(mockJokeData),

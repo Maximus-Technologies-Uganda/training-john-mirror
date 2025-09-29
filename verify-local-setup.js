@@ -10,7 +10,7 @@ import { execSync } from 'child_process';
 function checkFileExists(filePath) {
   try {
     return fs.existsSync(filePath);
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -19,7 +19,7 @@ function checkWorkflowContent(filePath, requiredElements) {
   try {
     const content = fs.readFileSync(filePath, 'utf8');
     return requiredElements.every(element => content.includes(element));
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -27,7 +27,7 @@ function checkWorkflowContent(filePath, requiredElements) {
 function runGitCommand(command) {
   try {
     return execSync(command, { encoding: 'utf8' }).trim();
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -133,7 +133,7 @@ async function main() {
           console.log(`⚠️  Script '${script}' is missing`);
         }
       }
-    } catch (error) {
+    } catch {
       console.log('⚠️  Could not parse package.json');
     }
   }

@@ -10,7 +10,7 @@ class JokeProvider {
      * @returns {Promise<Object>} Raw joke data from the API
      * @throws {Error} When the request fails
      */
-    async fetchJoke(category, type) {
+    async fetchJoke(_category, _type) {
         throw new Error('fetchJoke must be implemented by concrete provider');
     }
 }
