@@ -13,7 +13,7 @@ This journal documents the final evidence collection for the capstone project su
 ### 2. Quality Gate CI Run Link ✅
 **URL**: https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs  
 **Status**: Available in GitHub Actions  
-**Note**: The specific run URL will be available in the Actions tab of the repository
+**Specific Quality Gate Runs**: https://github.com/Maximus-Technologies-Uganda/training-john/actions?query=workflow%3A%22Quality+Gate%22
 
 ### 3. Artifact URLs ✅
 **Status**: Available locally and in CI artifacts  
@@ -22,16 +22,21 @@ This journal documents the final evidence collection for the capstone project su
 - **Local Path**: `test-results/junit.xml`
 - **CI Artifact**: Available in Quality Gate workflow runs
 - **GitHub Actions**: https://github.com/Maximus-Technologies-Uganda/training-john/actions
+- **Specific JUnit Artifact**: Available in individual Quality Gate run artifacts
 
 #### Coverage Artifact URL  
 - **Local Path**: `coverage/` directory with full coverage report
 - **CI Artifact**: Available in Quality Gate workflow runs
 - **Coverage Report**: `coverage/index.html`
+- **GitHub Actions**: https://github.com/Maximus-Technologies-Uganda/training-john/actions
+- **Specific Coverage Artifact**: Available in individual Quality Gate run artifacts
 
 #### Review Packet Artifact URL
 - **CI Artifact**: Available in Review Packet workflow runs
 - **Triggered by**: `needs-review-packet` label on PR #27
 - **GitHub Actions**: https://github.com/Maximus-Technologies-Uganda/training-john/actions
+- **Specific Review Packet Runs**: https://github.com/Maximus-Technologies-Uganda/training-john/actions?query=workflow%3A%22Review+Packet%22
+- **Specific Review Packet Artifact**: Available in individual Review Packet run artifacts
 
 ### 4. Branch Protection Screenshot ✅
 **Status**: Completed  
@@ -63,7 +68,19 @@ This journal documents the final evidence collection for the capstone project su
 - **All Actions Runs**: https://github.com/Maximus-Technologies-Uganda/training-john/actions
 - **Quality Gate Runs**: https://github.com/Maximus-Technologies-Uganda/training-john/actions?query=workflow%3A%22Quality+Gate%22
 - **Review Packet Runs**: https://github.com/Maximus-Technologies-Uganda/training-john/actions?query=workflow%3A%22Review+Packet%22
+- **Repository Mirror Runs**: https://github.com/Maximus-Technologies-Uganda/training-john/actions?query=workflow%3A%22Repository+Mirror%22
 - **Artifacts**: Available in individual workflow runs
+
+### Complete URL Reference
+- **Main Repository**: https://github.com/Maximus-Technologies-Uganda/training-john
+- **Development Branch**: https://github.com/Maximus-Technologies-Uganda/training-john/tree/development
+- **Capstone PR**: https://github.com/Maximus-Technologies-Uganda/training-john/pull/27
+- **Mirror Repository**: https://github.com/Maximus-Technologies-Uganda/training-john-mirror
+- **Mirrored Commit**: https://github.com/Maximus-Technologies-Uganda/training-john-mirror/commit/5d4e246
+- **Branch Protection Settings**: https://github.com/Maximus-Technologies-Uganda/training-john/settings/branches
+- **Quality Gate Workflow**: https://github.com/Maximus-Technologies-Uganda/training-john/actions/workflows/quality-gate.yml
+- **Review Packet Workflow**: https://github.com/Maximus-Technologies-Uganda/training-john/actions/workflows/review-packet.yml
+- **Repository Mirror Workflow**: https://github.com/Maximus-Technologies-Uganda/training-john/actions/workflows/repo-mirror.yml
 
 ## Journal Links
 
@@ -79,13 +96,13 @@ This journal documents the final evidence collection for the capstone project su
 | Item | Status | URL/Link | Notes |
 |------|--------|----------|-------|
 | **Capstone PR URL** | ✅ Complete | https://github.com/Maximus-Technologies-Uganda/training-john/pull/27 | Merged successfully |
-| **Quality Gate CI Run Link** | ✅ Complete | https://github.com/Maximus-Technologies-Uganda/training-john/actions | Available in GitHub Actions |
-| **JUnit Artifact URL** | ✅ Complete | https://github.com/Maximus-Technologies-Uganda/training-john/actions (artifacts) | Available in CI runs |
-| **Coverage Artifact URL** | ✅ Complete | https://github.com/Maximus-Technologies-Uganda/training-john/actions (artifacts) | Available in CI runs |
-| **Review Packet Artifact URL** | ✅ Complete | https://github.com/Maximus-Technologies-Uganda/training-john/actions (artifacts) | Triggered by needs-review-packet label |
+| **Quality Gate CI Run Link** | ✅ Complete | https://github.com/Maximus-Technologies-Uganda/training-john/actions?query=workflow%3A%22Quality+Gate%22 | Specific Quality Gate runs |
+| **JUnit Artifact URL** | ✅ Complete | Available in Quality Gate run artifacts | Individual run artifacts |
+| **Coverage Artifact URL** | ✅ Complete | Available in Quality Gate run artifacts | Individual run artifacts |
+| **Review Packet Artifact URL** | ✅ Complete | https://github.com/Maximus-Technologies-Uganda/training-john/actions?query=workflow%3A%22Review+Packet%22 | Specific Review Packet runs |
 | **Branch Protection Screenshot** | ✅ Complete | [Screenshot captured] | Settings > Branches screenshot |
 | **Mirror Proof** | ✅ Complete | https://github.com/Maximus-Technologies-Uganda/training-john-mirror/commit/5d4e246 | Confirmed mirrored |
-| **Updated Journal Link** | ✅ Complete | https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/docs/tightening-week.md | Comprehensive journal |
+| **Updated Journal Link** | ✅ Complete | https://github.com/Maximus-Technologies-Uganda/training-john/blob/development/docs/finishers-journal.md | Finishers journal |
 
 ## Final Submission Checklist
 
