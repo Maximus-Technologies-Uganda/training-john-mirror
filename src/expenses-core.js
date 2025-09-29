@@ -15,6 +15,20 @@ export function addExpense(expenses, category, amount) {
 }
 
 /**
+ * Lists all expenses in a readable format.
+ * @param {Array<Object>} expenses - The array of expense objects.
+ * @returns {Array<Object>} A formatted list of expenses with readable dates.
+ */
+export function listExpenses(expenses) {
+  return expenses.map(expense => ({
+    category: expense.category,
+    amount: expense.amount,
+    date: new Date(expense.date).toLocaleDateString(),
+    timestamp: expense.date
+  }));
+}
+
+/**
  * Summarizes a list of expenses by total and by category.
  * @param {Array<Object>} expenses - The array of expense objects.
  * @returns {Object} An object containing the total and a category breakdown.
