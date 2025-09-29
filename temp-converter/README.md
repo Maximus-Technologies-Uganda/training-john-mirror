@@ -1,13 +1,14 @@
 # Temperature Converter CLI
 
-A command-line interface for converting temperatures between Celsius and Fahrenheit.
+A command-line interface for converting temperatures between Celsius and Fahrenheit using `--from` and `--to` flags.
 
 ## Features
 
 - Convert between Celsius and Fahrenheit
-- Input validation
+- Uses `--from` and `--to` flags for clear interface
+- Input validation with proper error messages
 - Precise calculations with rounding
-- CLI interface with error handling
+- Non-zero exit codes on errors
 
 ## Installation
 
@@ -17,15 +18,41 @@ npm install
 
 ## Usage
 
+### Basic Usage
+
 ```bash
 # Convert Celsius to Fahrenheit
-node src/temp-converter.js 0 C F
+node src/temp-converter.js 0 --from C --to F
 
 # Convert Fahrenheit to Celsius
-node src/temp-converter.js 32 F C
+node src/temp-converter.js 32 --from F --to C
 
 # Convert with decimal values
-node src/temp-converter.js 25.5 C F
+node src/temp-converter.js 25.5 --from C --to F
+```
+
+### Error Cases
+
+```bash
+# Missing temperature value
+node src/temp-converter.js --from C --to F
+# Error: Temperature value is required
+
+# Missing --from flag
+node src/temp-converter.js 0 --to F
+# Error: --from flag is required
+
+# Missing --to flag
+node src/temp-converter.js 0 --from C
+# Error: --to flag is required
+
+# Invalid --from unit
+node src/temp-converter.js 0 --from K --to F
+# Error: Invalid --from unit 'K'. Must be 'C' or 'F'
+
+# Invalid --to unit
+node src/temp-converter.js 0 --from C --to K
+# Error: Invalid --to unit 'K'. Must be 'C' or 'F'
 ```
 
 ## API
