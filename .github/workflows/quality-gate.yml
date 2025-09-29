@@ -26,6 +26,13 @@ jobs:
       - name: Run tests
         run: npm run test:ci
 
+      - name: Upload JUnit test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: junit-results
+          path: test-results/junit.xml
+
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         if: always()

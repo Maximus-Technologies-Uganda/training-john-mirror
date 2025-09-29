@@ -2,6 +2,13 @@
 
 A comprehensive collection of command-line tools built during the first week of development training. This project demonstrates fundamental programming concepts, CLI development, file system operations, state management, and Test-Driven Development (TDD).
 
+## Branch Protection & Mirroring Setup
+
+This repository is configured with:
+- **Default branch**: `development` (protected)
+- **Branch protection**: Requires Quality Gate and Review Packet checks
+- **Mirror repository**: [training-john-mirror](https://github.com/Maximus-Technologies-Uganda/training-john-mirror)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -41,6 +48,14 @@ node src/hello.js Preston
 # Shout the greeting
 node src/hello.js Preston --shout
 # Output: HELLO, PRESTON!
+
+# Show help
+node src/hello.js --help
+# Output: Usage information and examples
+
+# Handle special characters
+node src/hello.js "José María"
+# Output: Hello, José María!
 ```
 
 ### 2. Stopwatch (`stopwatch.js`)
@@ -75,6 +90,14 @@ node src/stopwatch.js stop
 # Reset the stopwatch
 node src/stopwatch.js reset
 # Output: Stopwatch reset.
+
+# Use custom storage location
+node src/stopwatch.js start --storage /custom/path.json
+# Output: Stopwatch started at 20:43:35
+
+# Show help
+node src/stopwatch.js --help
+# Output: Usage information and options
 ```
 
 ### 3. Temperature Converter (`temp-converter.js`)
@@ -91,20 +114,28 @@ A robust temperature conversion tool built using Test-Driven Development (TDD) p
 **Usage:**
 ```bash
 # Convert Celsius to Fahrenheit
-node src/temp-converter.js 0 C F
+node src/temp-converter.js --value 0 --from C --to F
 # Output: 0°C = 32°F
 
 # Convert Fahrenheit to Celsius
-node src/temp-converter.js 32 F C
+node src/temp-converter.js --value 32 --from F --to C
 # Output: 32°F = 0°C
 
 # Convert with decimals
-node src/temp-converter.js 37.5 C F
+node src/temp-converter.js --value 37.5 --from C --to F
 # Output: 37.5°C = 99.5°F
 
 # Case insensitive
-node src/temp-converter.js 25 c f
+node src/temp-converter.js --value 25 --from c --to f
 # Output: 25°C = 77°F
+
+# Show help
+node src/temp-converter.js --help
+# Output: Usage information and examples
+
+# Error handling
+node src/temp-converter.js --value -300 --from C --to F
+# Output: Validation errors and usage information
 ```
 
 ### 4. Expense Tracker (`expense.js`)
@@ -164,20 +195,81 @@ node src/todo.js remove 1
 # Output: Task 1 removed
 ```
 
-### 6. Joke Generator (`joke.js`)
-A simple entertainment tool that fetches random jokes from an external API.
+### 6. Joke Generator (`jokes.js`)
+An enhanced entertainment tool that fetches random jokes from an external API with comprehensive features.
 
 **Features:**
-- Random joke generation
-- API integration
-- Error handling
+- Random joke generation with category selection
+- Multiple joke types (single-line and two-part jokes)
+- Comprehensive error handling and validation
+- Help system with usage examples
+- Network error resilience
+- Category and type listing
 
 **Usage:**
 ```bash
 # Get a random joke
-node src/joke.js
-# Output: Fetching a joke from the 'Any' category...
+node src/jokes.js
+# Output: Fetching a twopart joke from the 'Any' category...
+# ==================================================
 # [Random joke content]
+# ==================================================
+
+# Get a programming joke
+node src/jokes.js --category Programming
+# Output: Fetching a twopart joke from the 'Programming' category...
+
+# Get a single-line dark joke
+node src/jokes.js --category Dark --type single
+# Output: Fetching a single joke from the 'Dark' category...
+
+# List available categories
+node src/jokes.js --categories
+# Output: Available joke categories:
+#   - Any
+#   - Programming
+#   - Misc
+#   - Dark
+#   - Pun
+#   - Spooky
+#   - Christmas
+
+# List available types
+node src/jokes.js --types
+# Output: Available joke types:
+#   - single
+#   - twopart
+
+# Show help
+node src/jokes.js --help
+# Output: Usage information and examples
+
+# Error handling with helpful suggestions
+node src/jokes.js --category InvalidCategory
+# Output: Error: Invalid category. Must be one of: Any, Programming, Misc, Dark, Pun, Spooky, Christmas
+# Available categories:
+#   - Any
+#   - Programming
+#   - Misc
+#   - Dark
+#   - Pun
+#   - Spooky
+#   - Christmas
+```
+
+### 7. Legacy Joke Generator (`jokes-cli.js`)
+A simple backward-compatible joke generator for basic usage.
+
+**Features:**
+- Simple random joke generation
+- Basic error handling
+- Backward compatibility
+
+**Usage:**
+```bash
+# Get a random joke (simple version)
+node jokes-cli.js
+# Output: [Random joke content]
 ```
 
 ## 🧪 Testing
@@ -208,28 +300,37 @@ node tests/temp-converter-tdd-demo.js
 training-john/
 ├── src/                    # Source code
 │   ├── hello.js           # Hello greeter CLI
+│   ├── hello-core.js      # Hello core logic
 │   ├── stopwatch.js       # Stopwatch with state persistence
+│   ├── stopwatch-core.js  # Stopwatch core logic
+│   ├── stopwatch-storage.js # Stopwatch storage abstraction
 │   ├── temp-converter.js  # Temperature converter (TDD)
 │   ├── temp-converter.test.js # Temperature converter tests
 │   ├── expense.js         # Expense tracker
 │   ├── todo.js            # To-do list manager
 │   ├── todo.test.js       # To-do list tests
-│   └── joke.js            # Joke generator
+│   ├── joke.js            # Legacy joke generator
+│   ├── jokes.js           # Enhanced joke generator CLI
+│   └── jokes-core.js      # Jokes core logic
 ├── tests/                 # Test files
 │   ├── hello.test.js      # Hello greeter tests
 │   ├── stopwatch.test.js  # Stopwatch tests
+│   ├── stopwatch-core.test.js # Stopwatch core tests
+│   ├── jokes.test.js      # Jokes tests
 │   └── temp-converter-tdd-demo.js # TDD demonstration
 ├── data/                  # Data persistence files
 │   ├── time.json          # Stopwatch state
 │   ├── expenses.json      # Expense data
 │   └── todo.json          # To-do list data
 ├── journal/               # Learning journal
-│   └── week-1.md          # Week 1 development journal
+│   ├── week-1.md          # Week 1 development journal
+│   └── tightening-week.md # Tightening week journal
 ├── .github/               # GitHub Actions workflows
 │   └── workflows/
 │       ├── quality-gate.yml
 │       ├── review-packet.yml
 │       └── repo-mirror.yml
+├── jokes-cli.js          # Legacy jokes CLI
 ├── package.json           # Project configuration
 ├── .gitignore            # Git ignore rules
 └── README.md             # This file

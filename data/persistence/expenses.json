@@ -1,0 +1,22 @@
+[
+  {
+    "category": "Food",
+    "amount": 15.5,
+    "date": "2025-09-24T17:37:32.115Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5.25,
+    "date": "2025-09-24T17:37:36.236Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-24T17:37:40.720Z"
+  },
+  {
+    "category": "Entertainment",
+    "amount": 20,
+    "date": "2025-09-24T17:37:58.669Z"
+  }
+]

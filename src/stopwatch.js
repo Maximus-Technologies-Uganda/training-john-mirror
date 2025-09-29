@@ -1,112 +1,131 @@
-const fs = require('fs');
-const path = require('path');
+#!/usr/bin/env node
 
-const command = process.argv[2];
-const timeFile = path.join(__dirname, '../data/time.json');
+/**
+ * Stopwatch CLI Tool
+ * A command-line stopwatch application
+ */
 
-// Helper function to read the start time
-function getStartTime() {
-    try {
-        if (fs.existsSync(timeFile)) {
-            const content = fs.readFileSync(timeFile, 'utf8');
-            const data = JSON.parse(content);
-            return data.startTime;
-        }
-    } catch (error) {
-        console.error('Error reading time file:', error.message);
-        return null;
-    }
-    return null;
-}
+import fs from 'fs';
+import path from 'path';
+import {
+    createStopwatch,
+    startStopwatch,
+    stopStopwatch,
+    getElapsedTime,
+    resetStopwatch,
+    formatElapsedTime,
+    getStopwatchStatus
+} from './stopwatch-core.js';
+import { createStopwatchStorage } from './stopwatch-storage.js';
 
-// Helper function to write the start time
-function setStartTime(time) {
-    try {
-        // Ensure the data directory exists
-        const dataDir = path.dirname(timeFile);
-        if (!fs.existsSync(dataDir)) {
-            fs.mkdirSync(dataDir, { recursive: true });
-        }
-        
-        const data = { startTime: time };
-        fs.writeFileSync(timeFile, JSON.stringify(data, null, 2));
-    } catch (error) {
-        console.error('Error writing time file:', error.message);
-    }
-}
+// Default storage path
+const defaultTimeFile = path.join(process.cwd(), 'data/time.json');
 
-// Helper function to format elapsed time
-function formatElapsedTime(milliseconds) {
-    const seconds = Math.floor(milliseconds / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
+
+// Main CLI logic
+function main() {
+    const args = process.argv.slice(2);
     
-    const remainingSeconds = seconds % 60;
-    const remainingMinutes = minutes % 60;
+    // Parse --storage flag
+    let storagePath = defaultTimeFile;
+    let commandIndex = 0;
     
-    if (hours > 0) {
-        return `${hours}h ${remainingMinutes}m ${remainingSeconds}s`;
-    } else if (minutes > 0) {
-        return `${minutes}m ${remainingSeconds}s`;
-    } else {
-        return `${remainingSeconds}s`;
+    for (let i = 0; i < args.length; i++) {
+        if (args[i] === '--storage' && i + 1 < args.length) {
+            storagePath = args[i + 1];
+            commandIndex = i + 2;
+            break;
+        }
     }
-}
+    
+    const command = args[commandIndex];
 
-// Main logic
-switch (command) {
-    case 'start':
-        const now = Date.now();
-        setStartTime(now);
-        console.log('Stopwatch started at', new Date(now).toLocaleTimeString());
-        break;
-
-    case 'lap':
-        const startTimeForLap = getStartTime();
-        if (startTimeForLap) {
-            const currentTime = Date.now();
-            const elapsed = currentTime - startTimeForLap;
-            console.log(`Lap time: ${formatElapsedTime(elapsed)}`);
-        } else {
-            console.log('Stopwatch has not been started. Use the "start" command first.');
-        }
-        break;
-
-    case 'stop':
-        const startTimeForStop = getStartTime();
-        if (startTimeForStop) {
-            const endTime = Date.now();
-            const elapsed = endTime - startTimeForStop;
-            console.log(`Stopwatch stopped. Total elapsed time: ${formatElapsedTime(elapsed)}`);
-            setStartTime(null); // Reset the start time
-        } else {
-            console.log('Stopwatch has not been started. Use the "start" command first.');
-        }
-        break;
-
-    case 'status':
-        const startTimeForStatus = getStartTime();
-        if (startTimeForStatus) {
-            const currentTime = Date.now();
-            const elapsed = currentTime - startTimeForStatus;
-            console.log(`Stopwatch is running. Elapsed time: ${formatElapsedTime(elapsed)}`);
-        } else {
-            console.log('Stopwatch is not running.');
-        }
-        break;
-
-    case 'reset':
-        setStartTime(null);
-        console.log('Stopwatch reset.');
-        break;
-
-    default:
-        console.log('Usage: node stopwatch.js <command>');
+    if (!command) {
+        console.log('Usage: node stopwatch.js [--storage <path>] <command>');
         console.log('Commands:');
-        console.log('  start  - Start the stopwatch');
-        console.log('  lap    - Show current elapsed time');
-        console.log('  stop   - Stop the stopwatch and show total time');
-        console.log('  status - Show current status and elapsed time');
-        console.log('  reset  - Reset the stopwatch');
-        break;
+        console.log('  start   - Start the stopwatch');
+        console.log('  stop    - Stop the stopwatch');
+        console.log('  status  - Show current status');
+        console.log('  lap     - Record a lap time');
+        console.log('  reset   - Reset the stopwatch');
+        console.log('Options:');
+        console.log('  --storage <path> - Specify storage file path');
+        return;
+    }
+
+    // Create storage manager
+    const storage = createStopwatchStorage(storagePath);
+    let stopwatch = storage.load();
+
+    try {
+        switch (command) {
+            case 'start':
+                if (stopwatch.isRunning) {
+                    console.log('Stopwatch is already running');
+                    return;
+                }
+                stopwatch = startStopwatch(stopwatch);
+                storage.save(stopwatch);
+                console.log(`Stopwatch started at ${new Date().toLocaleTimeString()}`);
+                break;
+
+            case 'stop':
+                if (!stopwatch.isRunning) {
+                    console.log('Stopwatch has not been started');
+                    return;
+                }
+                stopwatch = stopStopwatch(stopwatch);
+                storage.save(stopwatch);
+                console.log('Stopwatch stopped');
+                break;
+
+            case 'status':
+                const status = getStopwatchStatus(stopwatch);
+                if (status.isRunning) {
+                    console.log('Stopwatch is running');
+                    console.log(`Elapsed time: ${status.formattedTime}`);
+                } else {
+                    console.log('Stopwatch is not running');
+                    if (status.elapsedTime > 0) {
+                        console.log(`Total elapsed time: ${status.formattedTime}`);
+                    }
+                }
+                break;
+
+            case 'lap':
+                if (!stopwatch.isRunning) {
+                    console.log('Stopwatch has not been started');
+                    return;
+                }
+                const elapsed = getElapsedTime(stopwatch);
+                console.log(`Lap time: ${formatElapsedTime(elapsed)}`);
+                break;
+
+            case 'reset':
+                stopwatch = resetStopwatch(stopwatch);
+                storage.save(stopwatch);
+                console.log('Stopwatch reset');
+                break;
+
+            default:
+                console.log('Usage: node stopwatch.js [--storage <path>] <command>');
+                console.log('Commands:');
+                console.log('  start   - Start the stopwatch');
+                console.log('  stop    - Stop the stopwatch');
+                console.log('  status  - Show current status');
+                console.log('  lap     - Record a lap time');
+                console.log('  reset   - Reset the stopwatch');
+                console.log('Options:');
+                console.log('  --storage <path> - Specify storage file path');
+                break;
+        }
+    } catch (error) {
+        console.error('Error:', error.message);
+        process.exit(1);
+    }
+}
+
+// Run the CLI if this file is executed directly
+if (import.meta.url === `file://${process.argv[1]}` || process.argv[1].endsWith('stopwatch.js')) {
+    main();
 }

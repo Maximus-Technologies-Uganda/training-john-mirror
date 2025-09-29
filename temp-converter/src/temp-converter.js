@@ -49,26 +49,66 @@ export function convertTemperature(value, fromUnit, toUnit) {
     return Math.round(result * 100) / 100;
 }
 
-// CLI functionality
+// CLI functionality with --from and --to flags
 if (import.meta.url === `file://${process.argv[1]}`) {
     const args = process.argv.slice(2);
     
-    if (args.length < 3) {
-        console.error('Missing required arguments');
-        console.error('Usage: node temp-converter.js <value> <fromUnit> <toUnit>');
-        console.error('Example: node temp-converter.js 0 C F');
+
+    // Parse command line arguments
+    let value = null;
+    let fromUnit = null;
+    let toUnit = null;
+    
+    for (let i = 0; i < args.length; i++) {
+        if (args[i] === '--from' && i + 1 < args.length) {
+            fromUnit = args[i + 1];
+            i++; // Skip next argument
+        } else if (args[i] === '--to' && i + 1 < args.length) {
+            toUnit = args[i + 1];
+            i++; // Skip next argument
+        } else if (!isNaN(parseFloat(args[i])) && value === null) {
+            value = parseFloat(args[i]);
+        }
+    }
+    
+    // Validate required arguments
+    if (value === null) {
+        console.error('Error: Temperature value is required');
+        console.error('Usage: node temp-converter.js <value> --from <C|F> --to <C|F>');
+        console.error('Example: node temp-converter.js 0 --from C --to F');
         process.exit(1);
     }
-
-    const value = parseFloat(args[0]);
-    const fromUnit = args[1];
-    const toUnit = args[2];
+    
+    if (!fromUnit) {
+        console.error('Error: --from flag is required');
+        console.error('Usage: node temp-converter.js <value> --from <C|F> --to <C|F>');
+        console.error('Example: node temp-converter.js 0 --from C --to F');
+        process.exit(1);
+    }
+    
+    if (!toUnit) {
+        console.error('Error: --to flag is required');
+        console.error('Usage: node temp-converter.js <value> --from <C|F> --to <C|F>');
+        console.error('Example: node temp-converter.js 0 --from C --to F');
+        process.exit(1);
+    }
+    
+    // Validate units
+    if (fromUnit !== 'C' && fromUnit !== 'F') {
+        console.error(`Error: Invalid --from unit '${fromUnit}'. Must be 'C' or 'F'`);
+        process.exit(1);
+    }
+    
+    if (toUnit !== 'C' && toUnit !== 'F') {
+        console.error(`Error: Invalid --to unit '${toUnit}'. Must be 'C' or 'F'`);
+        process.exit(1);
+    }
 
     try {
         const result = convertTemperature(value, fromUnit, toUnit);
         console.log(`${value}°${fromUnit} = ${result}°${toUnit}`);
     } catch (error) {
-        console.error(error.message);
+        console.error(`Error: ${error.message}`);
         process.exit(1);
     }
 }

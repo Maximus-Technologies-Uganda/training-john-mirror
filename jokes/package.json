@@ -1,0 +1,27 @@
+{
+  "name": "jokes-cli",
+  "version": "1.0.0",
+  "description": "A CLI tool for fetching random jokes from the JokeAPI",
+  "main": "src/jokes-core.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "test:ci": "jest --coverage --ci",
+    "lint": "eslint .",
+    "start": "node src/joke.js"
+  },
+  "keywords": ["cli", "jokes", "humor", "api"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.12.2",
+    "yargs": "^18.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.36.0",
+    "jest": "^29.7.0"
+  },
+  "bin": {
+    "jokes": "./src/joke.js"
+  }
+}
