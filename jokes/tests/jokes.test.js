@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'jest';
+import { describe, it, expect } from 'vitest';
 import { getAvailableCategories, getAvailableTypes } from '../src/jokes-core.js';
 
 describe('Jokes Core Functions', () => {
