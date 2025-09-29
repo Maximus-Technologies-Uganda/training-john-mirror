@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'jest';
+import { describe, it, expect } from 'vitest';
 import { addExpense, summarizeExpenses } from '../src/expenses-core.js';
 
 describe('addExpense function', () => {

@@ -5,10 +5,9 @@
  * A command-line stopwatch application
  */
 
-import fs from 'fs';
+// import fs from 'fs'; // Unused import
 import path from 'path';
 import {
-    createStopwatch,
     startStopwatch,
     stopStopwatch,
     getElapsedTime,

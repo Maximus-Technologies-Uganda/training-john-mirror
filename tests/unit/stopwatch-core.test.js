@@ -43,7 +43,6 @@ describe('stopwatch-core', () => {
         it('stops a running stopwatch', async () => {
             const started = startStopwatch(stopwatch);
             // Add small delay to ensure measurable elapsed time
-            // eslint-disable-next-line no-undef
             await new Promise(resolve => setTimeout(resolve, 10));
             const stopped = stopStopwatch(started);
             
@@ -59,7 +58,6 @@ describe('stopwatch-core', () => {
         it('accumulates elapsed time correctly', async () => {
             const started = startStopwatch(stopwatch);
             // Add small delay to ensure measurable elapsed time
-            // eslint-disable-next-line no-undef
             await new Promise(resolve => setTimeout(resolve, 10));
             const stopped = stopStopwatch(started);
             const totalElapsed = stopped.totalElapsed;
@@ -67,7 +65,6 @@ describe('stopwatch-core', () => {
             // Start again and stop
             const started2 = startStopwatch(stopped);
             // Add small delay to ensure measurable elapsed time
-            // eslint-disable-next-line no-undef
             await new Promise(resolve => setTimeout(resolve, 10));
             const stopped2 = stopStopwatch(started2);
             
@@ -86,7 +83,6 @@ describe('stopwatch-core', () => {
         it('returns current elapsed time when running', async () => {
             const started = startStopwatch(stopwatch);
             // Add small delay to ensure measurable elapsed time
-            // eslint-disable-next-line no-undef
             await new Promise(resolve => setTimeout(resolve, 10));
             const elapsed = getElapsedTime(started);
             
@@ -139,7 +135,6 @@ describe('stopwatch-core', () => {
         it('returns correct status for running stopwatch', async () => {
             const started = startStopwatch(stopwatch);
             // Add small delay to ensure measurable elapsed time
-            // eslint-disable-next-line no-undef
             await new Promise(resolve => setTimeout(resolve, 10));
             const status = getStopwatchStatus(started);
             
