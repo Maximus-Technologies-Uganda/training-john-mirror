@@ -53,6 +53,7 @@ export function convertTemperature(value, fromUnit, toUnit) {
 if (import.meta.url === `file://${process.argv[1]}`) {
     const args = process.argv.slice(2);
     
+
     // Parse command line arguments
     let value = null;
     let fromUnit = null;

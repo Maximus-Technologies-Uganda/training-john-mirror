@@ -1,46 +1,40 @@
 /* eslint-env browser */
+import { NetworkJokeProvider } from './jokes-provider.js';
+
 /**
- * Fetches a random joke from the API with enhanced functionality.
- * @param {string} category - The joke category (optional)
- * @param {string} type - The joke type ('single' or 'twopart')
- * @returns {Promise<Object>} A joke object with setup, punchline, and metadata
+ * Business logic for processing jokes - separated from network concerns
  */
-async function getJoke(category = 'Any', type = 'single') {
-    // Validate inputs
-    const validCategories = ['Any', 'Programming', 'Misc', 'Dark', 'Pun', 'Spooky', 'Christmas'];
-    const validTypes = ['single', 'twopart'];
-    
-    if (!validCategories.includes(category)) {
-        throw new Error(`Invalid category. Must be one of: ${validCategories.join(', ')}`);
-    }
-    
-    if (!validTypes.includes(type)) {
-        throw new Error(`Invalid type. Must be one of: ${validTypes.join(', ')}`);
+class JokeService {
+    constructor(provider) {
+        this.provider = provider;
     }
 
-    // Construct API URL
-    const baseUrl = 'https://v2.jokeapi.dev/joke/';
-    const apiUrl = `${baseUrl}${category}?type=${type}`;
-    
-    try {
-        // Make a request to the joke API
-        // eslint-disable-next-line no-undef
-        const response = await fetch(apiUrl);
+    /**
+     * Validates input parameters for joke requests
+     * @param {string} category - The joke category
+     * @param {string} type - The joke type
+     * @throws {Error} If validation fails
+     */
+    validateInputs(category, type) {
+        const validCategories = ['Any', 'Programming', 'Misc', 'Dark', 'Pun', 'Spooky', 'Christmas'];
+        const validTypes = ['single', 'twopart'];
         
-        // Check if the request was successful
-        if (!response.ok) {
-            throw new Error(`Failed to fetch joke from the API. Status: ${response.status}`);
+        if (!validCategories.includes(category)) {
+            throw new Error(`Invalid category. Must be one of: ${validCategories.join(', ')}`);
         }
         
-        // Parse the JSON response
-        const jokeData = await response.json();
-        
-        // Check for API errors
-        if (jokeData.error) {
-            throw new Error(`API Error: ${jokeData.message || 'Unknown error'}`);
+        if (!validTypes.includes(type)) {
+            throw new Error(`Invalid type. Must be one of: ${validTypes.join(', ')}`);
         }
-        
-        // Format the joke based on type
+    }
+
+    /**
+     * Formats raw joke data into a standardized structure
+     * @param {Object} jokeData - Raw joke data from the provider
+     * @param {string} type - The joke type
+     * @returns {Object} Formatted joke object
+     */
+    formatJoke(jokeData, type) {
         if (type === 'single') {
             return {
                 setup: jokeData.joke,
@@ -58,13 +52,37 @@ async function getJoke(category = 'Any', type = 'single') {
                 formatted: `${jokeData.setup}\n${jokeData.delivery}`
             };
         }
-    } catch (error) {
-        // Re-throw with more context
-        if (error.name === 'TypeError' && error.message.includes('fetch')) {
-            throw new Error('Network error: Unable to connect to the joke API. Please check your internet connection.');
-        }
-        throw error;
     }
+
+    /**
+     * Fetches a random joke with enhanced functionality.
+     * @param {string} category - The joke category (optional)
+     * @param {string} type - The joke type ('single' or 'twopart')
+     * @returns {Promise<Object>} A joke object with setup, punchline, and metadata
+     */
+    async getJoke(category = 'Any', type = 'single') {
+        // Validate inputs
+        this.validateInputs(category, type);
+        
+        // Fetch raw data from provider
+        const jokeData = await this.provider.fetchJoke(category, type);
+        
+        // Format and return the joke
+        return this.formatJoke(jokeData, type);
+    }
+}
+
+// Create a default service instance with network provider
+const defaultService = new JokeService(new NetworkJokeProvider());
+
+/**
+ * Fetches a random joke from the API with enhanced functionality.
+ * @param {string} category - The joke category (optional)
+ * @param {string} type - The joke type ('single' or 'twopart')
+ * @returns {Promise<Object>} A joke object with setup, punchline, and metadata
+ */
+async function getJoke(category = 'Any', type = 'single') {
+    return defaultService.getJoke(category, type);
 }
 
 /**
@@ -93,10 +111,21 @@ function getAvailableTypes() {
     return ['single', 'twopart'];
 }
 
-// Export functions for CommonJS
-module.exports = {
+/**
+ * Creates a new JokeService instance with a custom provider
+ * @param {JokeProvider} provider - The provider to use
+ * @returns {JokeService} A new service instance
+ */
+function createJokeService(provider) {
+    return new JokeService(provider);
+}
+
+// Export functions for ES modules
+export {
     getJoke,
     getJokeString,
     getAvailableCategories,
-    getAvailableTypes
+    getAvailableTypes,
+    createJokeService,
+    JokeService
 };
