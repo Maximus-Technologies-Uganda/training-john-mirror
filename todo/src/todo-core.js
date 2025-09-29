@@ -29,3 +29,22 @@ export function markTaskDone(tasks, taskId) {
       return task;
     });
   }
+
+/**
+ * Removes a specific task from the list.
+ * @param {Array<Object>} tasks - The array of task objects.
+ * @param {number} taskId - The ID of the task to remove.
+ * @returns {Array<Object>} A new array without the specified task.
+ */
+export function removeTask(tasks, taskId) {
+  return tasks.filter(task => task.id !== taskId);
+}
+
+/**
+ * Lists all tasks in the array.
+ * @param {Array<Object>} tasks - The array of task objects.
+ * @returns {Array<Object>} A copy of the tasks array.
+ */
+export function listTasks(tasks) {
+  return [...tasks];
+}
