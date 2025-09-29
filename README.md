@@ -2,6 +2,13 @@
 
 A comprehensive collection of command-line tools built during the first week of development training. This project demonstrates fundamental programming concepts, CLI development, file system operations, state management, and Test-Driven Development (TDD).
 
+## Branch Protection & Mirroring Setup
+
+This repository is configured with:
+- **Default branch**: `development` (protected)
+- **Branch protection**: Requires Quality Gate and Review Packet checks
+- **Mirror repository**: [training-john-mirror](https://github.com/Maximus-Technologies-Uganda/training-john-mirror)
+
 ## 🚀 Quick Start
 
 ### Prerequisites

@@ -7,13 +7,12 @@ on:
         description: Pull request number to generate packet for
         required: true
   pull_request:
-    types: [opened, reopened, synchronize, labeled, ready_for_review]
-  issues:
     types: [labeled]
 
 jobs:
   review-packet:
     runs-on: ubuntu-latest
+    if: github.event.label.name == 'needs-review-packet' || github.event_name == 'workflow_dispatch'
     permissions:
       contents: read
       pull-requests: read
@@ -57,7 +56,7 @@ jobs:
               const files = await github.paginate(github.rest.pulls.listFiles, { owner, repo, pull_number: prNumber, per_page: 100 });
               const commits = await github.paginate(github.rest.pulls.listCommits, { owner, repo, pull_number: prNumber, per_page: 100 });
 
-              const dir = path.join(process.cwd(), 'review-packet');
+              const dir = path.join(process.cwd(), '_review');
               fs.mkdirSync(dir, { recursive: true });
 
               const totalAdditions = files.reduce((n, f) => n + (f.additions || 0), 0);
@@ -132,7 +131,7 @@ jobs:
                 summaryLines.push(`- ${c.sha.substring(0,7)} ${msg} (@${c.author && c.author.login ? c.author.login : c.commit.author.name})`);
               }
 
-              const mdPath = path.join(dir, 'review-packet.md');
+              const mdPath = path.join(dir, 'summary.md');
               fs.writeFileSync(mdPath, summaryLines.join('\n'));
 
               // Save raw JSON as well
@@ -153,7 +152,7 @@ jobs:
         if: always()
         with:
           name: review-packet-${{ steps.resolve.outputs.pr_number }}
-          path: ${{ steps.generate.outputs.packet_dir }}
+          path: _review/
           retention-days: 30
 
       - name: Append review packet to job summary
