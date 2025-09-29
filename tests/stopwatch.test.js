@@ -22,7 +22,7 @@ function safeReset() {
     while (Date.now() - start < 10) {
       // Small delay to ensure file system operations complete
     }
-  } catch (error) {
+  } catch {
     // If reset fails, manually reset the file
     try {
       const data = { startTime: null };
