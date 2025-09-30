@@ -1,18 +1,14 @@
 name: Review Packet
 
 on:
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: Pull request number to generate packet for
-        required: true
   pull_request:
     types: [labeled]
+    branches: [development]
 
 jobs:
   review-packet:
     runs-on: ubuntu-latest
-    if: github.event.label.name == 'needs-review-packet' || github.event_name == 'workflow_dispatch'
+    if: contains(github.event.pull_request.labels.*.name, 'needs-review-packet')
     permissions:
       contents: read
       pull-requests: read
@@ -28,11 +24,7 @@ jobs:
         id: resolve
         shell: bash
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "pr_number=${{ github.event.inputs.pr_number }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "pr_number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
-          fi
+          echo "pr_number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
 
       - name: Generate review packet
         id: generate
