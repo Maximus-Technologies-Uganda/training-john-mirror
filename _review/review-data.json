@@ -1,0 +1,39 @@
+{
+  "git": {
+    "currentBranch": "development",
+    "lastCommit": "f457e6806125e285c4532c647bd9e5e82a16928c chore: clean up PR template by removing extra blank lines",
+    "totalCommits": "155",
+    "changedFiles": "PR_TEMPLATE.md",
+    "addedLines": 0,
+    "deletedLines": 0,
+    "modifiedFiles": [
+      {
+        "status": "M",
+        "filename": "PR_TEMPLATE.md"
+      }
+    ]
+  },
+  "project": {
+    "totalFiles": 144,
+    "totalLines": 24905,
+    "testFiles": 21,
+    "sourceFiles": 44,
+    "configFiles": 9,
+    "documentationFiles": 16
+  },
+  "tests": {
+    "success": false,
+    "coverage": {
+      "statements": 78.26,
+      "branches": 95.45,
+      "functions": 85.18,
+      "lines": 78.26
+    },
+    "output": "> training-john@0.1.0 test:ci\n> vitest run --reporter=junit --coverage --coverage.thresholds.global.branches=0 --coverage.thresholds.global.functions=0 --coverage.thresholds.global.lines=0 --coverage.thresholds.global.statements=0\n\nJUNIT report written to C:/Users/nsimb/Projects/training-john/training-john/test-results/junit.xml\n % Coverage report from v8\n-------------------|---------|----------|---------|---------|-------------------\nFile               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s \n-------------------|---------|----------|---------|---------|-------------------\nAll files          |   78.26 |    95.45 |   85.18 |   78.26 |                   \n hello/src         |    27.9 |       75 |      50 |    27.9 |                   \n  hello-core.js    |    27.9 |       75 |      50 |    27.9 | 10-38,42-43       \n jokes/src         |   36.63 |      100 |      50 |   36.63 |                   \n  jokes-core.js    |   36.63 |      100 |      50 |   36.63 | 8-67,74-77        \n src               |   95.62 |     95.4 |   96.96 |   95.62 |                   \n  ...s-provider.js |   98.05 |       85 |   85.71 |   98.05 | 14-15             \n  ...-converter.js |   71.62 |    94.73 |     100 |   71.62 | 54-74             \n stopwatch/src     |   70.24 |      100 |   42.85 |   70.24 |                   \n  ...watch-core.js |   70.24 |      100 |   42.85 |   70.24 | ...,78-83,113-119 \n ...-converter/src |   46.49 |    94.73 |     100 |   46.49 |                   \n  ...-converter.js |   46.49 |    94.73 |     100 |   46.49 | 54-114            \n-------------------|---------|----------|---------|---------|-------------------"
+  },
+  "lint": {
+    "success": true,
+    "output": "> training-john@0.1.0 lint\n> eslint .\n\n\nC:\\Users\\nsimb\\Projects\\training-john\\training-john\\generate-review-packet.js\n   89:34  warning  Unexpected string concatenation                                                         prefer-template\n  110:20  warning  'error' is defined but never used                                                       no-unused-vars\n  115:14  warning  'error' is defined but never used                                                       no-unused-vars\n  254:13  warning  'packageJson' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars\n\n✖ 4 problems (0 errors, 4 warnings)\n  0 errors and 1 warning potentially fixable with the `--fix` option."
+  },
+  "generated": "2025-09-30T08:55:27.819Z"
+}
