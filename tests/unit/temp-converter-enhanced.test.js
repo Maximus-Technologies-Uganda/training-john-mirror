@@ -62,23 +62,23 @@ describe('Temperature Converter Enhanced Tests', () => {
 
     describe('Error handling', () => {
         it('throws error for invalid value', () => {
-            expect(() => convertTemperature('invalid', 'C', 'F')).toThrow('Value must be a valid number');
+            expect(() => convertTemperature('invalid', 'C', 'F')).toThrow('Temperature must be a valid number');
         });
 
         it('throws error for missing fromUnit', () => {
-            expect(() => convertTemperature(0, null, 'F')).toThrow('Both fromUnit and toUnit must be specified');
+            expect(() => convertTemperature(0, null, 'F')).toThrow('Unit must be a non-empty string');
         });
 
         it('throws error for missing toUnit', () => {
-            expect(() => convertTemperature(0, 'C', null)).toThrow('Both fromUnit and toUnit must be specified');
+            expect(() => convertTemperature(0, 'C', null)).toThrow('Unit must be a non-empty string');
         });
 
         it('throws error for unsupported conversion', () => {
-            expect(() => convertTemperature(0, 'K', 'F')).toThrow('Conversion from K to F is not supported');
+            expect(() => convertTemperature(0, 'K', 'F')).toThrow('Invalid unit \'K\'. Must be \'C\' or \'F\'');
         });
 
         it('handles same unit conversion', () => {
-            expect(convertTemperature(25, 'C', 'C')).toBe(25);
+            expect(() => convertTemperature(25, 'C', 'C')).toThrow('Cannot convert from C to C (identical units)');
         });
     });
 

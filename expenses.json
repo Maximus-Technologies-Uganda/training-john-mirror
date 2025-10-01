@@ -138,5 +138,25 @@
     "category": "Food",
     "amount": 15,
     "date": "2025-10-01T11:22:14.179Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-10-01T11:30:57.382Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-10-01T11:31:01.430Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-10-01T11:31:02.224Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-10-01T11:31:03.186Z"
   }
 ]
