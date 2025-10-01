@@ -35,9 +35,10 @@ describe('Temperature Converter', () => {
       expect(result).toBe(99.5);
     });
 
-    it('should return same value for same unit conversion', () => {
-      const result = convertTemperature(25, 'C', 'C');
-      expect(result).toBe(25);
+    it('should throw error for identical unit conversion', () => {
+      expect(() => {
+        convertTemperature(25, 'C', 'C');
+      }).toThrow('Cannot convert from C to C (identical units)');
     });
 
     it('should handle case insensitive units', () => {
@@ -50,31 +51,31 @@ describe('Temperature Converter', () => {
     it('should throw error for invalid value type', () => {
       expect(() => {
         convertTemperature("not a number", 'C', 'F');
-      }).toThrow('Value must be a valid number');
+      }).toThrow('Temperature must be a valid number');
     });
 
     it('should throw error for missing fromUnit', () => {
       expect(() => {
         convertTemperature(0, null, 'F');
-      }).toThrow('Both fromUnit and toUnit must be specified');
+      }).toThrow('Unit must be a non-empty string');
     });
 
     it('should throw error for missing toUnit', () => {
       expect(() => {
         convertTemperature(0, 'C', null);
-      }).toThrow('Both fromUnit and toUnit must be specified');
+      }).toThrow('Unit must be a non-empty string');
     });
 
     it('should throw error for unsupported conversion', () => {
       expect(() => {
         convertTemperature(0, 'C', 'K');
-      }).toThrow('Conversion from C to K is not supported');
+      }).toThrow('Invalid unit \'K\'. Must be \'C\' or \'F\'');
     });
 
     it('should throw error for NaN value', () => {
       expect(() => {
         convertTemperature(NaN, 'C', 'F');
-      }).toThrow('Value must be a valid number');
+      }).toThrow('Temperature must be a valid number');
     });
   });
 

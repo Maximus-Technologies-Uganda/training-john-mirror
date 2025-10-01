@@ -5,8 +5,8 @@
   "main": "src/todo-core.js",
   "type": "module",
   "scripts": {
-    "test": "jest",
-    "test:ci": "jest --coverage --ci",
+    "test": "vitest",
+    "test:ci": "vitest run --coverage",
     "lint": "eslint .",
     "start": "node src/todo-core.js"
   },
@@ -18,7 +18,8 @@
   },
   "devDependencies": {
     "eslint": "^9.36.0",
-    "jest": "^29.7.0"
+    "vitest": "^1.6.1",
+    "@vitest/coverage-v8": "^1.6.1"
   },
   "bin": {
     "todo": "./src/todo-core.js"

@@ -16,6 +16,7 @@ import {
     getStopwatchStatus
 } from './stopwatch-core.js';
 import { createStopwatchStorage } from './stopwatch-storage.js';
+import { formatStopwatchData } from './exporter.js';
 
 // Default storage path
 const defaultTimeFile = path.join(process.cwd(), 'data/time.json');
@@ -80,15 +81,7 @@ function main() {
 
             case 'status':
                 const status = getStopwatchStatus(stopwatch);
-                if (status.isRunning) {
-                    console.log('Stopwatch is running');
-                    console.log(`Elapsed time: ${status.formattedTime}`);
-                } else {
-                    console.log('Stopwatch is not running');
-                    if (status.elapsedTime > 0) {
-                        console.log(`Total elapsed time: ${status.formattedTime}`);
-                    }
-                }
+                console.log(formatStopwatchData(status));
                 break;
 
             case 'lap':

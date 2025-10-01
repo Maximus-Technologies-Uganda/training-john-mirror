@@ -1,1 +1,547 @@
-[]
+[
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:45:20.001Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:45:20.349Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:45:20.618Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:45:20.701Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:45:20.741Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:45:21.310Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:45:21.513Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:45:21.587Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:45:21.630Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:45:22.363Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:46:01.267Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:46:01.360Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:46:01.392Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:46:02.049Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:46:06.975Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:46:07.060Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:46:07.496Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:46:07.690Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:46:07.772Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:46:07.917Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:46:08.333Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:46:08.412Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:46:08.579Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:46:08.880Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:46:09.081Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:46:09.117Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:46:37.429Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:46:37.458Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:46:37.487Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:46:41.621Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:46:41.717Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:46:41.727Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:46:41.738Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:46:42.264Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:46:42.282Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:46:42.312Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:46:42.351Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:46:42.898Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:46:42.932Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:46:42.944Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:46:43.024Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:49:31.296Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:49:33.837Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:49:34.401Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:49:34.957Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:51:40.314Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:51:40.379Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:51:40.440Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:51:40.613Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:51:41.513Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:51:46.700Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:51:46.757Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:51:47.449Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:51:47.801Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:51:47.911Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:51:48.129Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:51:48.431Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:51:48.916Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:51:49.162Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:51:49.206Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:51:49.685Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:51:50.008Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:51:50.399Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:51:50.615Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:51:50.795Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:52:35.006Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:52:38.828Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:52:39.751Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:52:40.620Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:53:24.882Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:53:24.955Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:53:25.157Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:53:25.661Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:53:26.419Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:53:31.729Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:53:32.390Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:53:32.558Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:53:33.354Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:53:33.683Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:53:33.772Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:53:34.245Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:53:34.844Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:53:35.358Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:53:35.787Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:53:36.028Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:53:36.472Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:53:36.782Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:53:36.936Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:53:37.422Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:54:04.710Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:54:04.786Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:54:04.992Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:54:05.458Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-09-30T11:54:07.829Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:54:11.644Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:54:12.019Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:54:12.120Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:54:12.883Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:54:13.141Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:54:13.515Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:54:13.601Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:54:14.653Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-09-30T11:54:14.910Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:54:15.357Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:54:16.043Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:54:16.401Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:54:17.268Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-09-30T11:54:17.477Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-09-30T11:54:20.407Z"
+  }
+]

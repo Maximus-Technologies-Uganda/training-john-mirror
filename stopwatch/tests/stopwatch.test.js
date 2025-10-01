@@ -1,9 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import {
     createStopwatch,
     startStopwatch,
-    formatElapsedTime
+    formatElapsedTime,
+    getStopwatchStatus
 } from '../src/stopwatch-core.js';
+import { formatStopwatchData } from '../src/exporter.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('stopwatch-core', () => {
     let stopwatch;
@@ -50,5 +57,44 @@ describe('stopwatch-core', () => {
         it('handles zero time', () => {
             expect(formatElapsedTime(0)).toBe('0s');
         });
+    });
+});
+
+describe('formatStopwatchData - Golden File Tests', () => {
+    it('matches empty state golden file', () => {
+        const stopwatch = createStopwatch();
+        const status = getStopwatchStatus(stopwatch);
+        const output = formatStopwatchData(status);
+        
+        const goldenContent = readFileSync(join(__dirname, '..', 'test', 'output-empty.golden.txt'), 'utf8').trim();
+        expect(output).toBe(goldenContent);
+    });
+
+    it('matches normal running state golden file', () => {
+        const stopwatch = createStopwatch();
+        const _started = startStopwatch(stopwatch);
+        // Simulate some elapsed time (32 seconds)
+        const status = {
+            isRunning: true,
+            elapsedTime: 32000,
+            formattedTime: '32s'
+        };
+        const output = formatStopwatchData(status);
+        
+        const goldenContent = readFileSync(join(__dirname, '..', 'test', 'output-normal.golden.txt'), 'utf8').trim().replace(/\r\n/g, '\n');
+        expect(output).toBe(goldenContent);
+    });
+
+    it('matches stopped state golden file', () => {
+        const _stopwatch = createStopwatch();
+        const status = {
+            isRunning: false,
+            elapsedTime: 48000,
+            formattedTime: '48s'
+        };
+        const output = formatStopwatchData(status);
+        
+        const goldenContent = readFileSync(join(__dirname, '..', 'test', 'output-stopped.golden.txt'), 'utf8').trim().replace(/\r\n/g, '\n');
+        expect(output).toBe(goldenContent);
     });
 });

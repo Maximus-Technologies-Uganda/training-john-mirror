@@ -86,7 +86,7 @@ function getProjectStats() {
         
         if (stat.isDirectory()) {
           if (!item.startsWith('.') && item !== 'node_modules') {
-            countFiles(fullPath, prefix + item + '/');
+            countFiles(fullPath, `${prefix}${item}/`);
           }
         } else {
           stats.totalFiles++;
@@ -107,12 +107,12 @@ function getProjectStats() {
           try {
             const content = fs.readFileSync(fullPath, 'utf8');
             stats.totalLines += content.split('\n').length;
-          } catch (error) {
+          } catch {
             // Skip binary files
           }
         }
       }
-    } catch (error) {
+    } catch {
       // Skip directories we can't read
     }
   }
@@ -251,7 +251,7 @@ function generateReviewPacket() {
   for (const module of modules) {
     const modulePath = path.join(process.cwd(), module);
     if (fs.existsSync(modulePath)) {
-      const packageJson = path.join(modulePath, 'package.json');
+      const _packageJson = path.join(modulePath, 'package.json');
       const hasTests = fs.existsSync(path.join(modulePath, 'tests')) || fs.existsSync(path.join(modulePath, 'test'));
       const hasSrc = fs.existsSync(path.join(modulePath, 'src'));
       summaryLines.push(`- **${module}**: ${hasSrc ? '✅ Source' : '❌ No source'} | ${hasTests ? '✅ Tests' : '❌ No tests'}`);

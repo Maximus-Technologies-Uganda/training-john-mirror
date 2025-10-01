@@ -4,11 +4,15 @@ on:
   pull_request:
     types: [labeled]
     branches: [development]
+  push:
+    branches: [development]
 
 jobs:
   review-packet:
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'needs-review-packet')
+    if: |
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'needs-review-packet')) ||
+      github.event_name == 'push'
     permissions:
       contents: read
       pull-requests: read
@@ -24,29 +28,70 @@ jobs:
         id: resolve
         shell: bash
         run: |
-          echo "pr_number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "pr_number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+            echo "event_type=pr" >> "$GITHUB_OUTPUT"
+          else
+            echo "pr_number=" >> "$GITHUB_OUTPUT"
+            echo "event_type=push" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Generate review packet
         id: generate
         uses: actions/github-script@v7
         env:
           PR_NUMBER: ${{ steps.resolve.outputs.pr_number }}
+          EVENT_TYPE: ${{ steps.resolve.outputs.event_type }}
         with:
           script: |
             const fs = require('fs');
             const path = require('path');
             const prNumber = Number(process.env.PR_NUMBER);
-            if (!prNumber) {
-              core.setFailed('PR number could not be determined.');
-              return;
-            }
+            const eventType = process.env.EVENT_TYPE;
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             
             try {
-              const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: prNumber });
-              const files = await github.paginate(github.rest.pulls.listFiles, { owner, repo, pull_number: prNumber, per_page: 100 });
-              const commits = await github.paginate(github.rest.pulls.listCommits, { owner, repo, pull_number: prNumber, per_page: 100 });
+              let pr, files, commits;
+              
+              if (eventType === 'pr') {
+                if (!prNumber) {
+                  core.setFailed('PR number could not be determined.');
+                  return;
+                }
+                pr = (await github.rest.pulls.get({ owner, repo, pull_number: prNumber })).data;
+                files = await github.paginate(github.rest.pulls.listFiles, { owner, repo, pull_number: prNumber, per_page: 100 });
+                commits = await github.paginate(github.rest.pulls.listCommits, { owner, repo, pull_number: prNumber, per_page: 100 });
+              } else {
+                // For push events, create a mock PR object and get commit info
+                const commit = context.payload.head_commit;
+                const beforeCommit = context.payload.before;
+                const afterCommit = context.payload.after;
+                
+                // Get files changed in this push
+                const compare = await github.rest.repos.compareCommits({
+                  owner,
+                  repo,
+                  base: beforeCommit,
+                  head: afterCommit
+                });
+                
+                files = compare.data.files || [];
+                commits = compare.data.commits || [];
+                
+                // Create a mock PR object for consistency
+                pr = {
+                  number: null,
+                  title: `Push to ${context.payload.ref}`,
+                  user: { login: commit.author.username || commit.author.name },
+                  state: 'closed',
+                  draft: false,
+                  base: { ref: context.payload.base_ref || 'development' },
+                  head: { ref: context.payload.ref.replace('refs/heads/', '') },
+                  labels: [],
+                  html_url: `https://github.com/${owner}/${repo}/commit/${afterCommit}`
+                };
+              }
 
               const dir = path.join(process.cwd(), '_review');
               fs.mkdirSync(dir, { recursive: true });
@@ -143,7 +188,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: review-packet-${{ steps.resolve.outputs.pr_number }}
+          name: review-packet-${{ steps.resolve.outputs.event_type }}-${{ steps.resolve.outputs.pr_number || github.sha }}
           path: _review/
           retention-days: 30
 
@@ -159,7 +204,7 @@ jobs:
           fi
 
       - name: Comment review packet on PR
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.resolve.outputs.event_type == 'pr'
         uses: actions/github-script@v7
         env:
           PR_NUMBER: ${{ steps.resolve.outputs.pr_number }}
