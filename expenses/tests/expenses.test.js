@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { addExpense, summarizeExpenses } from '../src/expenses-core.js';
 import { spawn } from 'child_process';
 import path from 'path';

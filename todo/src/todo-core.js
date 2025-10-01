@@ -10,7 +10,7 @@ export function addTask(tasks, taskName, dueDate = null) {
     id: tasks.length + 1, // Simple ID generation
     text: taskName,
     done: false,
-    dueDate: dueDate
+    dueDate
   };
   return [...tasks, newTask];
 }

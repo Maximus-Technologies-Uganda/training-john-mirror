@@ -362,7 +362,7 @@ describe('CLI --due Today functionality', () => {
       if (fs.existsSync('todos.json')) {
         fs.unlinkSync('todos.json');
       }
-    } catch (error) {
+    } catch {
       // Ignore cleanup errors
     }
   });
@@ -402,7 +402,7 @@ describe('CLI duplicate guard functionality', () => {
       if (fs.existsSync('todos.json')) {
         fs.unlinkSync('todos.json');
       }
-    } catch (error) {
+    } catch {
       // Ignore cleanup errors
     }
   });
@@ -414,7 +414,7 @@ describe('CLI duplicate guard functionality', () => {
       if (fs.existsSync('todos.json')) {
         fs.unlinkSync('todos.json');
       }
-    } catch (error) {
+    } catch {
       // Ignore cleanup errors
     }
   });

@@ -72,7 +72,7 @@ describe('formatStopwatchData - Golden File Tests', () => {
 
     it('matches normal running state golden file', () => {
         const stopwatch = createStopwatch();
-        const started = startStopwatch(stopwatch);
+        const _started = startStopwatch(stopwatch);
         // Simulate some elapsed time (32 seconds)
         const status = {
             isRunning: true,
@@ -86,7 +86,7 @@ describe('formatStopwatchData - Golden File Tests', () => {
     });
 
     it('matches stopped state golden file', () => {
-        const stopwatch = createStopwatch();
+        const _stopwatch = createStopwatch();
         const status = {
             isRunning: false,
             elapsedTime: 48000,
