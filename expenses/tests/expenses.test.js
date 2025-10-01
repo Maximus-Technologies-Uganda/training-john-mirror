@@ -47,7 +47,7 @@ describe('summarizeExpenses function', () => {
 // Helper function to run CLI commands
 function runCLI(args) {
   return new Promise((resolve) => {
-    const child = spawn('node', [path.join(process.cwd(), 'src/expenses-core.js'), ...args], {
+    const child = spawn('node', [path.join(process.cwd(), 'expenses/src/expenses-core.js'), ...args], {
       stdio: ['pipe', 'pipe', 'pipe']
     });
     

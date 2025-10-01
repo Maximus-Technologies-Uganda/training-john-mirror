@@ -1,9 +1,19 @@
-module.exports = {
+export default {
   testEnvironment: 'node',
   collectCoverage: true,
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov', 'html'],
+  collectCoverageFrom: [
+    'src/**/*.js',
+    '!src/**/*.test.js',
+    '!src/**/index.js'
+  ],
+  coverageReporters: ['text', 'lcov', 'html', 'json', 'text-summary'],
   testMatch: ['**/tests/**/*.test.js'],
   moduleFileExtensions: ['js', 'json'],
-  transform: {}
+  transform: {},
+  globals: {
+    'ts-jest': {
+      useESM: true
+    }
+  }
 };

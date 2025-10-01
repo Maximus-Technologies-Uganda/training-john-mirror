@@ -54,7 +54,7 @@ export function listTasks(tasks) {
 // Date utility functions for testing and CLI
 export function getEndOfToday() {
   const now = new Date();
-  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+  const endOfDay = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999);
   return endOfDay;
 }
 
