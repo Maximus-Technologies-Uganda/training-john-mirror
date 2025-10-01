@@ -1,5 +1,7 @@
-import { describe, it, expect } from 'vitest';
-import { addTask, markTaskDone, removeTask, listTasks } from '../src/todo-core.js';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { addTask, markTaskDone, removeTask, listTasks, getEndOfToday, isDuplicateTask } from '../src/todo-core.js';
+import { spawn } from 'child_process';
+import path from 'path';
 
 describe('addTask function', () => {
   it('should add a new task to an empty list', () => {
@@ -190,5 +192,276 @@ describe('listTasks function', () => {
 
     expect(tasks).toHaveLength(originalLength);
     expect(tasks[0].text).toBe('First task');
+  });
+});
+
+describe('addTask function with due dates', () => {
+  it('should add a task with a due date', () => {
+    const initialTasks = [];
+    const taskName = 'Buy groceries';
+    const dueDate = new Date('2025-12-25T23:59:59.999Z');
+
+    const newTasks = addTask(initialTasks, taskName, dueDate);
+
+    expect(newTasks).toHaveLength(1);
+    expect(newTasks[0].text).toBe(taskName);
+    expect(newTasks[0].dueDate).toEqual(dueDate);
+    expect(newTasks[0].done).toBe(false);
+  });
+
+  it('should add a task without a due date (null)', () => {
+    const initialTasks = [];
+    const taskName = 'Walk the dog';
+
+    const newTasks = addTask(initialTasks, taskName, null);
+
+    expect(newTasks).toHaveLength(1);
+    expect(newTasks[0].text).toBe(taskName);
+    expect(newTasks[0].dueDate).toBeNull();
+    expect(newTasks[0].done).toBe(false);
+  });
+
+  it('should add a task without specifying due date (defaults to null)', () => {
+    const initialTasks = [];
+    const taskName = 'Clean house';
+
+    const newTasks = addTask(initialTasks, taskName);
+
+    expect(newTasks).toHaveLength(1);
+    expect(newTasks[0].text).toBe(taskName);
+    expect(newTasks[0].dueDate).toBeNull();
+  });
+});
+
+describe('getEndOfToday function', () => {
+  beforeEach(() => {
+    // Mock the current date to a specific date for consistent testing
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2025-09-30T14:30:00.000Z')); // 2:30 PM UTC
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('should return end of current day', () => {
+    const endOfToday = getEndOfToday();
+    
+    // Should be 23:59:59.999 of the same day
+    expect(endOfToday.getFullYear()).toBe(2025);
+    expect(endOfToday.getMonth()).toBe(8); // September (0-indexed)
+    expect(endOfToday.getDate()).toBe(30);
+    expect(endOfToday.getHours()).toBe(23);
+    expect(endOfToday.getMinutes()).toBe(59);
+    expect(endOfToday.getSeconds()).toBe(59);
+    expect(endOfToday.getMilliseconds()).toBe(999);
+  });
+
+  it('should return different times for different days', () => {
+    const endOfToday = getEndOfToday();
+    
+    // Move to next day
+    vi.setSystemTime(new Date('2025-10-01T10:00:00.000Z'));
+    const endOfTomorrow = getEndOfToday();
+    
+    expect(endOfTomorrow.getDate()).toBe(1);
+    expect(endOfTomorrow.getMonth()).toBe(9); // October (0-indexed)
+    expect(endOfToday.getDate()).toBe(30);
+    expect(endOfToday.getMonth()).toBe(8); // September (0-indexed)
+  });
+});
+
+describe('isDuplicateTask function', () => {
+  const existingTasks = [
+    { id: 1, text: 'Buy groceries', done: false, dueDate: new Date('2025-09-30T23:59:59.999Z') },
+    { id: 2, text: 'Walk the dog', done: false, dueDate: null },
+    { id: 3, text: 'Clean house', done: true, dueDate: new Date('2025-10-01T23:59:59.999Z') }
+  ];
+
+  it('should detect exact duplicate (same text and due date)', () => {
+    const isDuplicate = isDuplicateTask(existingTasks, 'Buy groceries', new Date('2025-09-30T23:59:59.999Z'));
+    expect(isDuplicate).toBe(true);
+  });
+
+  it('should detect duplicate with null due dates', () => {
+    const isDuplicate = isDuplicateTask(existingTasks, 'Walk the dog', null);
+    expect(isDuplicate).toBe(true);
+  });
+
+  it('should not detect duplicate with different text', () => {
+    const isDuplicate = isDuplicateTask(existingTasks, 'Buy milk', new Date('2025-09-30T23:59:59.999Z'));
+    expect(isDuplicate).toBe(false);
+  });
+
+  it('should not detect duplicate with different due date', () => {
+    const isDuplicate = isDuplicateTask(existingTasks, 'Buy groceries', new Date('2025-10-01T23:59:59.999Z'));
+    expect(isDuplicate).toBe(false);
+  });
+
+  it('should not detect duplicate with null due date when task has due date', () => {
+    const isDuplicate = isDuplicateTask(existingTasks, 'Buy groceries', null);
+    expect(isDuplicate).toBe(false);
+  });
+
+  it('should detect duplicate with case-insensitive text', () => {
+    const isDuplicate = isDuplicateTask(existingTasks, 'buy groceries', new Date('2025-09-30T23:59:59.999Z'));
+    expect(isDuplicate).toBe(true);
+  });
+
+  it('should detect duplicate with different case', () => {
+    const isDuplicate = isDuplicateTask(existingTasks, 'WALK THE DOG', null);
+    expect(isDuplicate).toBe(true);
+  });
+
+  it('should not detect duplicate in empty list', () => {
+    const isDuplicate = isDuplicateTask([], 'Any task', null);
+    expect(isDuplicate).toBe(false);
+  });
+});
+
+// Helper function to run CLI commands
+function runCLI(args) {
+  return new Promise((resolve) => {
+    const child = spawn('node', [path.join(process.cwd(), 'src/todo-core.js'), ...args], {
+      stdio: ['pipe', 'pipe', 'pipe']
+    });
+    
+    let stdout = '';
+    let stderr = '';
+    
+    child.stdout.on('data', (data) => {
+      stdout += data.toString();
+    });
+    
+    child.stderr.on('data', (data) => {
+      stderr += data.toString();
+    });
+    
+    child.on('close', (code) => {
+      resolve({
+        exitCode: code,
+        stdout: stdout.trim(),
+        stderr: stderr.trim()
+      });
+    });
+  });
+}
+
+describe('CLI --due Today functionality', () => {
+  beforeEach(() => {
+    // Mock the current date for consistent testing
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2025-09-30T14:30:00.000Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    // Clean up any test data files
+    try {
+      const fs = require('fs');
+      if (fs.existsSync('todos.json')) {
+        fs.unlinkSync('todos.json');
+      }
+    } catch (error) {
+      // Ignore cleanup errors
+    }
+  });
+
+  it('should add task with --due Today flag', async () => {
+    const result = await runCLI(['add', 'Test task', '--due', 'Today']);
+    
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('Added task: "Test task" (due: 30/09/2025)');
+  });
+
+  it('should add task without due date', async () => {
+    const result = await runCLI(['add', 'Test task']);
+    
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('Added task: "Test task"');
+    expect(result.stdout).not.toContain('due:');
+  });
+
+  it('should show tasks with due dates in list', async () => {
+    // Add a task with due date
+    await runCLI(['add', 'Task with due date', '--due', 'Today']);
+    
+    const result = await runCLI(['list']);
+    
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('Task with due date');
+    expect(result.stdout).toContain('due: 30/09/2025');
+  });
+});
+
+describe('CLI duplicate guard functionality', () => {
+  beforeEach(() => {
+    // Clean up any test data files
+    try {
+      const fs = require('fs');
+      if (fs.existsSync('todos.json')) {
+        fs.unlinkSync('todos.json');
+      }
+    } catch (error) {
+      // Ignore cleanup errors
+    }
+  });
+
+  afterEach(() => {
+    // Clean up any test data files
+    try {
+      const fs = require('fs');
+      if (fs.existsSync('todos.json')) {
+        fs.unlinkSync('todos.json');
+      }
+    } catch (error) {
+      // Ignore cleanup errors
+    }
+  });
+
+  it('should prevent adding exact duplicate task', async () => {
+    // Add first task
+    await runCLI(['add', 'Test task']);
+    
+    // Try to add same task again
+    const result = await runCLI(['add', 'Test task']);
+    
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('⚠️  Task already exists: "Test task"');
+    expect(result.stdout).toContain('No duplicate task was added.');
+  });
+
+  it('should prevent adding duplicate with case-insensitive text', async () => {
+    // Add first task
+    await runCLI(['add', 'Test task']);
+    
+    // Try to add same task with different case
+    const result = await runCLI(['add', 'test task']);
+    
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('⚠️  Task already exists: "test task"');
+  });
+
+  it('should allow adding task with different due date', async () => {
+    // Add task without due date
+    await runCLI(['add', 'Test task']);
+    
+    // Add same task with due date (should be allowed)
+    const result = await runCLI(['add', 'Test task', '--due', 'Today']);
+    
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('Added task: "Test task" (due:');
+    expect(result.stdout).not.toContain('Task already exists');
+  });
+
+  it('should prevent adding duplicate with same due date', async () => {
+    // Add task with due date
+    await runCLI(['add', 'Test task', '--due', 'Today']);
+    
+    // Try to add same task with same due date
+    const result = await runCLI(['add', 'Test task', '--due', 'Today']);
+    
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('⚠️  Task already exists: "Test task" (due:');
   });
 });

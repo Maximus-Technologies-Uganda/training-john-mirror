@@ -1,0 +1,2 @@
+Stopwatch is not running
+Total elapsed time: 48s

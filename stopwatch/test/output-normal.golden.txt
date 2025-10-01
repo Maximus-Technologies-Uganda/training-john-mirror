@@ -1,0 +1,2 @@
+Stopwatch is running
+Elapsed time: 32s
