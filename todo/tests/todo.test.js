@@ -490,7 +490,7 @@ describe('CLI high priority behavior', () => {
     try {
       const fs = require('fs');
       if (fs.existsSync('todos.json')) fs.unlinkSync('todos.json');
-    } catch {}
+    } catch (e) { void e; }
   });
 
   it('should mark task as high priority when --highPriority is set', async () => {

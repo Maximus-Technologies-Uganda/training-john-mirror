@@ -28,7 +28,7 @@ export function loadQuotes(sourcePath) {
     return parsed
       .filter(q => q && typeof q.author === 'string' && typeof q.quote === 'string')
       .map(q => ({ author: q.author, quote: q.quote }));
-  } catch (_err) {
+  } catch {
     return [];
   }
 }
