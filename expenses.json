@@ -158,5 +158,45 @@
     "category": "Food",
     "amount": 15,
     "date": "2025-10-01T11:31:03.186Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-10-01T11:46:13.653Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-10-01T11:46:17.020Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-10-01T11:46:18.395Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-10-01T11:46:19.372Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-10-01T11:47:20.934Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-10-01T11:47:24.493Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-10-01T11:47:25.334Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-10-01T11:47:26.236Z"
   }
 ]
