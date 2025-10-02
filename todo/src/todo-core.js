@@ -5,12 +5,13 @@
  * @param {Date|null} dueDate - Optional due date for the task.
  * @returns {Array<Object>} A new array with the new task added.
  */
-export function addTask(tasks, taskName, dueDate = null) {
+export function addTask(tasks, taskName, dueDate = null, priority = 'normal') {
   const newTask = {
     id: tasks.length + 1, // Simple ID generation
     text: taskName,
     done: false,
-    dueDate
+    dueDate,
+    priority
   };
   return [...tasks, newTask];
 }
@@ -54,7 +55,8 @@ export function listTasks(tasks) {
 // Date utility functions for testing and CLI
 export function getEndOfToday() {
   const now = new Date();
-  const endOfDay = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999);
+  // Use LOCAL date parts so end-of-day aligns with the user's local timezone
+  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
   return endOfDay;
 }
 
@@ -154,11 +156,23 @@ function main() {
       description: 'Set due date (e.g., "Today")',
       default: null
     })
+    .option('dueToday', {
+      type: 'boolean',
+      description: 'Convenience flag to set due date to end of today (local)',
+      default: false
+    })
+    .option('highPriority', {
+      type: 'boolean',
+      description: 'Mark the task as high priority',
+      default: false
+    })
     .help('h')
     .alias('h', 'help')
     .version()
     .example('$0 add "Buy groceries"', 'Add a new task')
     .example('$0 add "Buy groceries" --due Today', 'Add a task due today')
+    .example('$0 add "Buy groceries" --dueToday', 'Add a task due today (local end-of-day)')
+    .example('$0 add "Pay bills" --highPriority', 'Add a high priority task')
     .example('$0 done 1', 'Mark task 1 as done')
     .example('$0 list', 'List all tasks')
     .demandCommand(1, 'You need to specify a command')
@@ -171,9 +185,12 @@ function main() {
     case 'add':
       const taskText = argv.task;
       let dueDate = null;
+      const priority = argv.highPriority ? 'high' : 'normal';
       
-      // Handle --due Today flag
-      if (argv.due === 'Today') {
+      // Handle --dueToday or --due Today flag
+      if (argv.dueToday === true) {
+        dueDate = getEndOfToday();
+      } else if (argv.due === 'Today') {
         dueDate = getEndOfToday();
       } else if (argv.due) {
         console.error('Error: Only "Today" is supported for --due flag');
@@ -188,13 +205,14 @@ function main() {
         break;
       }
       
-      const updatedTasks = addTask(tasks, taskText, dueDate);
+      const updatedTasks = addTask(tasks, taskText, dueDate, priority);
       saveTasks(updatedTasks);
       
+      const priorityInfo = priority === 'high' ? ' [HIGH]' : '';
       if (dueDate) {
-        console.log(`Added task: "${taskText}" (due: ${dueDate.toLocaleDateString()})`);
+        console.log(`Added task: "${taskText}"${priorityInfo} (due: ${dueDate.toLocaleDateString()})`);
       } else {
-        console.log(`Added task: "${taskText}"`);
+        console.log(`Added task: "${taskText}"${priorityInfo}`);
       }
       break;
       
@@ -217,10 +235,18 @@ function main() {
         console.log('No tasks found.');
       } else {
         console.log('\nTasks:');
-        tasks.forEach((task, index) => {
+        // Show high priority tasks first, then by id
+        const tasksForDisplay = [...tasks].sort((a, b) => {
+          const aPriority = a.priority === 'high' ? 1 : 0;
+          const bPriority = b.priority === 'high' ? 1 : 0;
+          if (aPriority !== bPriority) return bPriority - aPriority;
+          return a.id - b.id;
+        });
+        tasksForDisplay.forEach((task, index) => {
           const status = task.done ? '✓' : '○';
           const dueInfo = task.dueDate ? ` (due: ${task.dueDate.toLocaleDateString()})` : '';
-          console.log(`${index + 1}. ${status} ${task.text}${dueInfo}`);
+          const priorityInfo = task.priority === 'high' ? ' [HIGH]' : '';
+          console.log(`${index + 1}. ${status} ${task.text}${priorityInfo}${dueInfo}`);
         });
       }
       break;

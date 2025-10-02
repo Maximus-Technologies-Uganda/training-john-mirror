@@ -1,0 +1,17 @@
+{
+  "name": "quote",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node src/quote-cli.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0"
+  }
+}
+

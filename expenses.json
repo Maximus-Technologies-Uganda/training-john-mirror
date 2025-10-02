@@ -258,5 +258,111 @@
     "category": "Food",
     "amount": 15,
     "date": "2025-10-02T09:01:14.893Z"
+  },
+  {
+    "date": "2025-10-02T09:37:58.397Z"
+  },
+  {
+    "date": "2025-10-02T09:38:01.570Z"
+  },
+  {
+    "date": "2025-10-02T09:38:33.054Z"
+  },
+  {
+    "date": "2025-10-02T09:41:21.357Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-10-02T09:41:28.563Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-10-02T09:41:31.981Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-10-02T09:41:33.065Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-10-02T09:41:34.242Z"
+  },
+  {
+    "date": "2025-10-02T09:42:58.870Z"
+  },
+  {
+    "date": "2025-10-02T09:43:44.460Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-10-02T09:44:18.300Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-10-02T09:44:22.956Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-10-02T09:44:23.967Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-10-02T09:44:25.125Z"
+  },
+  {
+    "date": "2025-10-02T09:44:34.356Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-10-02T11:00:15.780Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-10-02T11:00:19.387Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-10-02T11:00:19.997Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-10-02T11:00:20.663Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-10-02T11:01:08.140Z"
+  },
+  {
+    "category": "Food",
+    "amount": 10,
+    "date": "2025-10-02T11:01:11.549Z"
+  },
+  {
+    "category": "Transport",
+    "amount": 5,
+    "date": "2025-10-02T11:01:12.039Z"
+  },
+  {
+    "category": "Food",
+    "amount": 15,
+    "date": "2025-10-02T11:01:12.420Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-10-02T11:04:39.747Z"
   }
 ]

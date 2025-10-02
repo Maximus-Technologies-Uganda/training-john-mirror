@@ -140,7 +140,7 @@ function main() {
       } else {
         console.log('\nExpense Summary:');
       }
-      
+      console.log(`Added expense: ${category} - $${amount.toFixed(2)}`);
       console.log(`Total: $${summary.total.toFixed(2)}`);
       console.log('\nBy Category:');
       Object.entries(summary.byCategory).forEach(([category, amount]) => {
