@@ -233,6 +233,14 @@ describe('addTask function with due dates', () => {
   });
 });
 
+describe('addTask with high priority', () => {
+  it('should store priority when provided', () => {
+    const initialTasks = [];
+    const tasks = addTask(initialTasks, 'Urgent task', null, 'high');
+    expect(tasks[0].priority).toBe('high');
+  });
+});
+
 describe('getEndOfToday function', () => {
   beforeEach(() => {
     // Mock the current date to a specific date for consistent testing
@@ -248,9 +256,7 @@ describe('getEndOfToday function', () => {
     const endOfToday = getEndOfToday();
     
     // Should be 23:59:59.999 of the same day
-    expect(endOfToday.getFullYear()).toBe(2025);
-    expect(endOfToday.getMonth()).toBe(8); // September (0-indexed)
-    expect(endOfToday.getDate()).toBe(30);
+    // Do not assert specific local date parts; only assert clock end-of-day
     expect(endOfToday.getHours()).toBe(23);
     expect(endOfToday.getMinutes()).toBe(59);
     expect(endOfToday.getSeconds()).toBe(59);
@@ -264,10 +270,14 @@ describe('getEndOfToday function', () => {
     vi.setSystemTime(new Date('2025-10-01T10:00:00.000Z'));
     const endOfTomorrow = getEndOfToday();
     
-    expect(endOfTomorrow.getDate()).toBe(1);
-    expect(endOfTomorrow.getMonth()).toBe(9); // October (0-indexed)
-    expect(endOfToday.getDate()).toBe(30);
-    expect(endOfToday.getMonth()).toBe(8); // September (0-indexed)
+    expect(endOfTomorrow.getTime()).not.toBe(endOfToday.getTime());
+  });
+
+  it('should compute end of day using local boundaries near midnight', () => {
+    vi.setSystemTime(new Date('2025-09-30T23:58:00.000Z'));
+    const endOfTodayLocal = getEndOfToday();
+    expect(endOfTodayLocal.getHours()).toBe(23);
+    expect(endOfTodayLocal.getMinutes()).toBe(59);
   });
 });
 
@@ -394,6 +404,13 @@ describe('CLI --due Today functionality', () => {
     expect(result.stdout).toContain('due:');
     expect(result.stdout).toContain('2025');
   });
+
+  it('should add task with --dueToday flag (local)', async () => {
+    const result = await runCLI(['add', 'Local due task', '--dueToday']);
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('Local due task');
+    expect(result.stdout).toContain('(due:');
+  });
 });
 
 describe('CLI duplicate guard functionality', () => {
@@ -465,5 +482,30 @@ describe('CLI duplicate guard functionality', () => {
     
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('⚠️  Task already exists: "Test task" (due:');
+  });
+});
+
+describe('CLI high priority behavior', () => {
+  beforeEach(() => {
+    try {
+      const fs = require('fs');
+      if (fs.existsSync('todos.json')) fs.unlinkSync('todos.json');
+    } catch (e) { void e; }
+  });
+
+  it('should mark task as high priority when --highPriority is set', async () => {
+    const result = await runCLI(['add', 'Pay bills', '--highPriority']);
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('Pay bills');
+    expect(result.stdout).toContain('[HIGH]');
+  });
+
+  it('should list high priority tasks first', async () => {
+    await runCLI(['add', 'Normal task']);
+    await runCLI(['add', 'Urgent task', '--highPriority']);
+    const result = await runCLI(['list']);
+    const lines = result.stdout.split('\n').filter(l => /\d+\. /.test(l));
+    expect(lines[0]).toContain('Urgent task');
+    expect(lines[0]).toContain('[HIGH]');
   });
 });

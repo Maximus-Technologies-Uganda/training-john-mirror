@@ -6,10 +6,10 @@ A command-line interface for managing todo tasks with add and mark-as-done funct
 
 - ✅ **Add new tasks** with optional due dates
 - ✅ **Mark tasks as done** and remove completed tasks
-- ✅ **Due date management** with --due Today flag
+- ✅ **Due date management** with --due Today and --dueToday flags (local EOD)
 - ✅ **Duplicate prevention** - no duplicate tasks allowed
 - ✅ **Task persistence** - automatic saving to todos.json
-- ✅ **Smart task management** with priority and due date tracking
+- ✅ **Smart task management** with priority (e.g., [HIGH]) and due date tracking
 
 ## Installation
 
@@ -24,15 +24,15 @@ npm install
 ```bash
 # Add a new task
 node src/todo-core.js add "Buy groceries"
-# Output: Added task: "Buy groceries"
+# Output: "Buy groceries"
 
 # Mark a task as done
 node src/todo-core.js done 1
-# Output: Marked task 1 as done
+# Output: Marked task as done: "Buy groceries"
 
 # Remove a task
 node src/todo-core.js remove 1
-# Output: Removed task 1
+# Output: Removed task: "Buy groceries"
 
 # List all tasks
 node src/todo-core.js list
@@ -49,8 +49,8 @@ node src/todo-core.js list
 node src/todo-core.js add "Buy groceries" --due Today
 # Output: Added task: "Buy groceries" (due: 30/09/2025)
 
-# Add a task due today using short flag
-node src/todo-core.js add "Walk the dog" -d Today
+# Add a task due today using convenience flag (local end-of-day)
+node src/todo-core.js add "Walk the dog" --dueToday
 # Output: Added task: "Walk the dog" (due: 30/09/2025)
 
 # List tasks with due dates
@@ -86,6 +86,23 @@ node src/todo-core.js add "Buy groceries" --due Today
 # Output: Added task: "Buy groceries" (due: 30/09/2025)
 ```
 
+### Priority
+
+- Tasks can be marked as high priority and are displayed first in the list.
+- High priority tasks are annotated with `[HIGH]` in outputs.
+
+```bash
+# Add a high priority task
+node src/todo-core.js add "Pay bills" --highPriority
+# Output: Added task: "Pay bills" [HIGH]
+
+# Listing will show high priority first
+node src/todo-core.js list
+# Tasks:
+# 1. ○ Pay bills [HIGH]
+# 2. ○ Buy groceries
+```
+
 ### Help and Examples
 
 ```bash
@@ -102,6 +119,8 @@ node src/todo-core.js --help
 # 
 # Options:
 #   -d, --due      Set due date (e.g., "Today")           [string] [default: null]
+#       --dueToday Set due date to end of today (local)     [boolean]
+#       --highPriority  Mark task as high priority          [boolean]
 #   -h, --help     Show help                                             [boolean]
 #       --version  Show version number                                   [boolean]
 ```
@@ -128,17 +147,21 @@ node src/todo-core.js --help
 
 ### CLI Commands
 
-#### `add <task> [--due Today]`
+#### `add <task> [--due Today|--dueToday] [--highPriority]`
 Adds a new task with optional due date.
 
 **Parameters:**
 - `task` (string): Task description
 - `--due, -d` (string): Set due date (currently only "Today" supported)
+- `--dueToday` (boolean): Convenience flag to set due date to end of today (local timezone)
+- `--highPriority` (boolean): Mark the task as high priority
 
 **Examples:**
 ```bash
 node src/todo-core.js add "Buy groceries"
 node src/todo-core.js add "Buy groceries" --due Today
+node src/todo-core.js add "Buy groceries" --dueToday
+node src/todo-core.js add "Pay bills" --highPriority
 ```
 
 #### `done <id>`

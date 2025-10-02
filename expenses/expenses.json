@@ -543,5 +543,25 @@
     "category": "Food",
     "amount": 15,
     "date": "2025-09-30T11:54:20.407Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-10-02T10:06:25.973Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-10-02T10:42:24.865Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-10-02T10:47:43.790Z"
+  },
+  {
+    "category": "Food",
+    "amount": 25.5,
+    "date": "2025-10-02T10:56:27.230Z"
   }
 ]
