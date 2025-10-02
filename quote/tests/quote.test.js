@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { loadQuotes, getRandomQuote, filterQuotesByAuthor, formatQuote } from '../src/quote-core.js';
+import { run as runCli } from '../src/quote-cli.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -56,9 +57,28 @@ describe('quote-core', () => {
     expect(quotes).toEqual([]);
   });
 
+  it('handles empty source file ([]) gracefully', () => {
+    const emptyFixture = fixturePath('data/empty.json');
+    const quotes = loadQuotes(emptyFixture);
+    expect(Array.isArray(quotes)).toBe(true);
+    expect(quotes).toEqual([]);
+  });
+
   it('formats a quote correctly', () => {
     const str = formatQuote({ author: 'Yoda', quote: 'Do. Or do not. There is no try.' });
     expect(str).toBe('"Do. Or do not. There is no try." — Yoda');
+  });
+
+  it('filters by author (case-insensitive) for real data (oscar wilde)', () => {
+    const quotes = loadQuotes(fixturePath('data/quotes.json'));
+    const res = filterQuotesByAuthor(quotes, 'oscar wilde');
+    expect(res.length).toBeGreaterThan(0);
+    expect(res.every(q => (q.author || '').toLowerCase() === 'oscar wilde')).toBe(true);
+  });
+
+  it('CLI returns non-zero when author not found', () => {
+    const code = runCli(['node', 'quote', '--by', 'author-that-does-not-exist']);
+    expect(code).toBe(1);
   });
 });
 
