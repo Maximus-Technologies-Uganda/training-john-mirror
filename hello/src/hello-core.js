@@ -7,8 +7,8 @@ export function formatGreeting(name = "World", shout = false) {
 }
 
 // CLI interface
-function main() {
-  const argv = yargs(hideBin(process.argv))
+export function runCLI(argvInput = process.argv) {
+  const argv = yargs(hideBin(argvInput))
     .usage('Usage: $0 [options] [name]')
     .option('shout', {
       alias: 's',
@@ -30,8 +30,14 @@ function main() {
     .example('$0 -s Bob', 'Shout hello to Bob (short flag)')
     .argv;
 
-  const name = argv.name || 'World';
-  const shout = argv.shout || false;
+  const positionalName = Array.isArray(argv._) && typeof argv._[0] === 'string' && argv._[0].length > 0
+    ? argv._[0]
+    : undefined;
+
+  const flagName = typeof argv.name === 'string' && argv.name.length > 0 ? argv.name : undefined;
+
+  const name = positionalName ?? flagName ?? 'World';
+  const shout = argv.shout === true;
   
   const greeting = formatGreeting(name, shout);
   console.log(greeting);
@@ -39,5 +45,5 @@ function main() {
 
 // Run CLI if this file is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  main();
+  runCLI(process.argv);
 }

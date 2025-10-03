@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   testEnvironment: 'node',
   collectCoverage: true,
   coverageDirectory: 'coverage',
@@ -10,5 +10,7 @@ module.exports = {
   coverageReporters: ['text', 'lcov', 'html', 'json', 'text-summary'],
   testMatch: ['**/tests/**/*.test.js'],
   moduleFileExtensions: ['js', 'json'],
-  transform: {}
+  transform: {
+    '^.+\\.js$': 'babel-jest'
+  }
 };

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { formatGreeting } from '../src/hello-core.js';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { formatGreeting, runCLI } from '../src/hello-core.js';
 
 describe('formatGreeting', () => {
   it('defaults to World when no name is given', () => {
@@ -37,5 +37,54 @@ describe('formatGreeting', () => {
 
   it('handles shout with empty name', () => {
     expect(formatGreeting('', true)).toBe('HELLO, !');
+  });
+});
+
+describe('CLI', () => {
+  let logSpy;
+  let exitSpy;
+
+  const runWithArgs = (args) => {
+    try {
+      runCLI(['node', 'hello-core.js', ...args]);
+    } catch (error) {
+      return error;
+    }
+    return null;
+  };
+
+  beforeEach(() => {
+    logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    exitSpy = jest.spyOn(process, 'exit').mockImplementation((code) => {
+      throw new Error(`EXIT_${code ?? 0}`);
+    });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('prints default greeting with no name provided', () => {
+    expect(runWithArgs([])).toBeNull();
+    expect(logSpy).toHaveBeenCalledWith('Hello, World!');
+    expect(exitSpy).not.toHaveBeenCalled();
+  });
+
+  it('prints greeting with provided name flag', () => {
+    expect(runWithArgs(['--name', 'Alice'])).toBeNull();
+    expect(logSpy).toHaveBeenCalledWith('Hello, Alice!');
+    expect(exitSpy).not.toHaveBeenCalled();
+  });
+
+  it('prints greeting when positional name is supplied', () => {
+    expect(runWithArgs(['Charlie'])).toBeNull();
+    expect(logSpy).toHaveBeenCalledWith('Hello, Charlie!');
+    expect(exitSpy).not.toHaveBeenCalled();
+  });
+
+  it('shouts greeting when --shout flag is provided', () => {
+    expect(runWithArgs(['Dana', '--shout'])).toBeNull();
+    expect(logSpy).toHaveBeenCalledWith('HELLO, DANA!');
+    expect(exitSpy).not.toHaveBeenCalled();
   });
 });
