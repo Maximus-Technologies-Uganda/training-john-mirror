@@ -1,5 +1,19 @@
 # Changelog
+## [Week 2] - 2025-10-03
+### Added
+- Initial scaffolding for the `quote` CLI, including core logic, CLI wrapper, and a full test suite.
+- Table-driven tests and robust input validation for the `temp-converter` CLI.
+- Golden file tests for the `stopwatch` CLI after refactoring the output exporter.
+- New features for the `todo` CLI, including `--due Today`, `--highPriority`, and a duplicate guard, with corresponding tests.
 
+### Changed
+- Significantly increased test coverage for the `expense` CLI to >90% by testing all error paths.
+- Improved error messages and output formatting across all applications as part of capstone improvements.
+- Ensured all application `README.md` files are accurate and match real command outputs.
+
+### Project
+- Configured CI Quality Gate to collect and report test coverage for all applications on pull requests.
+- Added a `.gitattributes` file for consistent line endings across the repository.
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),

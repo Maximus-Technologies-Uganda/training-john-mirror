@@ -1,5 +1,9 @@
 # Week 1 CLI Tools Collection
+## Test Coverage
 
+This project collects test coverage for all applications during the CI run. [cite_start]To view the detailed HTML coverage reports, please look for the **`review-packet`** artifact in the latest GitHub Actions run for your pull request. [cite: 58]
+
+[cite_start]Inside the unzipped artifact, open the `review-artifacts/index.html` file to view the main **Coverage Index**. [cite: 58, 70] [cite_start]This index provides links to the detailed report for each application. [cite: 58]
 A comprehensive collection of command-line tools built during the first week of development training. This project demonstrates fundamental programming concepts, CLI development, file system operations, state management, and Test-Driven Development (TDD).
 
 ## Branch Protection & Mirroring Setup
