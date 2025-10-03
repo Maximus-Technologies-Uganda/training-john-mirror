@@ -61,7 +61,7 @@ function main() {
         switch (command) {
             case 'start':
                 if (stopwatch.isRunning) {
-                    console.log('Stopwatch is already running');
+                    console.log('Stopwatch is already running. Use "status" to view elapsed time.');
                     return;
                 }
                 stopwatch = startStopwatch(stopwatch);
@@ -71,7 +71,7 @@ function main() {
 
             case 'stop':
                 if (!stopwatch.isRunning) {
-                    console.log('Stopwatch has not been started');
+                    console.log('Stopwatch has not been started. Use "start" to begin.');
                     return;
                 }
                 stopwatch = stopStopwatch(stopwatch);
@@ -86,7 +86,7 @@ function main() {
 
             case 'lap':
                 if (!stopwatch.isRunning) {
-                    console.log('Stopwatch has not been started');
+                    console.log('Stopwatch has not been started. Use "start" to begin.');
                     return;
                 }
                 const elapsed = getElapsedTime(stopwatch);
