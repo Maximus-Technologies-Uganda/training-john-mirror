@@ -125,7 +125,7 @@ function saveTasks(tasks) {
 }
 
 // CLI interface
-function main() {
+export function main() {
   const argv = yargs(hideBin(process.argv))
     .usage('Usage: $0 <command> [options]')
     .command('add <task>', 'Add a new task', (yargs) => {

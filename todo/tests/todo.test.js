@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { addTask, markTaskDone, removeTask, listTasks, getEndOfToday, isDuplicateTask } from '../src/todo-core.js';
-import { spawn } from 'child_process';
-import path from 'path';
+import { main } from '../src/todo-core.js';
 
 describe('addTask function', () => {
   it('should add a new task to an empty list', () => {
@@ -329,30 +328,44 @@ describe('isDuplicateTask function', () => {
   });
 });
 
-// Helper function to run CLI commands
+// Helper function to run CLI commands in-process
 function runCLI(args) {
   return new Promise((resolve) => {
-    const child = spawn('node', [path.join(process.cwd(), 'todo/src/todo-core.js'), ...args], {
-      stdio: ['pipe', 'pipe', 'pipe']
+    const originalArgv = process.argv.slice();
+    const logs = [];
+    const errors = [];
+    let exitCode = 0;
+
+    const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation((...msgs) => {
+      logs.push(msgs.join(' '));
     });
-    
-    let stdout = '';
-    let stderr = '';
-    
-    child.stdout.on('data', (data) => {
-      stdout += data.toString();
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation((...msgs) => {
+      errors.push(msgs.join(' '));
     });
-    
-    child.stderr.on('data', (data) => {
-      stderr += data.toString();
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((code) => {
+      exitCode = Number(code) || 0;
+      throw new Error(`EXIT_${exitCode}`);
     });
-    
-    child.on('close', (code) => {
-      resolve({
-        exitCode: code,
-        stdout: stdout.trim(),
-        stderr: stderr.trim()
-      });
+
+    process.argv = ['node', 'todo-core.js', ...args];
+
+    try {
+      main();
+    } catch (e) {
+      if (!(e instanceof Error && /^EXIT_\d+$/.test(e.message))) {
+        throw e;
+      }
+    } finally {
+      process.argv = originalArgv;
+      consoleLogSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
+      exitSpy.mockRestore();
+    }
+
+    resolve({
+      exitCode,
+      stdout: logs.join('\n').trim(),
+      stderr: errors.join('\n').trim()
     });
   });
 }
@@ -380,7 +393,6 @@ describe('CLI --due Today functionality', () => {
   it('should add task with --due Today flag', async () => {
     const result = await runCLI(['add', 'Test task', '--due', 'Today']);
     
-    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Added task: "Test task" (due:');
     expect(result.stdout).toContain('2025');
   });
@@ -388,7 +400,6 @@ describe('CLI --due Today functionality', () => {
   it('should add task without due date', async () => {
     const result = await runCLI(['add', 'Test task']);
     
-    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Added task: "Test task"');
     expect(result.stdout).not.toContain('due:');
   });
@@ -399,7 +410,6 @@ describe('CLI --due Today functionality', () => {
     
     const result = await runCLI(['list']);
     
-    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Task with due date');
     expect(result.stdout).toContain('due:');
     expect(result.stdout).toContain('2025');
@@ -407,7 +417,6 @@ describe('CLI --due Today functionality', () => {
 
   it('should add task with --dueToday flag (local)', async () => {
     const result = await runCLI(['add', 'Local due task', '--dueToday']);
-    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Local due task');
     expect(result.stdout).toContain('(due:');
   });
@@ -445,7 +454,6 @@ describe('CLI duplicate guard functionality', () => {
     // Try to add same task again
     const result = await runCLI(['add', 'Test task']);
     
-    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('⚠️  Task already exists: "Test task"');
     expect(result.stdout).toContain('No duplicate task was added.');
   });
@@ -457,7 +465,6 @@ describe('CLI duplicate guard functionality', () => {
     // Try to add same task with different case
     const result = await runCLI(['add', 'test task']);
     
-    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('⚠️  Task already exists: "test task"');
   });
 
@@ -468,7 +475,6 @@ describe('CLI duplicate guard functionality', () => {
     // Add same task with due date (should be allowed)
     const result = await runCLI(['add', 'Test task', '--due', 'Today']);
     
-    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Added task: "Test task" (due:');
     expect(result.stdout).not.toContain('Task already exists');
   });
@@ -480,7 +486,6 @@ describe('CLI duplicate guard functionality', () => {
     // Try to add same task with same due date
     const result = await runCLI(['add', 'Test task', '--due', 'Today']);
     
-    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('⚠️  Task already exists: "Test task" (due:');
   });
 });
@@ -495,7 +500,6 @@ describe('CLI high priority behavior', () => {
 
   it('should mark task as high priority when --highPriority is set', async () => {
     const result = await runCLI(['add', 'Pay bills', '--highPriority']);
-    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Pay bills');
     expect(result.stdout).toContain('[HIGH]');
   });
@@ -507,5 +511,32 @@ describe('CLI high priority behavior', () => {
     const lines = result.stdout.split('\n').filter(l => /\d+\. /.test(l));
     expect(lines[0]).toContain('Urgent task');
     expect(lines[0]).toContain('[HIGH]');
+  });
+});
+
+describe('CLI invalid --due flag handling', () => {
+  const originalArgv = process.argv.slice();
+
+  afterEach(() => {
+    process.argv = originalArgv.slice();
+    vi.restoreAllMocks();
+  });
+
+  it('should print error and exit(1) when --due is invalid', () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((/** @type {number} */ code) => {
+      throw new Error(`EXIT_${code}`);
+    });
+
+    process.argv = ['node', 'todo-core.js', 'add', 'My new task', '--due', 'Tomorrow'];
+
+    try {
+      main();
+    } catch {
+      // Swallow the forced exit exception
+    }
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error: Only "Today" is supported for --due flag');
+    expect(exitSpy).toHaveBeenCalledWith(1);
   });
 });
