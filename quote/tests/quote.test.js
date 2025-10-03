@@ -80,6 +80,24 @@ describe('quote-core', () => {
     const code = runCli(['node', 'quote', '--by', 'author-that-does-not-exist']);
     expect(code).toBe(1);
   });
+
+  it('CLI prints count header when filtering by author', () => {
+    // Hijack console.log to capture output
+    const originalLog = console.log;
+    const lines = [];
+    console.log = (msg) => { lines.push(String(msg)); };
+    try {
+      const code = runCli(['node', 'quote', '--by', 'oscar wilde']);
+      expect(code).toBe(0);
+      expect(lines[0].toLowerCase()).toContain('found');
+      expect(lines[0].toLowerCase()).toContain('quote');
+      expect(lines[0].toLowerCase()).toContain('oscar wilde');
+      // Then at least one formatted quote line should follow
+      expect(lines.slice(1).some(l => l.includes('—'))).toBe(true);
+    } finally {
+      console.log = originalLog;
+    }
+  });
 });
 
 

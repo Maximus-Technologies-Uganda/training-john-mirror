@@ -28,6 +28,7 @@ export function run(argv = process.argv) {
       console.log(`No quotes found for author: ${args.by}`);
       return 1;
     }
+    console.log(`Found ${filtered.length} quote${filtered.length === 1 ? '' : 's'} by ${args.by}`);
     for (const q of filtered) {
       console.log(formatQuote(q));
     }

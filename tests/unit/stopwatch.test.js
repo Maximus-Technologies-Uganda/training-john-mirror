@@ -127,17 +127,17 @@ describe('Stopwatch CLI', () => {
       
       // Try to start again
       const output = execSync('node src/stopwatch.js start', { stdio: 'pipe' }).toString().trim();
-      expect(output).toContain('Stopwatch is already running');
+      expect(output).toContain('Stopwatch is already running. Use "status" to view elapsed time.');
     });
 
     it('should prevent stopping a non-running stopwatch', () => {
       const output = execSync('node src/stopwatch.js stop', { stdio: 'pipe' }).toString().trim();
-      expect(output).toContain('Stopwatch has not been started');
+      expect(output).toContain('Stopwatch has not been started. Use "start" to begin.');
     });
 
     it('should prevent lap on non-running stopwatch', () => {
       const output = execSync('node src/stopwatch.js lap', { stdio: 'pipe' }).toString().trim();
-      expect(output).toContain('Stopwatch has not been started');
+      expect(output).toContain('Stopwatch has not been started. Use "start" to begin.');
     });
 
     it('should prevent double stop', () => {
