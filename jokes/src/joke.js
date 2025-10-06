@@ -1,32 +1,43 @@
-const axios = require('axios');
-const yargs = require('yargs/yargs');
-const { hideBin } = require('yargs/helpers');
-const argv = yargs(hideBin(process.argv)).argv;
+import axios from 'axios';
+import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
 
-// The base URL for the API
-const baseUrl = 'https://v2.jokeapi.dev/joke/';
+const BASE_URL = 'https://v2.jokeapi.dev/joke/';
 
-// Get the category from the command line, or default to 'Any'
-const category = argv.category || 'Any';
-const jokeType = 'single'; // We only want single-part jokes
+/**
+ * Run the jokes CLI.
+ * @param {string[]} argv
+ * @param {{ get: (url: string) => Promise<{ data: { error?: boolean, joke?: string, message?: string } }> }} httpClient
+ * @param {(msg: string, ...args: any[]) => void} log
+ * @param {(msg: string, ...args: any[]) => void} error
+ * @returns {Promise<void>}
+ */
+export async function run(argv = process.argv, httpClient = axios, log = console.log, error = console.error) {
+  const parsed = yargs(hideBin(argv)).option('category', {
+    type: 'string',
+    describe: 'Joke category (e.g., Programming, Misc)'
+  }).parse();
 
-// Construct the final URL
-const apiUrl = `${baseUrl}${category}?type=${jokeType}`;
+  const category = parsed.category || 'Any';
+  const jokeType = 'single';
+  const apiUrl = `${BASE_URL}${category}?type=${jokeType}`;
 
-async function getJoke() {
+  log(`Fetching a joke from the '${category}' category...`);
   try {
-    console.log(`Fetching a joke from the '${category}' category...`);
-    const response = await axios.get(apiUrl);
-    
-    if (response.data.error) {
-      // The API sends an error field if the category is bad
-      console.error('Error: Could not find jokes for that category.');
-    } else {
-      console.log(`\n${response.data.joke}`);
+    const response = await httpClient.get(apiUrl);
+    if (response?.data?.error) {
+      error('Error: Could not find jokes for that category.');
+      return;
     }
-  } catch (error) {
-    console.error("Sorry, there was a problem connecting to the API.", error.message);
+    log(`\n${response?.data?.joke ?? ''}`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    error('Sorry, there was a problem connecting to the API.', message);
   }
 }
 
-getJoke();
+if (import.meta.url === `file://${process.argv[1]}`) {
+  run(process.argv).catch(() => {
+    process.exitCode = 1;
+  });
+}

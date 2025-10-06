@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { formatGreeting, runCLI } from '../src/hello-core.js';
 
 describe('formatGreeting', () => {
@@ -54,14 +54,14 @@ describe('CLI', () => {
   };
 
   beforeEach(() => {
-    logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    exitSpy = jest.spyOn(process, 'exit').mockImplementation((code) => {
+    logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    exitSpy = vi.spyOn(process, 'exit').mockImplementation((code) => {
       throw new Error(`EXIT_${code ?? 0}`);
     });
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('prints default greeting with no name provided', () => {

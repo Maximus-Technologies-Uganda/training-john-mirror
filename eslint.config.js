@@ -27,6 +27,8 @@ export default [
         it: 'readonly',
         test: 'readonly',
         expect: 'readonly',
+        jest: 'readonly',
+        setImmediate: 'readonly',
       },
     },
     rules: {

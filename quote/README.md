@@ -15,7 +15,9 @@ npm install
 ```
 
 ### Usage
-
+$ node src/quote-cli.js --by "Mark Twain"
+Found 1 quote by Mark Twain
+"The secret of getting ahead is getting started." — Mark Twain
 Get a random quote:
 
 ```bash
