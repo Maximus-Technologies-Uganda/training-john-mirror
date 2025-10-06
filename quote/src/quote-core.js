@@ -76,4 +76,41 @@ export function formatQuote(quoteObj) {
   return `"${text}" — ${author}`;
 }
 
+/**
+ * Determine which quote(s) to return based on options.
+ * This function performs no I/O and returns a descriptive result object.
+ *
+ * @param {{ quotes?: Array<{ author: string, quote: string }>, author?: string, rng?: () => number, formatter?: (quote: { author: string, quote: string }) => string }} [options]
+ * @returns {{ success: boolean, data: string }}
+ */
+export function getQuote(options = {}) {
+  const {
+    quotes = [],
+    author,
+    rng,
+    formatter = formatQuote
+  } = options || {};
+
+  if (!Array.isArray(quotes) || quotes.length === 0) {
+    return { success: false, data: 'No quotes available.' };
+  }
+
+  if (author && typeof author === 'string' && author.trim().length > 0) {
+    const filtered = filterQuotesByAuthor(quotes, author);
+    if (filtered.length === 0) {
+      return { success: false, data: `No quotes found for author: ${author}` };
+    }
+    const header = `Found ${filtered.length} quote${filtered.length === 1 ? '' : 's'} by ${author}`;
+    const formattedQuotes = filtered.map(formatter);
+    return { success: true, data: [header, ...formattedQuotes].join('\n') };
+  }
+
+  const random = getRandomQuote(quotes, rng);
+  if (!random) {
+    return { success: false, data: 'No quotes available.' };
+  }
+
+  return { success: true, data: formatter(random) };
+}
+
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { loadQuotes, getRandomQuote, filterQuotesByAuthor, formatQuote } from '../src/quote-core.js';
+import { loadQuotes, getRandomQuote, filterQuotesByAuthor, formatQuote, getQuote } from '../src/quote-core.js';
 import { run as runCli } from '../src/quote-cli.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -76,6 +76,41 @@ describe('quote-core', () => {
     expect(res.every(q => (q.author || '').toLowerCase() === 'oscar wilde')).toBe(true);
   });
 
+  it('getQuote returns formatted random quote when no author provided', () => {
+    const quotes = [
+      { author: 'Ada Lovelace', quote: 'The Analytical Engine weaves algebraic patterns.' },
+      { author: 'Grace Hopper', quote: 'It is easier to ask forgiveness than it is to get permission.' }
+    ];
+    const result = getQuote({ quotes, rng: () => 0.6 });
+    expect(result).toEqual({
+      success: true,
+      data: '"It is easier to ask forgiveness than it is to get permission." — Grace Hopper'
+    });
+  });
+
+  it('getQuote returns header and quotes when author provided', () => {
+    const quotes = [
+      { author: 'Alan Turing', quote: 'We can only see a short distance ahead.' },
+      { author: 'alan turing', quote: 'Those who can imagine anything, can create the impossible.' }
+    ];
+    const result = getQuote({ quotes, author: 'Alan Turing' });
+    expect(result.success).toBe(true);
+    const lines = result.data.split('\n');
+    expect(lines[0]).toContain('Found 2 quotes by Alan Turing');
+    expect(lines.length).toBe(3);
+  });
+
+  it('getQuote returns failure when author not found', () => {
+    const quotes = [
+      { author: 'Someone', quote: 'Something' }
+    ];
+    const result = getQuote({ quotes, author: 'Nope' });
+    expect(result).toEqual({
+      success: false,
+      data: 'No quotes found for author: Nope'
+    });
+  });
+
   it('CLI returns non-zero when author not found', () => {
     const code = runCli(['node', 'quote', '--by', 'author-that-does-not-exist']);
     expect(code).toBe(1);
@@ -89,11 +124,12 @@ describe('quote-core', () => {
     try {
       const code = runCli(['node', 'quote', '--by', 'oscar wilde']);
       expect(code).toBe(0);
-      expect(lines[0].toLowerCase()).toContain('found');
-      expect(lines[0].toLowerCase()).toContain('quote');
-      expect(lines[0].toLowerCase()).toContain('oscar wilde');
+      const output = lines.join('\n');
+      expect(output.toLowerCase()).toContain('found');
+      expect(output.toLowerCase()).toContain('quote');
+      expect(output.toLowerCase()).toContain('oscar wilde');
       // Then at least one formatted quote line should follow
-      expect(lines.slice(1).some(l => l.includes('—'))).toBe(true);
+      expect(output.split('\n').slice(1).some(l => l.includes('—'))).toBe(true);
     } finally {
       console.log = originalLog;
     }

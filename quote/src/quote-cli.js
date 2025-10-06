@@ -1,6 +1,6 @@
 import yargs from 'yargs/yargs';
 import { hideBin } from 'yargs/helpers';
-import { loadQuotes, getRandomQuote, filterQuotesByAuthor, formatQuote } from './quote-core.js';
+import { loadQuotes, getQuote as getQuoteResult, formatQuote } from './quote-core.js';
 
 /**
  * Run the CLI. Returns an exit code. Does not call process.exit().
@@ -21,27 +21,14 @@ export function run(argv = process.argv) {
 
   const args = parser.parse();
   const quotes = loadQuotes();
+  const result = getQuoteResult({
+    quotes,
+    author: args.by,
+    formatter: formatQuote
+  });
 
-  if (args.by) {
-    const filtered = filterQuotesByAuthor(quotes, args.by);
-    if (filtered.length === 0) {
-      console.log(`No quotes found for author: ${args.by}`);
-      return 1;
-    }
-    console.log(`Found ${filtered.length} quote${filtered.length === 1 ? '' : 's'} by ${args.by}`);
-    for (const q of filtered) {
-      console.log(formatQuote(q));
-    }
-    return 0;
-  }
-
-  const random = getRandomQuote(quotes);
-  if (!random) {
-    console.log('No quotes available.');
-    return 1;
-  }
-  console.log(formatQuote(random));
-  return 0;
+  console.log(result.data);
+  return result.success ? 0 : 1;
 }
 
 // Execute if run directly
