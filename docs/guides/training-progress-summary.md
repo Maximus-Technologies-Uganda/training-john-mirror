@@ -188,9 +188,21 @@ node src/temp-converter.js --value 37.5 --from C --to F
 
 ### Code Quality
 - **Total Test Files:** 6
-- **Test Coverage:** Comprehensive across all modules
+- **Test Coverage:** Comprehensive across all modules *(see per-app coverage below)*
 - **ESLint Errors:** 0
 - **CI/CD Status:** ✅ All checks passing
+
+#### Per-application Coverage Snapshot *(2025-10-06)*
+- `src/` shared core: 95.47% statements / 94.31% branches
+- `expenses/src`: 70.62% statements / 61.53% branches
+- `hello/src`: 90.90% statements / 78.94% branches *(after 2025-10-06 update)*
+- `jokes/src`: 85.71% statements / 69.56% branches *(new CLI/core tests added 2025-10-02)*
+- `quote/src`: 78.33% statements / 53.84% branches
+- `stopwatch/src`: 82.31% statements / 93.75% branches
+- `temp-converter/src`: 100% statements / 100% branches *(2025-10-06 unit tests added)*
+- `todo/src`: 36.65% statements / 94.11% branches *(needs additional unit coverage)*
+
+> Next actions: lift low-coverage packages (hello already addressed; todo & temp-converter pending additional tests).
 
 ### Repository Health
 - **Branch Protection:** ✅ Enabled
@@ -255,3 +267,10 @@ node src/temp-converter.js --value 37.5 --from C --to F
 **Training Progress Status: ✅ Week 1 Complete**
 
 *This summary demonstrates comprehensive mastery of CLI development, testing practices, CI/CD workflows, and professional development standards achieved during Week 1 of training.*
+
+## Upcoming Refactor Roadmap (Draft)
+- **Hello CLI**: migrate from custom process.argv parsing to shared CLI util, add integration tests for help output.
+- **Todo CLI**: extract persistence adapter, introduce interface-based storage to simplify mocking.
+- **Temp Converter**: convert CLI parsing to yargs for consistency; move threshold constants to config file.
+- **Legacy joke CLI**: unify logging style with enhanced CLI, replace axios usage with shared http client wrapper.
+- **Cross-cutting**: adopt shared error formatting helper, add lint rule to forbid direct process.exit in modules (enforce via wrapper).

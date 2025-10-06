@@ -5,18 +5,27 @@
   "main": "src/temp-converter.js",
   "type": "module",
   "scripts": {
-    "test": "jest",
-    "test:ci": "jest --coverage --ci",
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
+    "test:ci": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --coverage --ci",
     "lint": "eslint .",
     "start": "node src/temp-converter.js"
   },
-  "keywords": ["cli", "temperature", "converter", "celsius", "fahrenheit"],
+  "keywords": [
+    "cli",
+    "temperature",
+    "converter",
+    "celsius",
+    "fahrenheit"
+  ],
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
     "yargs": "^18.0.0"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.28.3",
+    "@jest/globals": "^30.2.0",
+    "babel-jest": "^30.2.0",
     "eslint": "^9.36.0",
     "jest": "^29.7.0"
   },
