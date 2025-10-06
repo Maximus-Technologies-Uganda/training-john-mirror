@@ -1,43 +1,47 @@
-const path = require('path');
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
-jest.mock('axios', () => ({
-  get: jest.fn()
-}));
+vi.mock('axios', () => {
+  const get = vi.fn();
+  return {
+    __esModule: true,
+    default: { get },
+    get
+  };
+});
 
-jest.mock('yargs/yargs', () => {
-  const yargsMock = jest.fn(() => ({ argv: yargsMock.argv }));
+vi.mock('yargs/yargs', () => {
+  const yargsMock = vi.fn(() => ({ argv: yargsMock.argv }));
   yargsMock.argv = {};
   yargsMock.__setArgv = (nextArgv) => {
     yargsMock.argv = nextArgv;
   };
-  return yargsMock;
+  return {
+    __esModule: true,
+    default: Object.assign(yargsMock, { __setArgv: yargsMock.__setArgv })
+  };
 });
-jest.mock('yargs/helpers', () => ({ hideBin: jest.fn((args) => args) }));
 
-const axios = require('axios');
-const yargs = require('yargs/yargs');
-const jokesCore = require('../src/jokes-core.js');
+vi.mock('yargs/helpers', () => ({ hideBin: vi.fn((args) => args) }));
 
-const cliPath = path.join(__dirname, '../src/joke.js');
+const { default: axios } = await import('axios');
+const { default: yargs } = await import('yargs/yargs');
+const { run: runCli } = await import('../src/joke.js');
+const jokesCore = await import('../src/jokes-core.js');
 
-const flushPromises = () => new Promise((resolve) => setImmediate(resolve));
-
-const runCli = async (argvOverrides = {}) => {
-  yargs.__setArgv(argvOverrides);
-  jest.isolateModules(() => {
-    require(cliPath);
-  });
-  await flushPromises();
-};
+const createParsedYargs = (argv = {}) => ({
+  argv,
+  option: vi.fn().mockImplementation(() => createParsedYargs(argv)),
+  parse: vi.fn().mockImplementation(() => argv)
+});
 
 describe('jokes CLI', () => {
   let logSpy;
   let errorSpy;
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    vi.clearAllMocks();
+    logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -55,7 +59,8 @@ describe('jokes CLI', () => {
       }
     });
 
-    await runCli({ category: 'Programming' });
+    yargs.mockImplementation(() => createParsedYargs({ category: 'Programming' }));
+    await runCli(['node', 'joke.js']);
 
     expect(axios.get).toHaveBeenCalledWith('https://v2.jokeapi.dev/joke/Programming?type=single');
     expect(logSpy).toHaveBeenNthCalledWith(1, "Fetching a joke from the 'Programming' category...");
@@ -68,7 +73,8 @@ describe('jokes CLI', () => {
 
     axios.get.mockRejectedValue(new Error(errorMessage));
 
-    await runCli();
+    yargs.mockImplementation(() => createParsedYargs({}));
+    await runCli(['node', 'joke.js']);
 
     expect(axios.get).toHaveBeenCalledWith('https://v2.jokeapi.dev/joke/Any?type=single');
     expect(logSpy).toHaveBeenNthCalledWith(1, "Fetching a joke from the 'Any' category...");
@@ -83,7 +89,7 @@ describe('jokes-core API interactions', () => {
   const jokeApiBase = 'https://v2.jokeapi.dev/joke/';
 
   beforeEach(() => {
-    global.fetch = jest.fn();
+    global.fetch = vi.fn();
   });
 
   afterEach(() => {
@@ -98,7 +104,7 @@ describe('jokes-core API interactions', () => {
       joke: 'Some witty single line'
     };
 
-    const jsonMock = jest.fn().mockResolvedValue(mockJson);
+    const jsonMock = vi.fn().mockResolvedValue(mockJson);
     global.fetch.mockResolvedValue({ ok: true, status: 200, json: jsonMock });
 
     const result = await jokesCore.getJoke('Programming', 'single');
@@ -126,7 +132,7 @@ describe('jokes-core API interactions', () => {
     global.fetch.mockResolvedValue({
       ok: true,
       status: 200,
-      json: jest.fn().mockResolvedValue(mockJson)
+      json: vi.fn().mockResolvedValue(mockJson)
     });
 
     const result = await jokesCore.getJoke('Misc', 'twopart');
@@ -150,7 +156,7 @@ describe('jokes-core API interactions', () => {
     global.fetch.mockResolvedValue({
       ok: true,
       status: 200,
-      json: jest.fn().mockResolvedValue({ error: true, message: 'Bad stuff' })
+      json: vi.fn().mockResolvedValue({ error: true, message: 'Bad stuff' })
     });
 
     await expect(jokesCore.getJoke('Any', 'single')).rejects.toThrow('API Error: Bad stuff');
