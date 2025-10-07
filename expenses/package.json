@@ -2,13 +2,13 @@
   "name": "expenses-cli",
   "version": "1.0.0",
   "description": "A CLI tool for managing personal expenses",
-  "main": "src/expenses-core.js",
+  "main": "src/expense-cli.js",
   "type": "module",
   "scripts": {
     "test": "vitest",
     "test:ci": "vitest run --coverage",
     "lint": "eslint .",
-    "start": "node src/expenses-core.js"
+    "start": "node src/expense-cli.js"
   },
   "keywords": ["cli", "expenses", "finance", "budget"],
   "author": "Your Name",
@@ -22,6 +22,6 @@
     "@vitest/coverage-v8": "^1.6.1"
   },
   "bin": {
-    "expenses": "./src/expenses-core.js"
+    "expenses": "./src/expense-cli.js"
   }
 }
