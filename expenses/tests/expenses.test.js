@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 import { addExpense, summarizeExpenses, getExpenses } from '../src/expense-core.js';
 import { spawn } from 'child_process';
 import path from 'path';
+import fs from 'fs';
 
 describe('addExpense function', () => {
   it('should add an expense to the list', () => {
@@ -44,10 +45,26 @@ describe('summarizeExpenses function', () => {
   });
 });
 
+function resolveCliPath() {
+  const candidates = [
+    path.join(process.cwd(), 'expenses/src/expense-cli.js'),
+    path.join(process.cwd(), 'src/expense-cli.js')
+  ];
+
+  const matched = candidates.find((candidate) => fs.existsSync(candidate));
+
+  if (!matched) {
+    throw new Error('Unable to locate expense-cli.js');
+  }
+
+  return matched;
+}
+
 // Helper function to run CLI commands
 function runCLI(args) {
+  const cliPath = resolveCliPath();
   return new Promise((resolve) => {
-    const child = spawn('node', [path.join(process.cwd(), 'src/expense-cli.js'), ...args], {
+    const child = spawn('node', [cliPath, ...args], {
       stdio: ['pipe', 'pipe', 'pipe']
     });
     

@@ -1,10 +1,20 @@
 import { describe, it, expect, vi } from 'vitest';
 import path from 'path';
 import { pathToFileURL } from 'url';
+import fs from 'fs';
 
 describe('CLI month flag validation (invalid month)', () => {
   it('prints error and exits(1) when --month is 13', async () => {
-    const moduleFsPath = path.join(process.cwd(), 'src/expense-cli.js');
+    const candidates = [
+      path.join(process.cwd(), 'expenses/src/expense-cli.js'),
+      path.join(process.cwd(), 'src/expense-cli.js')
+    ];
+    const moduleFsPath = candidates.find((candidate) => fs.existsSync(candidate));
+
+    if (!moduleFsPath) {
+      throw new Error('Unable to locate expense-cli.js');
+    }
+
     const moduleFileUrl = pathToFileURL(moduleFsPath).href;
 
     const originalArgv = process.argv.slice();
