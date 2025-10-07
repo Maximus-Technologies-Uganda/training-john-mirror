@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { addExpense, summarizeExpenses } from '../src/expenses-core.js';
+import { addExpense, summarizeExpenses, getExpenses } from '../src/expense-core.js';
 import { spawn } from 'child_process';
 import path from 'path';
 
@@ -47,7 +47,7 @@ describe('summarizeExpenses function', () => {
 // Helper function to run CLI commands
 function runCLI(args) {
   return new Promise((resolve) => {
-    const child = spawn('node', [path.join(process.cwd(), 'expenses/src/expenses-core.js'), ...args], {
+    const child = spawn('node', [path.join(process.cwd(), 'src/expense-cli.js'), ...args], {
       stdio: ['pipe', 'pipe', 'pipe']
     });
     
@@ -143,31 +143,24 @@ describe('CLI --month validation', () => {
 describe('CLI commands functionality', () => {
   const commandTestCases = [
     {
-      name: 'should add expense successfully',
-      args: ['add', 'Food', '25.50'],
+      name: 'should show summary when no arguments provided',
+      args: [],
       expectedExitCode: 0,
-      expectedOutput: 'Added expense: Food - $25.5',
+      expectedOutput: 'Expense Summary:',
       shouldContain: true
     },
     {
-      name: 'should show help when no command provided',
-      args: [],
-      expectedExitCode: 1,
-      expectedOutput: 'You need to specify a command',
+      name: 'should show summary with category filter',
+      args: ['--category', 'Food'],
+      expectedExitCode: 0,
+      expectedOutput: 'Category: Food',
       shouldContain: true
     },
     {
       name: 'should show help with --help flag',
       args: ['--help'],
       expectedExitCode: 0,
-      expectedOutput: 'Usage: expenses-core.js <command> [options]',
-      shouldContain: true
-    },
-    {
-      name: 'should reject add command without required arguments',
-      args: ['add'],
-      expectedExitCode: 1,
-      expectedOutput: 'Not enough non-option arguments: got 0, need at least 2',
+      expectedOutput: 'Usage: expenses [options]',
       shouldContain: true
     }
   ];
@@ -190,41 +183,33 @@ describe('CLI commands functionality', () => {
 });
 
 describe('CLI filtering functionality', () => {
-  // Setup test data by adding some expenses first
-  beforeAll(async () => {
-    // Add test expenses for different months and categories
-    await runCLI(['add', 'Food', '10.00']);
-    await runCLI(['add', 'Transport', '5.00']);
-    await runCLI(['add', 'Food', '15.00']);
-  });
-
   const filteringTestCases = [
     {
       name: 'should show summary without filters',
-      args: ['summary'],
+      args: [],
       expectedExitCode: 0,
       expectedOutput: 'Expense Summary:',
       shouldContain: true
     },
     {
       name: 'should filter by valid month',
-      args: ['summary', '--month', '10'], // October (current month)
+      args: ['--month', '10'], // October (current month)
       expectedExitCode: 0,
       expectedOutput: 'Expense Summary for October:',
       shouldContain: true
     },
     {
       name: 'should show empty summary for different month',
-      args: ['summary', '--month', '1'], // January
+      args: ['--month', '1'], // January
       expectedExitCode: 0,
       expectedOutput: 'Total: $0.00',
       shouldContain: true
     },
     {
-      name: 'should list all expenses',
-      args: ['list'],
+      name: 'should filter by category only',
+      args: ['--category', 'Transport'],
       expectedExitCode: 0,
-      expectedOutput: 'All Expenses:',
+      expectedOutput: 'Category: Transport',
       shouldContain: true
     }
   ];
@@ -232,9 +217,9 @@ describe('CLI filtering functionality', () => {
   filteringTestCases.forEach(({ name, args, expectedExitCode, expectedOutput, shouldContain }) => {
     it(name, async () => {
       const result = await runCLI(args);
-      
+
       expect(result.exitCode).toBe(expectedExitCode);
-      
+
       if (shouldContain) {
         expect(result.stdout).toContain(expectedOutput);
       }

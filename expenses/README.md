@@ -20,65 +20,55 @@ npm install
 ### Basic Commands
 
 ```bash
-# Add a new expense
-node src/expenses-core.js add "Food" 25.50
-# Output: Added expense: Food - $25.5
-
 # View expense summary
-node src/expenses-core.js summary
-# Output:
-# Expense Summary:
-# Total: $25.50
-# By Category:
-#   Food: $25.50
-
-# List all expenses
-node src/expenses-core.js list
-# Output:
-# All Expenses:
-# 1. Food - $25.5 (10/30/2025)
-```
-
-### Filtering by Month
-
-```bash
-# Filter expenses by month (1-12)
-node src/expenses-core.js summary --month 10
+node src/expense-cli.js --month 10
 # Output:
 # Expense Summary for October:
 # Total: $25.50
 # By Category:
 #   Food: $25.50
 
-# Filter by month using short flag
-node src/expenses-core.js summary -m 3
+# View expense summary filtered by category
+node src/expense-cli.js --category Food
 # Output:
-# Expense Summary for March:
-# Total: $0.00
+# Expense Summary for category Food
+# Total: $25.50
 # By Category:
+#   Food: $25.50
+```
+
+### Filtering by Month
+
+```bash
+# Filter expenses by month (1-12)
+node src/expense-cli.js --month 10
+# Output:
+# Expense Summary for October
+# Total: $25.50
+
+# Filter by month using short flag
+node src/expense-cli.js -m 3
+# Output:
+# Expense Summary for March
+# Total: $0.00
 ```
 
 ### Error Handling
 
 ```bash
 # Invalid month (too high)
-node src/expenses-core.js summary --month 13
-# Output: Error: --month must be a number between 1 and 12
+node src/expense-cli.js --month 13
+# Output: Month must be an integer between 1 and 12.
 # Exit code: 1
 
 # Invalid month (too low)
-node src/expenses-core.js summary --month 0
-# Output: Error: --month must be a number between 1 and 12
+node src/expense-cli.js --month 0
+# Output: Month must be an integer between 1 and 12.
 # Exit code: 1
 
 # Invalid month (non-numeric)
-node src/expenses-core.js summary --month abc
-# Output: Error: --month must be a number between 1 and 12
-# Exit code: 1
-
-# Missing required arguments
-node src/expenses-core.js add
-# Output: [Help message with usage information]
+node src/expense-cli.js --month abc
+# Output: Month must be an integer between 1 and 12.
 # Exit code: 1
 ```
 
@@ -86,19 +76,13 @@ node src/expenses-core.js add
 
 ```bash
 # Show help
-node src/expenses-core.js --help
-# Output:
-# Usage: expenses-core.js <command> [options]
-# 
-# Commands:
-#   expenses-core.js add <category> <amount>  Add a new expense
-#   expenses-core.js summary                  Show expense summary
-#   expenses-core.js list                     List all expenses
-# 
+node src/expense-cli.js --help
+# Output includes:
 # Options:
-#   -m, --month    Filter by month (1-12)                 [number] [default: null]
-#   -h, --help     Show help                                             [boolean]
-#       --version  Show version number                                   [boolean]
+#   -m, --month     Filter expenses by month (1-12)        [number]
+#   -c, --category  Filter expenses by category            [string]
+#   -h, --help      Show help                              [boolean]
+#       --version   Show version number                    [boolean]
 ```
 
 ## Features
@@ -123,7 +107,7 @@ Adds a new expense to the expense tracker.
 
 **Example:**
 ```bash
-node src/expenses-core.js add "Food" 25.50
+node src/expense-cli.js add "Food" 25.50
 ```
 
 #### `summary [--month <1-12>]`
@@ -134,8 +118,8 @@ Shows expense summary with optional month filtering.
 
 **Examples:**
 ```bash
-node src/expenses-core.js summary
-node src/expenses-core.js summary --month 10
+node src/expense-cli.js summary
+node src/expense-cli.js --month 10
 ```
 
 #### `list`
@@ -176,15 +160,15 @@ The CLI includes robust input validation:
 node src/expenses-core.js summary --month 10
 
 # ❌ Invalid month (too high)
-node src/expenses-core.js summary --month 13
+node src/expense-cli.js --month 13
 # Error: --month must be a number between 1 and 12
 
 # ❌ Invalid month (too low)  
-node src/expenses-core.js summary --month 0
+node src/expense-cli.js --month 0
 # Error: --month must be a number between 1 and 12
 
 # ❌ Non-numeric month
-node src/expenses-core.js summary --month abc
+node src/expense-cli.js --month abc
 # Error: --month must be a number between 1 and 12
 ```
 

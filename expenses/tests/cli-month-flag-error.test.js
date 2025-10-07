@@ -4,7 +4,7 @@ import { pathToFileURL } from 'url';
 
 describe('CLI month flag validation (invalid month)', () => {
   it('prints error and exits(1) when --month is 13', async () => {
-    const moduleFsPath = path.join(process.cwd(), 'expenses/src/expenses-core.js');
+    const moduleFsPath = path.join(process.cwd(), 'src/expense-cli.js');
     const moduleFileUrl = pathToFileURL(moduleFsPath).href;
 
     const originalArgv = process.argv.slice();

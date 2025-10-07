@@ -3,7 +3,7 @@ const path = require('path');
 
 describe('expenses CLI --month validation (Jest)', () => {
   test('prints error for invalid month (13)', () => {
-    const cliPath = path.join(process.cwd(), 'expenses/src/expenses-core.js');
+    const cliPath = path.join(process.cwd(), 'src/expense-cli.js');
     const result = spawnSync('node', [cliPath, 'summary', '--month', '13'], {
       encoding: 'utf8'
     });
