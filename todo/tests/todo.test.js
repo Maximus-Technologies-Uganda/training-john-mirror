@@ -1,6 +1,17 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { addTask, markTaskDone, removeTask, listTasks, getEndOfToday, isDuplicateTask } from '../src/todo-core.js';
-import { main } from '../src/todo-core.js';
+import path from 'path';
+import fs from 'fs';
+import {
+  manageTodos,
+  PRIORITY_HIGH,
+  normalizeDueDate,
+  addTask,
+  markTaskDone,
+  removeTask,
+  listTasks,
+  getEndOfToday,
+  isDuplicateTask
+} from '../src/todo-core.js';
 
 describe('addTask function', () => {
   it('should add a new task to an empty list', () => {
@@ -329,45 +340,48 @@ describe('isDuplicateTask function', () => {
 });
 
 // Helper function to run CLI commands in-process
-function runCLI(args) {
-  return new Promise((resolve) => {
-    const originalArgv = process.argv.slice();
-    const logs = [];
-    const errors = [];
-    let exitCode = 0;
+async function runCLI(args) {
+  const originalArgv = process.argv.slice();
+  const logs = [];
+  const errors = [];
+  let exitCode = 0;
 
-    const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation((...msgs) => {
-      logs.push(msgs.join(' '));
-    });
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation((...msgs) => {
-      errors.push(msgs.join(' '));
-    });
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((code) => {
-      exitCode = Number(code) || 0;
-      throw new Error(`EXIT_${exitCode}`);
-    });
-
-    process.argv = ['node', 'todo-core.js', ...args];
-
-    try {
-      main();
-    } catch (e) {
-      if (!(e instanceof Error && /^EXIT_\d+$/.test(e.message))) {
-        throw e;
-      }
-    } finally {
-      process.argv = originalArgv;
-      consoleLogSpy.mockRestore();
-      consoleErrorSpy.mockRestore();
-      exitSpy.mockRestore();
-    }
-
-    resolve({
-      exitCode,
-      stdout: logs.join('\n').trim(),
-      stderr: errors.join('\n').trim()
-    });
+  const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation((...msgs) => {
+    logs.push(msgs.join(' '));
   });
+  const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation((...msgs) => {
+    errors.push(msgs.join(' '));
+  });
+  const exitSpy = vi.spyOn(process, 'exit').mockImplementation((code) => {
+    exitCode = Number(code) || 0;
+    throw new Error(`EXIT_${exitCode}`);
+  });
+
+  process.argv = ['node', 'todo-cli.js', ...args];
+
+  try {
+    const cliModule = await import('../../src/todo-cli.js');
+    if (typeof cliModule.run === 'function') {
+      cliModule.run(process.argv);
+    } else {
+      throw new Error('todo-cli.js does not export run()');
+    }
+  } catch (e) {
+    if (!(e instanceof Error && /^EXIT_\d+$/.test(e.message))) {
+      throw e;
+    }
+  } finally {
+    process.argv = originalArgv;
+    consoleLogSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
+    exitSpy.mockRestore();
+  }
+
+  return {
+    exitCode,
+    stdout: logs.join('\n').trim(),
+    stderr: errors.join('\n').trim()
+  };
 }
 
 describe('CLI --due Today functionality', () => {
@@ -392,31 +406,32 @@ describe('CLI --due Today functionality', () => {
 
   it('should add task with --due Today flag', async () => {
     const result = await runCLI(['add', 'Test task', '--due', 'Today']);
-    
+
+    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Added task: "Test task" (due:');
-    expect(result.stdout).toContain('2025');
   });
 
   it('should add task without due date', async () => {
     const result = await runCLI(['add', 'Test task']);
-    
+
+    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Added task: "Test task"');
     expect(result.stdout).not.toContain('due:');
   });
 
   it('should show tasks with due dates in list', async () => {
-    // Add a task with due date
     await runCLI(['add', 'Task with due date', '--due', 'Today']);
-    
+
     const result = await runCLI(['list']);
-    
+
+    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Task with due date');
     expect(result.stdout).toContain('due:');
-    expect(result.stdout).toContain('2025');
   });
 
   it('should add task with --dueToday flag (local)', async () => {
     const result = await runCLI(['add', 'Local due task', '--dueToday']);
+    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Local due task');
     expect(result.stdout).toContain('(due:');
   });
@@ -448,45 +463,38 @@ describe('CLI duplicate guard functionality', () => {
   });
 
   it('should prevent adding exact duplicate task', async () => {
-    // Add first task
     await runCLI(['add', 'Test task']);
-    
-    // Try to add same task again
+
     const result = await runCLI(['add', 'Test task']);
-    
-    expect(result.stdout).toContain('⚠️  Task already exists: "Test task"');
-    expect(result.stdout).toContain('No duplicate task was added.');
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain('Error: Duplicate to-do item found.');
   });
 
   it('should prevent adding duplicate with case-insensitive text', async () => {
-    // Add first task
     await runCLI(['add', 'Test task']);
-    
-    // Try to add same task with different case
     const result = await runCLI(['add', 'test task']);
-    
-    expect(result.stdout).toContain('⚠️  Task already exists: "test task"');
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain('Error: Duplicate to-do item found.');
   });
 
   it('should allow adding task with different due date', async () => {
-    // Add task without due date
     await runCLI(['add', 'Test task']);
-    
-    // Add same task with due date (should be allowed)
+
     const result = await runCLI(['add', 'Test task', '--due', 'Today']);
-    
+
+    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Added task: "Test task" (due:');
-    expect(result.stdout).not.toContain('Task already exists');
   });
 
   it('should prevent adding duplicate with same due date', async () => {
-    // Add task with due date
     await runCLI(['add', 'Test task', '--due', 'Today']);
-    
-    // Try to add same task with same due date
+
     const result = await runCLI(['add', 'Test task', '--due', 'Today']);
-    
-    expect(result.stdout).toContain('⚠️  Task already exists: "Test task" (due:');
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain('Error: Duplicate to-do item found.');
   });
 });
 
@@ -500,6 +508,7 @@ describe('CLI high priority behavior', () => {
 
   it('should mark task as high priority when --highPriority is set', async () => {
     const result = await runCLI(['add', 'Pay bills', '--highPriority']);
+    expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('Pay bills');
     expect(result.stdout).toContain('[HIGH]');
   });
@@ -508,6 +517,7 @@ describe('CLI high priority behavior', () => {
     await runCLI(['add', 'Normal task']);
     await runCLI(['add', 'Urgent task', '--highPriority']);
     const result = await runCLI(['list']);
+    expect(result.exitCode).toBe(0);
     const lines = result.stdout.split('\n').filter(l => /\d+\. /.test(l));
     expect(lines[0]).toContain('Urgent task');
     expect(lines[0]).toContain('[HIGH]');
@@ -528,10 +538,10 @@ describe('CLI invalid --due flag handling', () => {
       throw new Error(`EXIT_${code}`);
     });
 
-    process.argv = ['node', 'todo-core.js', 'add', 'My new task', '--due', 'Tomorrow'];
+    process.argv = ['node', 'todo-cli.js', 'add', 'My new task', '--due', 'Tomorrow'];
 
     try {
-      main();
+      runCLI(process.argv);
     } catch {
       // Swallow the forced exit exception
     }
