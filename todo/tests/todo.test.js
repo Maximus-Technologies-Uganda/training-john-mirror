@@ -360,7 +360,7 @@ async function runCLI(args) {
   process.argv = ['node', 'todo-cli.js', ...args];
 
   try {
-    const cliModule = await import('../../src/todo-cli.js');
+    const cliModule = await import('../src/todo-cli.js');
     if (typeof cliModule.run === 'function') {
       cliModule.run(process.argv);
     } else {
