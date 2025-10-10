@@ -1,9 +1,0 @@
-[
-  {
-    "id": 1,
-    "text": "Test task",
-    "done": false,
-    "dueDate": null,
-    "priority": "normal"
-  }
-]
