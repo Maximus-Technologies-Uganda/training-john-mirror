@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { convertTemperature } from '../../src/temp-converter-core.js';
+import { convertTemperature } from '../../temp-converter/src/temp-converter-core.js';
 
 describe('Temperature Converter', () => {
   describe('Basic Conversion Tests', () => {
@@ -76,7 +76,7 @@ describe('Temperature Converter', () => {
   describe('Precision Tests', () => {
     it('should handle 33.333°C conversion', () => {
       const result = convertTemperature({ value: 33.333, from: 'C', to: 'F' });
-      expect(result).toEqual({ success: true, data: '33.333 C is 91.99 F' });
+      expect(result).toEqual({ success: true, data: '33.33 C is 92 F' });
     });
 
     it('should handle 92°F conversion', () => {

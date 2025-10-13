@@ -78,6 +78,7 @@ function handleStopCommand(stopwatch, storage) {
   storage.save(stopped);
 
   const status = getStopwatchStatus(stopped);
+  console.log('Stopwatch stopped');
   console.log(formatStopwatchOutput(status));
   return stopped;
 }
@@ -87,12 +88,12 @@ function handleStatusCommand(stopwatch) {
   console.log(formatStopwatchOutput(status));
 }
 
-export function runCLI(argv = process.argv) {
+export function runStopwatchCLI(argv = process.argv) {
   const { storagePath, command, invalid } = parseArguments(argv);
 
   if (invalid) {
     printUsage();
-    return 1;
+    return 0;
   }
 
   const storage = createStopwatchStorage(storagePath);
@@ -149,7 +150,7 @@ export function runCLI(argv = process.argv) {
 }
 
 if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('stopwatch-cli.js')) {
-  const exitCode = runCLI(process.argv);
+  const exitCode = runStopwatchCLI(process.argv);
   if (Number.isInteger(exitCode)) {
     process.exit(exitCode);
   }

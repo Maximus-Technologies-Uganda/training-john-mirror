@@ -107,6 +107,7 @@ function runCommand(command, stopwatch, storagePath) {
       }
       const stopped = stopStopwatch(stopwatch);
       saveStopwatch(storagePath, stopped);
+      console.log('Stopwatch stopped');
       console.log(formatStopwatchOutput(getStopwatchStatus(stopped)));
       return stopped;
 
@@ -140,7 +141,7 @@ export function runStopwatchCLI(argv = process.argv) {
 
   if (invalid) {
     printUsage();
-    return 1;
+    return 0;
   }
 
   let stopwatch = loadStopwatch(storagePath);

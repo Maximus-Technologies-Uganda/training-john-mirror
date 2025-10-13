@@ -2,7 +2,15 @@ const VALID_UNITS = new Set(['C', 'F']);
 
 function formatNumber(value) {
   const rounded = Math.round(value * 100) / 100;
-  return Number.isInteger(rounded) ? String(rounded) : String(Number(rounded.toFixed(2)));
+  if (Number.isInteger(rounded)) {
+    return String(rounded);
+  }
+  const asString = rounded.toFixed(2);
+  if (!asString.includes('.')) {
+    return asString;
+  }
+  const trimmed = asString.replace(/0+$/, '').replace(/\.$/, '');
+  return trimmed.length > 0 ? trimmed : '0';
 }
 
 /**
