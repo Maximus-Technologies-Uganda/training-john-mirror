@@ -121,6 +121,20 @@ const getStopwatchStatus = (stopwatch) => {
     };
 };
 
+const formatStopwatchOutput = (status) => {
+    const formattedTime = formatElapsedTime(status.elapsedTime);
+
+    if (status.isRunning) {
+        return `Stopwatch is running\nElapsed time: ${formattedTime}`;
+    }
+
+    if (status.elapsedTime > 0) {
+        return `Stopwatch is not running\nTotal elapsed time: ${formattedTime}`;
+    }
+
+    return 'Stopwatch is not running';
+};
+
 export {
     createStopwatch,
     startStopwatch,
@@ -128,5 +142,6 @@ export {
     getElapsedTime,
     resetStopwatch,
     formatElapsedTime,
-    getStopwatchStatus
+    getStopwatchStatus,
+    formatStopwatchOutput
 };
