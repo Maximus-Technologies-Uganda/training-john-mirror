@@ -1,25 +1,9 @@
 [
   {
     "id": 1,
-    "text": "Finish Week 2 workbook",
-    "done": true,
-    "createdAt": "2025-09-24T16:48:58.035Z",
-    "completedAt": "2025-09-24T16:48:58.037Z"
-  },
-  "Test task",
-  "Test task",
-  "Test task",
-  "Test task",
-  {
-    "id": 6,
     "text": "Test task",
     "done": false,
-    "createdAt": "2025-09-24T16:48:28.037Z"
-  },
-  {
-    "id": 7,
-    "text": "Buy groceries",
-    "done": false,
-    "createdAt": "2025-09-24T16:49:04.894Z"
+    "dueDate": "2025-09-30T20:59:59.999Z",
+    "priority": "normal"
   }
 ]
