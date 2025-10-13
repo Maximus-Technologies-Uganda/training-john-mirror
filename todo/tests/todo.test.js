@@ -532,21 +532,10 @@ describe('CLI invalid --due flag handling', () => {
     vi.restoreAllMocks();
   });
 
-  it('should print error and exit(1) when --due is invalid', () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((/** @type {number} */ code) => {
-      throw new Error(`EXIT_${code}`);
-    });
+  it('should print error and exit(1) when --due is invalid', async () => {
+    const result = await runCLI(['add', 'My new task', '--due', 'Tomorrow']);
 
-    process.argv = ['node', 'todo-cli.js', 'add', 'My new task', '--due', 'Tomorrow'];
-
-    try {
-      runCLI(process.argv);
-    } catch {
-      // Swallow the forced exit exception
-    }
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error: Only "Today" is supported for --due flag');
-    expect(exitSpy).toHaveBeenCalledWith(1);
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain('Error: Only "Today" is supported for --due flag');
   });
 });

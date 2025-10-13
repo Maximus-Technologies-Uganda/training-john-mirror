@@ -1,11 +1,58 @@
-import fs from 'fs';
-import path from 'path';
 import yargs from 'yargs/yargs';
 import { hideBin } from 'yargs/helpers';
 
 import { manageTodos, getEndOfToday } from './todo-core.js';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import { fileURLToPath } from 'url';
 
-const dataFile = path.resolve(process.cwd(), 'todos.json');
+const modulePath = fileURLToPath(import.meta.url);
+const moduleBasename = path.basename(modulePath);
+
+function resolveDataFile() {
+  const override = process.env.TODO_DATA_FILE;
+
+  if (override && String(override).trim()) {
+    return path.isAbsolute(override) ? override : path.resolve(override);
+  }
+
+  return path.resolve(process.cwd(), 'todos.json');
+}
+
+const baseDataFile = resolveDataFile();
+let dataFile = baseDataFile;
+let cleanupFile = null;
+
+function prepareDataFile() {
+  if (process.env.TODO_DATA_FILE && String(process.env.TODO_DATA_FILE).trim()) {
+    dataFile = path.resolve(process.env.TODO_DATA_FILE);
+    ensureFileReady(dataFile);
+    return;
+  }
+
+  if (process.env.VITEST) {
+    dataFile = path.resolve(process.cwd(), 'todos.json');
+    cleanupFile = null;
+    ensureFileReady(dataFile);
+    return;
+  }
+
+  ensureFileReady(baseDataFile);
+}
+
+function ensureFileReady(targetFile) {
+  const directory = path.dirname(targetFile);
+  if (!fs.existsSync(directory)) {
+    fs.mkdirSync(directory, { recursive: true });
+  }
+
+  if (!fs.existsSync(targetFile)) {
+    fs.writeFileSync(targetFile, '[]', 'utf8');
+  }
+}
+
+prepareDataFile();
 
 function loadTodos() {
   try {
@@ -13,12 +60,16 @@ function loadTodos() {
       return [];
     }
 
-    const raw = fs.readFileSync(dataFile, 'utf8');
+    const raw = fs.readFileSync(dataFile, 'utf8') || '[]';
     const parsed = JSON.parse(raw);
+
+    if (!Array.isArray(parsed)) {
+      throw new Error('Stored todos are not an array');
+    }
 
     return parsed.map((todo) => ({
       ...todo,
-      dueDate: todo.dueDate ? new Date(todo.dueDate) : null
+      dueDate: todo?.dueDate ? new Date(todo.dueDate) : null
     }));
   } catch (error) {
     console.error('Error loading todos:', error.message);
@@ -56,8 +107,38 @@ function resolveDueOption(argv) {
   return new Error('Error: Only "Today" is supported for --due flag');
 }
 
+function sanitizeArgv(argsList) {
+  if (!Array.isArray(argsList)) {
+    return [];
+  }
+
+  const sanitized = [...argsList];
+
+  while (sanitized.length) {
+    const first = sanitized[0];
+    const lower = typeof first === 'string' ? first.toLowerCase() : '';
+    const isNodeBinary = lower === 'node' || lower === 'node.exe' || lower === 'node.cmd';
+    const isScriptPath = typeof first === 'string' && (
+      first === moduleBasename ||
+      first.endsWith(`/${moduleBasename}`) ||
+      first.endsWith(`\\${moduleBasename}`)
+    );
+
+    if (isNodeBinary || isScriptPath) {
+      sanitized.shift();
+      continue;
+    }
+
+    break;
+  }
+
+  return sanitized;
+}
+
 function parseArgs(argv = process.argv) {
-  return yargs(hideBin(argv))
+  const normalizedArgv = sanitizeArgv(hideBin(argv));
+
+  return yargs(normalizedArgv)
     .scriptName('todo')
     .usage('Usage: $0 <command> [options]')
     .command('add <task>', 'Add a new task', (y) => y
@@ -189,9 +270,20 @@ function run(argv = process.argv) {
 
 export { run };
 
-if (import.meta.url === `file://${process.argv[1]}` ||
-  (process.argv[1] && import.meta.url.endsWith('todo-cli.js') && process.argv[1].endsWith('todo-cli.js')))
-{
+const isDirectCli = (() => {
+  if (!Array.isArray(process.argv) || process.argv.length < 2) {
+    return false;
+  }
+
+  try {
+    const entryPath = path.resolve(process.argv[1]);
+    return entryPath === modulePath;
+  } catch {
+    return false;
+  }
+})();
+
+if (isDirectCli) {
   const exitCode = run(process.argv);
   process.exit(exitCode);
 }
