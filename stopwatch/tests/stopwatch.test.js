@@ -4,10 +4,11 @@ import { fileURLToPath } from 'url';
 import {
     createStopwatch,
     startStopwatch,
+    stopStopwatch,
     formatElapsedTime,
-    getStopwatchStatus
+    getStopwatchStatus,
+    formatStopwatchOutput
 } from '../src/stopwatch-core.js';
-import { formatStopwatchData } from '../src/exporter.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -60,39 +61,40 @@ describe('stopwatch-core', () => {
     });
 });
 
-describe('formatStopwatchData - Golden File Tests', () => {
+describe('formatStopwatchOutput - Golden File Tests', () => {
     it('matches empty state golden file', () => {
         const stopwatch = createStopwatch();
         const status = getStopwatchStatus(stopwatch);
-        const output = formatStopwatchData(status);
+        const output = formatStopwatchOutput(status);
         
         const goldenContent = readFileSync(join(__dirname, '..', 'test', 'output-empty.golden.txt'), 'utf8').trim();
         expect(output).toBe(goldenContent);
     });
 
     it('matches normal running state golden file', () => {
-        const stopwatch = createStopwatch();
-        const _started = startStopwatch(stopwatch);
-        // Simulate some elapsed time (32 seconds)
-        const status = {
+        const now = Date.now();
+        const runningBase = {
+            startTime: now - 32000,
             isRunning: true,
-            elapsedTime: 32000,
-            formattedTime: '32s'
+            totalElapsed: 0
         };
-        const output = formatStopwatchData(status);
+        const runningStatus = getStopwatchStatus(runningBase);
+        const output = formatStopwatchOutput(runningStatus);
         
         const goldenContent = readFileSync(join(__dirname, '..', 'test', 'output-normal.golden.txt'), 'utf8').trim().replace(/\r\n/g, '\n');
         expect(output).toBe(goldenContent);
     });
 
     it('matches stopped state golden file', () => {
-        const _stopwatch = createStopwatch();
-        const status = {
-            isRunning: false,
-            elapsedTime: 48000,
-            formattedTime: '48s'
+        const now = Date.now();
+        const base = {
+            startTime: now - 48000,
+            isRunning: true,
+            totalElapsed: 0
         };
-        const output = formatStopwatchData(status);
+        const stopped = stopStopwatch(base);
+        const stoppedStatus = getStopwatchStatus(stopped);
+        const output = formatStopwatchOutput(stoppedStatus);
         
         const goldenContent = readFileSync(join(__dirname, '..', 'test', 'output-stopped.golden.txt'), 'utf8').trim().replace(/\r\n/g, '\n');
         expect(output).toBe(goldenContent);
