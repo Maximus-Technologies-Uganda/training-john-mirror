@@ -43,6 +43,56 @@ describe('summarizeExpenses function', () => {
     const summary = summarizeExpenses(expenses);
     expect(summary.total).toBe(0);
   });
+
+  it('should coerce non-numeric amounts to zero', () => {
+    const expenses = [
+      { id: 1, category: 'Misc', amount: 'not-a-number' },
+      { id: 2, category: 'Misc', amount: 'NaN' }
+    ];
+
+    const summary = summarizeExpenses(expenses);
+
+    expect(summary.total).toBe(0);
+    expect(summary.byCategory.Misc).toBe(0);
+  });
+});
+
+describe('getExpenses validation', () => {
+  const cases = [
+    {
+      name: 'rejects non-array expenses input',
+      allExpenses: null,
+      options: {},
+      expected: {
+        success: false,
+        error: 'Expenses must be provided as an array.'
+      }
+    },
+    {
+      name: 'rejects invalid month option',
+      allExpenses: [],
+      options: { month: 13 },
+      expected: {
+        success: false,
+        error: 'Error: --month must be a number between 1 and 12'
+      }
+    },
+    {
+      name: 'rejects empty category option',
+      allExpenses: [],
+      options: { category: '   ' },
+      expected: {
+        success: false,
+        error: 'Category must be a non-empty string.'
+      }
+    }
+  ];
+
+  cases.forEach(({ name, allExpenses, options, expected }) => {
+    it(name, () => {
+      expect(getExpenses(allExpenses, options)).toEqual(expected);
+    });
+  });
 });
 
 function resolveCliPath() {
