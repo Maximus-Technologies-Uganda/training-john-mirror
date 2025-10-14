@@ -1,0 +1,12 @@
+# Auto-detect text files and perform EOL normalization.
+* text=auto
+
+# Explicitly declare file types that are always text.
+*.js text
+*.json text
+*.md text
+*.golden text
+
+# Explicitly declare file types that are binary and should not be modified.
+*.png binary
+*.jpg binary

@@ -54,11 +54,11 @@ jobs:
             
             try {
               // Read coverage data from individual app coverage directories
-              const apps = ['expenses', 'jokes', 'stopwatch', 'todo', 'temp-converter', 'hello'];
+              const apps = ['expenses', 'hello', 'jokes', 'quote', 'stopwatch', 'temp-converter', 'todo'];
               const coverageData = [];
               
               for (const app of apps) {
-                const coverageFile = path.join(app, 'coverage', 'coverage-final.json');
+                const coverageFile = path.join(app, 'coverage', 'coverage-summary.json');
                 if (fs.existsSync(coverageFile)) {
                   const coverage = JSON.parse(fs.readFileSync(coverageFile, 'utf8'));
                   const total = coverage.total;

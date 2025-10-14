@@ -195,11 +195,11 @@ jobs:
       - name: Append review packet to job summary
         shell: bash
         run: |
-          if [ -f "${{ steps.generate.outputs.packet_md }}" ]; then
+          if [ -f "_review/summary.md" ]; then
             {
               echo "# Review Packet"
               echo
-              cat "${{ steps.generate.outputs.packet_md }}"
+              cat "_review/summary.md"
             } >> "$GITHUB_STEP_SUMMARY"
           fi
 
@@ -208,7 +208,7 @@ jobs:
         uses: actions/github-script@v7
         env:
           PR_NUMBER: ${{ steps.resolve.outputs.pr_number }}
-          PACKET_MD: ${{ steps.generate.outputs.packet_md }}
+          PACKET_MD: _review/summary.md
         with:
           script: |
             const fs = require('fs');
@@ -224,3 +224,40 @@ jobs:
             } catch (error) {
               core.warning(`Failed to comment review packet: ${error.message}`);
             }
+
+      - name: Display Coverage Summary
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PYTHON'
+          import os
+          import json
+
+          rows = []
+          for root, _, files in os.walk('.'):
+              if 'coverage-summary.json' in files:
+                  file_path = os.path.join(root, 'coverage-summary.json')
+                  try:
+                      with open(file_path, 'r', encoding='utf-8') as f:
+                          data = json.load(f)
+                      pct = data.get('total', {}).get('statements', {}).get('pct', 'N/A')
+                  except (OSError, json.JSONDecodeError):
+                      pct = 'N/A'
+
+                  parts = os.path.normpath(file_path).split(os.sep)
+                  if parts and parts[0] == '.':
+                      parts = parts[1:]
+                  app = parts[0] if parts else 'unknown'
+                  rows.append((app, pct))
+
+          rows.sort(key=lambda r: r[0])
+
+          if not rows:
+              print("No coverage-summary.json files found.")
+          else:
+              print("| App | Statement Coverage % |")
+              print("| --- | --- |")
+              for app, pct in rows:
+                  print(f"| {app} | {pct} |")
+          PYTHON

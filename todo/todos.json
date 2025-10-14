@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "text": "Normal task",
+    "done": false,
+    "dueDate": null,
+    "priority": "normal"
+  },
+  {
+    "id": 2,
+    "text": "Urgent task",
+    "done": false,
+    "dueDate": null,
+    "priority": "high"
+  }
+]

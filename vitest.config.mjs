@@ -8,7 +8,7 @@ export default defineConfig({
     testTimeout: 10000, // 10 second timeout for tests
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html', 'lcov', 'text-summary'],
+      reporter: ['text', 'json', 'json-summary', 'html', 'lcov', 'text-summary'],
       exclude: [
         'node_modules/',
         'coverage/',

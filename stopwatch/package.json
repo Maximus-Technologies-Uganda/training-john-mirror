@@ -5,8 +5,8 @@
   "main": "src/stopwatch-core.js",
   "type": "module",
   "scripts": {
-    "test": "jest",
-    "test:ci": "jest --coverage --ci",
+    "test": "vitest",
+    "test:ci": "vitest run --coverage",
     "lint": "eslint .",
     "start": "node src/stopwatch-core.js"
   },
@@ -17,8 +17,9 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^1.6.1",
     "eslint": "^9.36.0",
-    "jest": "^29.7.0"
+    "vitest": "^1.6.1"
   },
   "bin": {
     "stopwatch": "./src/stopwatch-core.js"

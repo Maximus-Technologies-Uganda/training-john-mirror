@@ -1,5 +1,6 @@
+import { describe, it, expect, beforeEach } from 'vitest';
 import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import {
     createStopwatch,
@@ -10,8 +11,7 @@ import {
     formatStopwatchOutput
 } from '../src/stopwatch-core.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 describe('stopwatch-core', () => {
     let stopwatch;
