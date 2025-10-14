@@ -7,14 +7,8 @@ export default {
     '!src/**/*.test.js',
     '!src/**/index.js'
   ],
-  coverageReporters: ['text', 'lcov', 'html', 'json', 'text-summary'],
+  coverageReporters: ['text', 'lcov', 'html', 'json', 'json-summary', 'text-summary'],
   testMatch: ['**/tests/**/*.test.js'],
   moduleFileExtensions: ['js', 'json'],
-  transform: {},
-  extensionsToTreatAsEsm: ['.js'],
-  globals: {
-    'ts-jest': {
-      useESM: true
-    }
-  }
+  transform: {}
 };

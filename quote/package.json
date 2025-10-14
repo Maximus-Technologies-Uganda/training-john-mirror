@@ -5,18 +5,15 @@
   "private": true,
   "scripts": {
     "start": "node src/quote-cli.js",
-    "test": "vitest run"
+    "test": "vitest",
+    "test:ci": "vitest run --coverage"
   },
   "dependencies": {
+    "training-john": "file:..",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "vitest": "^1.6.0"
+    "@vitest/coverage-v8": "^3.2.4",
+    "vitest": "^3.2.4"
   }
 }
-
-
-
-
-
-
