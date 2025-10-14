@@ -95,6 +95,33 @@ describe('getExpenses validation', () => {
   });
 });
 
+it('should ignore expenses with invalid dates when filtering by month', () => {
+  const expensesWithBadData = [
+    { category: 'Food', amount: 50, date: '2025-10-10T10:00:00.000Z' },
+    { category: 'Travel', amount: 100, date: 'this-is-not-a-date' },
+    { category: 'Food', amount: 25, date: '2025-10-15T12:00:00.000Z' }
+  ];
+
+  const result = getExpenses(expensesWithBadData, { month: 10 });
+
+  expect(result.success).toBe(true);
+  expect(result.data.summary.total).toBe(75);
+});
+
+it('should skip expenses with NaN dates during month filtering', () => {
+  const expenses = [
+    { category: 'Food', amount: 50, date: '2025-11-03T08:00:00.000Z' },
+    { category: 'Travel', amount: 200, date: 'not-a-date' }
+  ];
+
+  const result = getExpenses(expenses, { month: 11 });
+
+  expect(result.success).toBe(true);
+  expect(result.data.summary.total).toBe(50);
+  expect(result.data.expenses).toHaveLength(1);
+  expect(result.data.expenses[0].category).toBe('Food');
+});
+
 function resolveCliPath() {
   const candidates = [
     path.join(process.cwd(), 'expenses/src/expense-cli.js'),
