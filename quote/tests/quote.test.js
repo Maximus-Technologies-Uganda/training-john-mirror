@@ -98,6 +98,7 @@ describe('quote-core', () => {
     const lines = result.data.split('\n');
     expect(lines[0]).toContain('Found 2 quotes by Alan Turing');
     expect(lines.length).toBe(3);
+    expect(result.count).toBe(2);
   });
 
   it('getQuote returns failure when author not found', () => {
@@ -130,6 +131,23 @@ describe('quote-core', () => {
       expect(output.toLowerCase()).toContain('oscar wilde');
       // Then at least one formatted quote line should follow
       expect(output.split('\n').slice(1).some(l => l.includes('—'))).toBe(true);
+    } finally {
+      console.log = originalLog;
+    }
+  });
+
+  it('CLI prints count and quotes when --by and --count are used', () => {
+    const originalLog = console.log;
+    const outputs = [];
+    console.log = (msg) => { outputs.push(String(msg)); };
+    try {
+      const code = runCli(['node', 'quote', '--by', 'oscar wilde', '--count']);
+      expect(code).toBe(0);
+      expect(outputs[0]).toMatch(/^\d+$/);
+      expect(Number(outputs[0])).toBeGreaterThan(0);
+      const combined = outputs.slice(1).join('\n');
+      expect(combined.toLowerCase()).toContain('found');
+      expect(combined.toLowerCase()).toContain('oscar wilde');
     } finally {
       console.log = originalLog;
     }

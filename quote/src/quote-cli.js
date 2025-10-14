@@ -15,6 +15,11 @@ export function run(argv = process.argv) {
       type: 'string',
       describe: 'Filter quotes by author (case-insensitive)'
     })
+    .option('count', {
+      type: 'boolean',
+      default: false,
+      describe: 'When used with --by, print the number of quotes found'
+    })
     .help('h')
     .alias('h', 'help')
     .version();
@@ -27,6 +32,9 @@ export function run(argv = process.argv) {
     formatter: formatQuote
   });
 
+  if (args.count && typeof result.count === 'number') {
+    console.log(result.count);
+  }
   console.log(result.data);
   return result.success ? 0 : 1;
 }
