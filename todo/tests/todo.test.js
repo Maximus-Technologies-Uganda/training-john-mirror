@@ -337,6 +337,25 @@ describe('isDuplicateTask function', () => {
   });
 });
 
+describe('manageTodos clear command', () => {
+  it('should remove all completed tasks while leaving pending ones', () => {
+    const todos = [
+      { id: 1, text: 'First', done: false },
+      { id: 2, text: 'Second', done: true },
+      { id: 3, text: 'Third', done: true },
+      { id: 4, text: 'Fourth', done: false }
+    ];
+
+    const result = manageTodos(todos, 'clear', {});
+
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual([
+      { id: 1, text: 'First', done: false },
+      { id: 4, text: 'Fourth', done: false }
+    ]);
+  });
+});
+
 // Helper function to run CLI commands in-process
 async function runCLI(args) {
   const originalArgv = process.argv.slice();
