@@ -3,7 +3,8 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-const timeFile = path.join(process.cwd(), 'data/time.json');
+const cliPath = path.join(process.cwd(), 'stopwatch', 'src', 'stopwatch-cli.js');
+const timeFile = path.join(process.cwd(), 'data', 'time.json');
 
 // Helper function to safely reset the stopwatch
 function safeReset() {
@@ -15,7 +16,7 @@ function safeReset() {
     }
     
     // Reset the stopwatch
-    execSync('node src/stopwatch.js reset', { stdio: 'pipe' });
+    execSync(`node ${cliPath} reset`, { stdio: 'pipe' });
     
     // Wait a bit to ensure file operations complete
     const start = Date.now();
@@ -45,12 +46,12 @@ describe('Stopwatch CLI', () => {
   });
 
   it('should show usage message', () => {
-    const output = execSync('node src/stopwatch.js', { stdio: 'pipe' }).toString().trim();
+    const output = execSync(`node ${cliPath}`, { stdio: 'pipe' }).toString().trim();
     expect(output).toContain('Usage: node stopwatch.js [--storage <path>] <command>');
   });
 
   it('should reset stopwatch', () => {
-    const output = execSync('node src/stopwatch.js reset', { stdio: 'pipe' }).toString().trim();
+    const output = execSync(`node ${cliPath} reset`, { stdio: 'pipe' }).toString().trim();
     expect(output).toContain('Stopwatch reset');
     
     // Check that time file is reset
@@ -60,7 +61,7 @@ describe('Stopwatch CLI', () => {
   });
 
   it('should start stopwatch', () => {
-    const output = execSync('node src/stopwatch.js start', { stdio: 'pipe' }).toString().trim();
+    const output = execSync(`node ${cliPath} start`, { stdio: 'pipe' }).toString().trim();
     expect(output).toContain('Stopwatch started at');
     
     // Check that startTime is recorded
@@ -72,25 +73,25 @@ describe('Stopwatch CLI', () => {
 
   it('should show running status', () => {
     // Start the stopwatch first
-    execSync('node src/stopwatch.js start', { stdio: 'pipe' });
-    
-    const output = execSync('node src/stopwatch.js status', { stdio: 'pipe' }).toString().trim();
+    execSync(`node ${cliPath} start`, { stdio: 'pipe' });
+
+    const output = execSync(`node ${cliPath} status`, { stdio: 'pipe' }).toString().trim();
     expect(output).toContain('Stopwatch is running');
   });
 
   it('should record lap time', () => {
     // Start the stopwatch first
-    execSync('node src/stopwatch.js start', { stdio: 'pipe' });
-    
-    const output = execSync('node src/stopwatch.js lap', { stdio: 'pipe' }).toString().trim();
+    execSync(`node ${cliPath} start`, { stdio: 'pipe' });
+
+    const output = execSync(`node ${cliPath} lap`, { stdio: 'pipe' }).toString().trim();
     expect(output).toContain('Lap time:');
   });
 
   it('should stop stopwatch', () => {
     // Start the stopwatch first
-    execSync('node src/stopwatch.js start', { stdio: 'pipe' });
-    
-    const output = execSync('node src/stopwatch.js stop', { stdio: 'pipe' }).toString().trim();
+    execSync(`node ${cliPath} start`, { stdio: 'pipe' });
+
+    const output = execSync(`node ${cliPath} stop`, { stdio: 'pipe' }).toString().trim();
     expect(output).toContain('Stopwatch stopped');
     
     // Check that time file is reset
@@ -100,17 +101,17 @@ describe('Stopwatch CLI', () => {
   });
 
   it('should show not running status when stopped', () => {
-    const output = execSync('node src/stopwatch.js status', { stdio: 'pipe' }).toString().trim();
+    const output = execSync(`node ${cliPath} status`, { stdio: 'pipe' }).toString().trim();
     expect(output).toContain('Stopwatch is not running');
   });
 
   it('should show error for lap without start', () => {
-    const output = execSync('node src/stopwatch.js lap', { stdio: 'pipe' }).toString().trim();
+    const output = execSync(`node ${cliPath} lap`, { stdio: 'pipe' }).toString().trim();
     expect(output).toContain('Stopwatch has not been started');
   });
 
   it('should show error for stop without start', () => {
-    const output = execSync('node src/stopwatch.js stop', { stdio: 'pipe' }).toString().trim();
+    const output = execSync(`node ${cliPath} stop`, { stdio: 'pipe' }).toString().trim();
     expect(output).toContain('Stopwatch has not been started');
   });
 
@@ -123,30 +124,30 @@ describe('Stopwatch CLI', () => {
   describe('Negative test cases', () => {
     it('should prevent starting an already running stopwatch', () => {
       // Start the stopwatch
-      execSync('node src/stopwatch.js start', { stdio: 'pipe' });
+      execSync(`node ${cliPath} start`, { stdio: 'pipe' });
       
       // Try to start again
-      const output = execSync('node src/stopwatch.js start', { stdio: 'pipe' }).toString().trim();
+      const output = execSync(`node ${cliPath} start`, { stdio: 'pipe' }).toString().trim();
       expect(output).toContain('Stopwatch is already running. Use "status" to view elapsed time.');
     });
 
     it('should prevent stopping a non-running stopwatch', () => {
-      const output = execSync('node src/stopwatch.js stop', { stdio: 'pipe' }).toString().trim();
+      const output = execSync(`node ${cliPath} stop`, { stdio: 'pipe' }).toString().trim();
       expect(output).toContain('Stopwatch has not been started. Use "start" to begin.');
     });
 
     it('should prevent lap on non-running stopwatch', () => {
-      const output = execSync('node src/stopwatch.js lap', { stdio: 'pipe' }).toString().trim();
+      const output = execSync(`node ${cliPath} lap`, { stdio: 'pipe' }).toString().trim();
       expect(output).toContain('Stopwatch has not been started. Use "start" to begin.');
     });
 
     it('should prevent double stop', () => {
       // Start and stop once
-      execSync('node src/stopwatch.js start', { stdio: 'pipe' });
-      execSync('node src/stopwatch.js stop', { stdio: 'pipe' });
+      execSync(`node ${cliPath} start`, { stdio: 'pipe' });
+      execSync(`node ${cliPath} stop`, { stdio: 'pipe' });
       
       // Try to stop again
-      const output = execSync('node src/stopwatch.js stop', { stdio: 'pipe' }).toString().trim();
+      const output = execSync(`node ${cliPath} stop`, { stdio: 'pipe' }).toString().trim();
       expect(output).toContain('Stopwatch has not been started');
     });
 
@@ -155,14 +156,14 @@ describe('Stopwatch CLI', () => {
       
       try {
         // Test with custom storage path
-        const output = execSync(`node src/stopwatch.js --storage "${customPath}" start`, { stdio: 'pipe' }).toString().trim();
+        const output = execSync(`node ${cliPath} --storage "${customPath}" start`, { stdio: 'pipe' }).toString().trim();
         expect(output).toContain('Stopwatch started at');
         
         // Verify custom file was created
         expect(fs.existsSync(customPath)).toBe(true);
         
         // Test status with custom storage
-        const statusOutput = execSync(`node src/stopwatch.js --storage "${customPath}" status`, { stdio: 'pipe' }).toString().trim();
+        const statusOutput = execSync(`node ${cliPath} --storage "${customPath}" status`, { stdio: 'pipe' }).toString().trim();
         expect(statusOutput).toContain('Stopwatch is running');
         
       } finally {
@@ -174,12 +175,12 @@ describe('Stopwatch CLI', () => {
     });
 
     it('should handle invalid --storage flag gracefully', () => {
-      const output = execSync('node src/stopwatch.js --storage', { stdio: 'pipe' }).toString().trim();
+      const output = execSync(`node ${cliPath} --storage`, { stdio: 'pipe' }).toString().trim();
       expect(output).toContain('Usage: node stopwatch.js [--storage <path>] <command>');
     });
 
     it('should handle empty command after --storage flag', () => {
-      const output = execSync('node src/stopwatch.js --storage /tmp/test.json', { stdio: 'pipe' }).toString().trim();
+      const output = execSync(`node ${cliPath} --storage /tmp/test.json`, { stdio: 'pipe' }).toString().trim();
       expect(output).toContain('Usage: node stopwatch.js [--storage <path>] <command>');
     });
   });
