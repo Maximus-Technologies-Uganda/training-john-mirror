@@ -1,4 +1,17 @@
 # Changelog
+## Week 2
+
+- **Features**
+  - `feature/LIN-QUO-quote-core-and-tests` – Introduced the quote domain core module with comprehensive test coverage.
+  - `feature/LIN-EXP-expense-tests` – Expanded expense suite to assert happy-path and edge case behaviour.
+  - `feature/LIN-TODO-todo-tests` – Strengthened todo workflow tests for higher reliability.
+  - `feature/LIN-SW-stopwatch-exporter+golden` – Added stopwatch exporter plus golden snapshots to lock output format.
+- **Fixes**
+  - `feature/LIN-DOC-harden-temp-converter` – Hardened the temperature converter to handle invalid input and clarified its usage.
+- **Internal Chores**
+  - `chore/LIN-DOC-repo-hygiene` – Curated documentation and repo hygiene items to keep the workspace tidy.
+  - `chore/LIN-DOC-coverage-uplift` – Tuned coverage tooling and reports to surface gaps and track improvements.
+
 ## [Week 2] - 2025-10-03
 ### Added
 - Initial scaffolding for the `quote` CLI, including core logic, CLI wrapper, and a full test suite.

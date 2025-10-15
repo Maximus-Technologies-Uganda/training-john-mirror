@@ -40,6 +40,16 @@ A simple greeting tool that demonstrates command-line argument parsing and condi
 - Shout mode for uppercase output
 
 **Usage:**
+## Testing
+
+This project uses Vitest for unit and integration testing.
+
+### Running Tests
+
+To run all tests, use the following command from the root directory:
+
+```bash
+npm test
 ```bash
 # Default greeting
 node src/hello.js
