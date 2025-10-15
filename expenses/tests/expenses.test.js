@@ -122,6 +122,24 @@ it('should skip expenses with NaN dates during month filtering', () => {
   expect(result.data.expenses[0].category).toBe('Food');
 });
 
+it('should return a filtered summary when category filter is applied', () => {
+  const expenses = [
+    { category: 'Food', amount: 30, date: '2025-10-01T10:00:00.000Z' },
+    { category: 'Transport', amount: 20, date: '2025-10-02T09:00:00.000Z' },
+    { category: 'Food', amount: 15.5, date: '2025-10-03T08:30:00.000Z' },
+    { category: 'Entertainment', amount: 40, date: '2025-10-04T07:45:00.000Z' }
+  ];
+
+  const result = getExpenses(expenses, { category: 'Food' });
+
+  expect(result.success).toBe(true);
+  expect(result.data.summary.total).toBeCloseTo(45.5);
+  expect(result.data.summary.byCategory).toEqual({ Food: 45.5 });
+  expect(result.data.expenses).toHaveLength(2);
+  expect(result.data.expenses.every((expense) => expense.category === 'Food')).toBe(true);
+  expect(result.data.options).toEqual({ category: 'Food' });
+});
+
 function resolveCliPath() {
   const candidates = [
     path.join(process.cwd(), 'expenses/src/expense-cli.js'),
