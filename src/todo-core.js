@@ -136,11 +136,17 @@ function listTodos(todos, options = {}) {
   return { success: true, data: sorted };
 }
 
+function clearCompleted(todos) {
+  const remaining = todos.filter((todo) => !todo.done);
+  return { success: true, data: remaining };
+}
+
 const COMMANDS = {
   add: addTodo,
   done: markDone,
   remove: removeTodo,
-  list: listTodos
+  list: listTodos,
+  clear: clearCompleted
 };
 
 export function manageTodos(todos = [], command = '', options = {}) {

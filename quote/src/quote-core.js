@@ -102,7 +102,7 @@ export function getQuote(options = {}) {
     }
     const header = `Found ${filtered.length} quote${filtered.length === 1 ? '' : 's'} by ${author}`;
     const formattedQuotes = filtered.map(formatter);
-    return { success: true, data: [header, ...formattedQuotes].join('\n') };
+    return { success: true, data: [header, ...formattedQuotes].join('\n'), count: filtered.length };
   }
 
   const random = getRandomQuote(quotes, rng);
