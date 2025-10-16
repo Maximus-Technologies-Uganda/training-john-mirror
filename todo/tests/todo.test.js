@@ -1,8 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   manageTodos,
-  PRIORITY_HIGH,
-  normalizeDueDate,
   addTask,
   markTaskDone,
   removeTask,

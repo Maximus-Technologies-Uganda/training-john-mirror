@@ -5,15 +5,13 @@ import path from 'path';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import {
-  addTask,
   markTaskDone,
   removeTask,
   listTasks,
   manageTodos,
   normalizeDueDate,
   getEndOfToday,
-  PRIORITY_HIGH,
-  PRIORITY_NORMAL
+  PRIORITY_HIGH
 } from './todo-core.js';
 
 const DATA_FILE = path.resolve(process.cwd(), 'todos.json');
@@ -36,9 +34,9 @@ function loadTodos() {
   return [];
 }
 
-function saveTodos(todos) {
+function saveTodos(_todos) {
   try {
-    const serializable = todos.map((todo) => ({
+    const serializable = _todos.map((todo) => ({
       ...todo,
       dueDate: todo.dueDate ? new Date(todo.dueDate).toISOString() : null
     }));
@@ -48,14 +46,14 @@ function saveTodos(todos) {
   }
 }
 
-function printTodos(todos) {
-  if (todos.length === 0) {
+function printTodos(_todos) {
+  if (_todos.length === 0) {
     console.log('No tasks found.');
     return;
   }
 
   console.log('Tasks:');
-  todos.forEach((todo) => {
+  _todos.forEach((todo) => {
     const status = todo.done ? '✓' : '○';
     const priority = todo.priority === PRIORITY_HIGH ? ' [HIGH]' : '';
     const due = todo.dueDate ? ` (due: ${new Date(todo.dueDate).toLocaleDateString()})` : '';

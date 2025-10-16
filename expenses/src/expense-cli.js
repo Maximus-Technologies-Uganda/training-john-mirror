@@ -24,7 +24,7 @@ function loadExpenses() {
   return [];
 }
 
-function saveExpenses(expenses) {
+function _saveExpenses(expenses) {
   try {
     fs.writeFileSync(dataFile, JSON.stringify(expenses, null, 2));
     return true;
@@ -56,7 +56,7 @@ function parseArgs(argv = process.argv) {
 }
 
 function formatSummary(result, { month, category }) {
-  const { summary, expenses } = result;
+  const { summary } = result;
   const lines = [];
 
   if (Number.isInteger(month)) {
@@ -91,8 +91,8 @@ function formatSummary(result, { month, category }) {
 export function run(argv = process.argv) {
   const args = parseArgs(argv);
   const { month, category } = args;
-  const allExpenses = loadExpenses();
-  const result = getExpenses(allExpenses, { month, category });
+  const _allExpenses = loadExpenses();
+  const result = getExpenses(_allExpenses, { month, category });
 
   if (result.success) {
     console.log(formatSummary(result.data, { month, category }));

@@ -1,5 +1,5 @@
 /* eslint-env browser, jest */
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import { getJoke } from '../../jokes/src/jokes-core.js';
 
 describe('Jokes Core Functions with Stubbed Provider', () => {

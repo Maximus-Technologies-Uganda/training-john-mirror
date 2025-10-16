@@ -144,14 +144,14 @@ export function runStopwatchCLI(argv = process.argv) {
     return 0;
   }
 
-  let stopwatch = loadStopwatch(storagePath);
+  let _stopwatch = loadStopwatch(storagePath);
   if (!command) {
     printUsage();
     return 0;
   }
 
   try {
-    stopwatch = runCommand(command, stopwatch, storagePath);
+    _stopwatch = runCommand(command, _stopwatch, storagePath);
     return 0;
   } catch (error) {
     console.error('Error:', error instanceof Error ? error.message : String(error));
