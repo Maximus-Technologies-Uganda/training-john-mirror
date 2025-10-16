@@ -7,7 +7,6 @@ import { hideBin } from 'yargs/helpers';
 import {
   markTaskDone,
   removeTask,
-  listTasks,
   manageTodos,
   normalizeDueDate,
   getEndOfToday,
@@ -56,9 +55,17 @@ function printTodos(_todos) {
   _todos.forEach((todo) => {
     const status = todo.done ? '✓' : '○';
     const priority = todo.priority === PRIORITY_HIGH ? ' [HIGH]' : '';
-    const due = todo.dueDate ? ` (due: ${new Date(todo.dueDate).toLocaleDateString()})` : '';
+    const due = formatDueLabel(todo.dueDate);
     console.log(`${todo.id}. ${status} ${todo.text}${priority}${due}`);
   });
+}
+
+function formatDueLabel(dueDate) {
+  if (!dueDate) {
+    return '';
+  }
+  const date = dueDate instanceof Date ? dueDate : new Date(dueDate);
+  return Number.isNaN(date.getTime()) ? '' : ` (due: ${date.toLocaleDateString()})`;
 }
 
 function run(argv = process.argv) {
@@ -76,7 +83,7 @@ function run(argv = process.argv) {
         .option('due', {
           alias: 'd',
           type: 'string',
-          describe: 'Due date string (e.g. 2025-12-31)'
+          describe: 'Due date string (supports "Today" keyword or ISO date)'
         })
         .option('dueToday', {
           type: 'boolean',
@@ -87,9 +94,26 @@ function run(argv = process.argv) {
           describe: 'Mark task as high priority'
         });
     }, (args) => {
-      const dueDate = args.dueToday
-        ? getEndOfToday()
-        : normalizeDueDate(args.due ?? null);
+      let dueDate = null;
+
+      if (args.dueToday) {
+        dueDate = getEndOfToday();
+      } else if (typeof args.due === 'string') {
+        const trimmedDue = args.due.trim();
+        if (trimmedDue.length > 0) {
+          if (trimmedDue.toLowerCase() === 'today') {
+            dueDate = getEndOfToday();
+          } else {
+            try {
+              dueDate = normalizeDueDate(trimmedDue);
+            } catch (error) {
+              console.error('Error: Only "Today" is supported for --due flag');
+              process.exitCode = 1;
+              return;
+            }
+          }
+        }
+      }
 
       try {
         const result = manageTodos(todos, 'add', {
@@ -103,10 +127,13 @@ function run(argv = process.argv) {
           return;
         }
         saveTodos(result.data);
-        console.log(`Added task: "${args.text}"${args.highPriority ? ' [HIGH]' : ''}`);
+        const highPriorityLabel = args.highPriority ? ' [HIGH]' : '';
+        const dueLabel = formatDueLabel(dueDate);
+        console.log(`Added task: "${args.text}"${highPriorityLabel}${dueLabel}`);
       } catch (error) {
-        console.error(error.message);
+        console.error(error instanceof Error ? error.message : String(error));
         process.exitCode = 1;
+        return;
       }
     })
     .command('done <id>', 'Mark a task as done', (y) => {
@@ -142,7 +169,13 @@ function run(argv = process.argv) {
     .command('list', 'List all tasks', () => {
       return undefined;
     }, () => {
-      printTodos(listTasks(todos));
+      const result = manageTodos(todos, 'list');
+      if (!result.success) {
+        console.error(result.error);
+        process.exitCode = 1;
+        return;
+      }
+      printTodos(result.data);
     })
     .command('clear', 'Remove all completed tasks', () => {
       return undefined;

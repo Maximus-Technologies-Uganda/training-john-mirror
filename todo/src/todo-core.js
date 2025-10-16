@@ -116,23 +116,40 @@ function manageTodos(todos, command, options = {}) {
 
   switch (command) {
     case 'add':
-      return {
-        success: true,
-        data: addTask(normalizedTodos, options.text, options.dueDate, options.highPriority ? PRIORITY_HIGH : PRIORITY_NORMAL)
-      };
+      try {
+        const updated = addTask(
+          normalizedTodos,
+          options.text,
+          options.dueDate,
+          options.highPriority ? PRIORITY_HIGH : PRIORITY_NORMAL
+        );
+
+        return {
+          success: true,
+          data: updated
+        };
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : String(error)
+        };
+      }
 
     case 'list': {
-      const filterDueDate = options.filterDueDate ? normalizeDueDate(options.filterDueDate).getTime() : null;
+      const filterDueDate = options.filterDueDate ? normalizeDueDate(options.filterDueDate) : null;
+      const filterTime = filterDueDate ? filterDueDate.getTime() : null;
+
       const filtered = normalizedTodos.filter((todo) => {
-        if (!filterDueDate) {
+        if (!filterTime) {
           return true;
         }
         if (!todo.dueDate) {
           return false;
         }
-        const todoDue = new Date(todo.dueDate).getTime();
-        return todoDue <= filterDueDate;
+        const todoDue = normalizeDueDate(todo.dueDate);
+        return todoDue.getTime() <= filterTime;
       });
+
       return {
         success: true,
         data: sortTodosForList(filtered)

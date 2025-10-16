@@ -382,7 +382,9 @@ async function runCLI(args) {
       throw new Error('todo-cli.js does not export run()');
     }
   } catch (e) {
-    if (!(e instanceof Error && /^EXIT_\d+$/.test(e.message))) {
+    if (e instanceof Error && /^EXIT_\d+$/.test(e.message)) {
+      // Swallow expected exits for assertion checks
+    } else {
       throw e;
     }
   } finally {
