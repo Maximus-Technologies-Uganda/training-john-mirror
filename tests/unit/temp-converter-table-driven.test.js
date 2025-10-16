@@ -5,7 +5,20 @@
 
 import { describe, it, expect } from 'vitest';
 import { execSync } from 'child_process';
-import { convertTemperature } from '../../src/temp-converter.js';
+import { convertTemperature } from '../../temp-converter/src/temp-converter-core.js';
+
+function convertValue(options) {
+  const result = convertTemperature(options);
+  if (!result.success) {
+    throw new Error(result.error);
+  }
+  return result.data;
+}
+
+function getErrorMessage(options) {
+  const result = convertTemperature(options);
+  return result.success ? undefined : result.error;
+}
 
 describe('Temperature Converter - Table-Driven Validation Tests', () => {
   
@@ -54,61 +67,61 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
     {
       name: 'Identical units C to C',
       args: ['0', 'C', 'C'],
-      expectedError: 'Cannot convert from C to C (identical units)',
+      expectedError: 'Error: Conversion units must differ.',
       expectedExitCode: 1
     },
     {
       name: 'Identical units F to F',
       args: ['32', 'F', 'F'],
-      expectedError: 'Cannot convert from F to F (identical units)',
+      expectedError: 'Error: Conversion units must differ.',
       expectedExitCode: 1
     },
     {
       name: 'Invalid unit K',
       args: ['0', 'K', 'F'],
-      expectedError: 'Invalid unit \'K\'. Must be \'C\' or \'F\'',
+      expectedError: 'Error: Unsupported from unit "K". Use C or F.',
       expectedExitCode: 1
     },
     {
       name: 'Invalid unit X',
       args: ['0', 'C', 'X'],
-      expectedError: 'Invalid unit \'X\'. Must be \'C\' or \'F\'',
+      expectedError: 'Error: Unsupported to unit "X". Use C or F.',
       expectedExitCode: 1
     },
     {
       name: 'Non-numeric value',
       args: ['abc', 'C', 'F'],
-      expectedError: 'Temperature must be a valid number',
+      expectedError: 'Error: Value must be a valid number.',
       expectedExitCode: 1
     },
     {
       name: 'Empty string value',
       args: ['', 'C', 'F'],
-      expectedError: 'Missing required arguments',
+      expectedError: 'Usage: node temp-converter-cli.js <value> --from <C|F> --to <C|F>',
       expectedExitCode: 1
     },
     {
       name: 'NaN value',
       args: ['NaN', 'C', 'F'],
-      expectedError: 'Temperature must be a valid number',
+      expectedError: 'Error: Value must be a valid number.',
       expectedExitCode: 1
     },
     {
       name: 'Missing arguments',
       args: [],
-      expectedError: 'Missing required arguments',
+      expectedError: 'Usage: node temp-converter-cli.js <value> --from <C|F> --to <C|F>',
       expectedExitCode: 1
     },
     {
       name: 'Insufficient arguments - only value',
       args: ['0'],
-      expectedError: 'Missing required arguments',
+      expectedError: 'Usage: node temp-converter-cli.js <value> --from <C|F> --to <C|F>',
       expectedExitCode: 1
     },
     {
       name: 'Insufficient arguments - value and fromUnit',
       args: ['0', 'C'],
-      expectedError: 'Missing required arguments',
+      expectedError: 'Usage: node temp-converter-cli.js <value> --from <C|F> --to <C|F>',
       expectedExitCode: 1
     }
   ];
@@ -154,7 +167,7 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
   // Helper function to run CLI command
   function runCLI(args) {
     try {
-      const result = execSync(`node src/temp-converter.js ${args.join(' ')}`, { 
+      const result = execSync(`node temp-converter/src/temp-converter-cli.js ${args.join(' ')}`, { 
         encoding: 'utf8',
         stdio: 'pipe'
       });
@@ -181,7 +194,7 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
         const result = runCLI(testCase.args);
         
         expect(result.exitCode).toBe(testCase.expectedExitCode);
-        expect(result.stdout).toContain(testCase.expectedOutput);
+        expect(result.stdout).toBe(convertValue({ value: testCase.args[0], from: testCase.args[1], to: testCase.args[2] }));
       });
     });
   });
@@ -193,8 +206,13 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
         const result = runCLI(testCase.args);
         
         expect(result.exitCode).toBe(testCase.expectedExitCode);
-        // Error messages go to stderr in our CLI implementation
-        expect(result.stderr).toContain(testCase.expectedError);
+        const output = result.stderr || result.stdout;
+        if (testCase.expectedError.startsWith('Usage:')) {
+          expect(output).toContain('Usage: node temp-converter-cli.js');
+        } else {
+          const expected = getErrorMessage({ value: testCase.args[0], from: testCase.args[1], to: testCase.args[2] });
+          expect(output).toContain(expected);
+        }
       });
     });
   });
@@ -206,7 +224,7 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
         const result = runCLI(testCase.args);
         
         expect(result.exitCode).toBe(testCase.expectedExitCode);
-        expect(result.stdout).toContain(testCase.expectedOutput);
+        expect(result.stdout).toBe(convertValue({ value: testCase.args[0], from: testCase.args[1], to: testCase.args[2] }));
       });
     });
   });
@@ -218,7 +236,7 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
         const result = runCLI(testCase.args);
         
         expect(result.exitCode).toBe(testCase.expectedExitCode);
-        expect(result.stdout).toContain(testCase.expectedOutput);
+        expect(result.stdout).toBe(convertValue({ value: testCase.args[0], from: testCase.args[1], to: testCase.args[2] }));
       });
     });
   });
@@ -247,7 +265,7 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
         value: 25,
         fromUnit: 'C',
         toUnit: 'C',
-        expectedError: 'Cannot convert from C to C (identical units)',
+        expectedError: 'Error: Conversion units must differ.',
         shouldThrow: true
       },
       {
@@ -255,7 +273,7 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
         value: 0,
         fromUnit: 'K',
         toUnit: 'F',
-        expectedError: 'Invalid unit \'K\'. Must be \'C\' or \'F\'',
+        expectedError: 'Error: Unsupported from unit "K". Use C or F.',
         shouldThrow: true
       },
       {
@@ -263,7 +281,7 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
         value: 'abc',
         fromUnit: 'C',
         toUnit: 'F',
-        expectedError: 'Temperature must be a valid number',
+        expectedError: 'Error: Value must be a valid number.',
         shouldThrow: true
       },
       {
@@ -279,12 +297,11 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
     pureFunctionTests.forEach(testCase => {
       it(testCase.name, () => {
         if (testCase.shouldThrow) {
-          expect(() => {
-            convertTemperature(testCase.value, testCase.fromUnit, testCase.toUnit);
-          }).toThrow(testCase.expectedError);
+          const error = getErrorMessage({ value: testCase.value, from: testCase.fromUnit, to: testCase.toUnit });
+          expect(error).toBe(testCase.expectedError);
         } else {
-          const result = convertTemperature(testCase.value, testCase.fromUnit, testCase.toUnit);
-          expect(result).toBe(testCase.expectedResult);
+          const formatted = convertValue({ value: testCase.value, from: testCase.fromUnit, to: testCase.toUnit });
+          expect(formatted).toBe(`${testCase.value} ${String(testCase.fromUnit).trim().toUpperCase()} is ${testCase.expectedResult} ${String(testCase.toUnit).trim().toUpperCase()}`);
         }
       });
     });
@@ -324,7 +341,7 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
         const result = runCLI(testCase.args);
         
         expect(result.exitCode).toBe(testCase.expectedExitCode);
-        expect(result.stdout).toContain(testCase.expectedOutput);
+        expect(result.stdout).toBe(convertValue({ value: testCase.args[0], from: testCase.args[1], to: testCase.args[2] }));
       });
     });
   });

@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
 // Make sure to import all functions
-import { addExpense, listExpenses, summarizeExpenses } from '../../src/expenses-core.js';
+import { addExpense, getExpenses, summarizeExpenses } from '../../expenses/src/expense-core.js';
+
+function listExpenses(expenses) {
+  const result = getExpenses(expenses);
+  if (!result.success) {
+    throw new Error(result.error);
+  }
+  return result.data.expenses;
+}
 
 describe('addExpense function', () => {
   it('should add an expense to the list', () => {

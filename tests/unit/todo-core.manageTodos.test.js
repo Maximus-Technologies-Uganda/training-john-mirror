@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import {
   manageTodos,
   PRIORITY_HIGH
-} from '../../src/todo-core.js';
+} from '../../todo/src/todo-core.js';
 
 describe('manageTodos core behaviours', () => {
   it('filters tasks due today while respecting end-of-day boundary', () => {

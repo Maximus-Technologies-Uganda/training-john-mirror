@@ -1,6 +1,6 @@
 /* eslint-env browser, jest */
 import { describe, it, expect, vi } from 'vitest';
-import { getJoke, getJokeString, getAvailableCategories, getAvailableTypes } from '../../src/jokes-core.js';
+import { getJoke, getJokeString, getAvailableCategories, getAvailableTypes } from '../../jokes/src/jokes-core.js';
 
 // Mock the global fetch function
 global.fetch = vi.fn();

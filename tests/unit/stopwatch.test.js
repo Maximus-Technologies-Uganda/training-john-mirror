@@ -116,7 +116,7 @@ describe('Stopwatch CLI', () => {
   });
 
   it('should show usage for invalid command', () => {
-    const output = execSync('node src/stopwatch.js invalid', { stdio: 'pipe' }).toString().trim();
+    const output = execSync(`node ${cliPath} invalid`, { stdio: 'pipe' }).toString().trim();
     expect(output).toContain('Usage: node stopwatch.js [--storage <path>] <command>');
   });
 
