@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatElapsedTime } from '../../src/stopwatch-core.js';
+import { formatElapsedTime } from '../../stopwatch/src/stopwatch-core.js';
 
 describe('formatElapsedTime utility function', () => {
   describe('Basic formatting', () => {

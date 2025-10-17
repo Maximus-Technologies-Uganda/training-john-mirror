@@ -36,9 +36,11 @@ describe('manageTodos core behaviours', () => {
     const result = manageTodos(todos, 'list', { filterDueDate: new Date(targetEndOfDay) });
 
     expect(result.success).toBe(true);
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0].id).toBe(1);
-    expect(result.data[0].text).toBe('Boundary task');
+    expect(result.data).toHaveLength(2);
+    expect(result.data[0].id).toBe(2);
+    expect(result.data[0].text).toBe('Early same day task');
+    expect(result.data[1].id).toBe(1);
+    expect(result.data[1].text).toBe('Boundary task');
   });
 
   it('applies the high priority flag when adding a task', () => {

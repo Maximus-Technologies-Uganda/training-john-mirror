@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatGreeting } from '../../src/hello-core.js';
+import { formatGreeting } from '../../hello/src/hello-core.js';
 
 describe('formatGreeting', () => {
   it('defaults to World when no name is given', () => {

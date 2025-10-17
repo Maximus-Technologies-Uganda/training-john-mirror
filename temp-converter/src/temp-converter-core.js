@@ -21,27 +21,37 @@ function formatNumber(value) {
 export function convertTemperature(options = {}) {
   const { value, from, to } = options;
 
-  if (from === undefined || to === undefined) {
+  if (from === undefined || to === undefined || from === null || to === null) {
     return {
       success: false,
       error: 'Both "from" and "to" units are required.'
     };
   }
 
-  const fromUnit = String(from).trim().toUpperCase();
-  const toUnit = String(to).trim().toUpperCase();
+  const rawFrom = String(from).trim();
+  const rawTo = String(to).trim();
+
+  if (rawFrom.length === 0 || rawTo.length === 0) {
+    return {
+      success: false,
+      error: 'Both "from" and "to" units are required.'
+    };
+  }
+
+  const fromUnit = rawFrom.toUpperCase();
+  const toUnit = rawTo.toUpperCase();
 
   if (!VALID_UNITS.has(fromUnit)) {
     return {
       success: false,
-      error: `Unsupported from unit "${from}". Use C or F.`
+      error: `Unsupported from unit "${rawFrom}". Use C or F.`
     };
   }
 
   if (!VALID_UNITS.has(toUnit)) {
     return {
       success: false,
-      error: `Unsupported to unit "${to}". Use C or F.`
+      error: `Unsupported to unit "${rawTo}". Use C or F.`
     };
   }
 

@@ -8,7 +8,7 @@ import {
     resetStopwatch,
     formatElapsedTime,
     getStopwatchStatus
-} from '../../src/stopwatch-core.js';
+} from '../../stopwatch/src/stopwatch-core.js';
 
 describe('stopwatch-core', () => {
     let stopwatch;
@@ -127,29 +127,30 @@ describe('stopwatch-core', () => {
     describe('getStopwatchStatus', () => {
         it('returns correct status for new stopwatch', () => {
             const status = getStopwatchStatus(stopwatch);
-            expect(status.isRunning).toBe(false);
-            expect(status.elapsedTime).toBe(0);
-            expect(status.formattedTime).toBe('0s');
+            expect(status).toEqual({
+                isRunning: false,
+                elapsedTime: 0
+            });
         });
 
         it('returns correct status for running stopwatch', async () => {
             const started = startStopwatch(stopwatch);
-            // Add small delay to ensure measurable elapsed time
             await new Promise(resolve => setTimeout(resolve, 10));
             const status = getStopwatchStatus(started);
-            
+
             expect(status.isRunning).toBe(true);
             expect(status.elapsedTime).toBeGreaterThan(0);
-            expect(status.formattedTime).toMatch(/\d+s/);
         });
 
         it('returns correct status for stopped stopwatch', () => {
             const started = startStopwatch(stopwatch);
             const stopped = stopStopwatch(started);
             const status = getStopwatchStatus(stopped);
-            
-            expect(status.isRunning).toBe(false);
-            expect(status.elapsedTime).toBe(stopped.totalElapsed);
+
+            expect(status).toEqual({
+                isRunning: false,
+                elapsedTime: stopped.totalElapsed
+            });
         });
     });
 

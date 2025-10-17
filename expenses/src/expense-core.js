@@ -104,7 +104,10 @@ export function getExpenses(allExpenses, options = {}) {
     success: true,
     data: {
       summary,
-      expenses: filtered,
+      expenses: filtered.map((expense) => ({
+        ...expense,
+        timestamp: expense.date ?? null
+      })),
       options: validation.value
     }
   };

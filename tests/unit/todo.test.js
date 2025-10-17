@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { addTask, markTaskDone, removeTask, listTasks } from '../../src/todo-core.js';
+import { addTask, markTaskDone, removeTask, listTasks } from '../../todo/src/todo-core.js';
 
 describe('addTask function', () => {
 
