@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "vitest --ui",
-    "test:ci": "vitest run --reporter=junit --coverage --coverage.thresholds.global.branches=0 --coverage.thresholds.global.functions=0 --coverage.thresholds.global.lines=0 --coverage.thresholds.global.statements=0",
+    "test": "node scripts/run-vitest.mjs",
+    "test:ci": "npm run test -- --run --coverage",
     "lint": "eslint .",
     "todo:remove": "node cli/todo.js remove"
   },
@@ -18,5 +18,20 @@
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.36.0",
     "vitest": "^3.2.4"
+  },
+  "vitest": {
+    "reporters": [
+      "default",
+      [
+        "junit",
+        {
+          "outputFile": "test-results/junit.xml"
+        }
+      ]
+    ],
+    "coverage": {
+      "enabled": true,
+      "reportsDirectory": "review-artifacts"
+    }
   }
 }
