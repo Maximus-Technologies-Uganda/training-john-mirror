@@ -265,7 +265,7 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
         value: 25,
         fromUnit: 'C',
         toUnit: 'C',
-        expectedError: 'Error: Conversion units must differ.',
+        expectedError: 'Conversion units must differ.',
         shouldThrow: true
       },
       {
@@ -273,7 +273,7 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
         value: 0,
         fromUnit: 'K',
         toUnit: 'F',
-        expectedError: 'Error: Unsupported from unit "K". Use C or F.',
+        expectedError: 'Unsupported from unit "K". Use C or F.',
         shouldThrow: true
       },
       {
@@ -281,7 +281,7 @@ describe('Temperature Converter - Table-Driven Validation Tests', () => {
         value: 'abc',
         fromUnit: 'C',
         toUnit: 'F',
-        expectedError: 'Error: Value must be a valid number.',
+        expectedError: 'Value must be a valid number.',
         shouldThrow: true
       },
       {

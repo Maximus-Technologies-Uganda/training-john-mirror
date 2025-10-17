@@ -38,9 +38,11 @@ describe('manageTodos core logic', () => {
     });
 
     expect(result.success).toBe(true);
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0].id).toBe(1);
-    expect(result.data[0].text).toBe('Boundary task');
+    expect(result.data).toHaveLength(2);
+    expect(result.data[0].id).toBe(2);
+    expect(result.data[0].text).toBe('Same day start task');
+    expect(result.data[1].id).toBe(1);
+    expect(result.data[1].text).toBe('Boundary task');
   });
 
   it('marks a task as high priority when requested', () => {

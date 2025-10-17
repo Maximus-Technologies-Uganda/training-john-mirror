@@ -104,37 +104,27 @@ function run(argv = process.argv) {
           if (trimmedDue.toLowerCase() === 'today') {
             dueDate = getEndOfToday();
           } else {
-            try {
-              dueDate = normalizeDueDate(trimmedDue);
-            } catch (error) {
-              console.error('Error: Only "Today" is supported for --due flag');
-              process.exitCode = 1;
-              return;
-            }
+            console.error('Error: Only "Today" is supported for --due flag');
+            process.exit(1);
           }
         }
       }
 
-      try {
-        const result = manageTodos(todos, 'add', {
-          text: args.text,
-          dueDate,
-          highPriority: Boolean(args.highPriority)
-        });
-        if (!result.success) {
-          console.error(result.error);
-          process.exitCode = 1;
-          return;
-        }
-        saveTodos(result.data);
-        const highPriorityLabel = args.highPriority ? ' [HIGH]' : '';
-        const dueLabel = formatDueLabel(dueDate);
-        console.log(`Added task: "${args.text}"${highPriorityLabel}${dueLabel}`);
-      } catch (error) {
-        console.error(error instanceof Error ? error.message : String(error));
-        process.exitCode = 1;
-        return;
+      const result = manageTodos(todos, 'add', {
+        text: args.text,
+        dueDate,
+        highPriority: Boolean(args.highPriority)
+      });
+      
+      if (!result.success) {
+        console.error(result.error);
+        process.exit(1);
       }
+      
+      saveTodos(result.data);
+      const highPriorityLabel = args.highPriority ? ' [HIGH]' : '';
+      const dueLabel = formatDueLabel(dueDate);
+      console.log(`Added task: "${args.text}"${highPriorityLabel}${dueLabel}`);
     })
     .command('done <id>', 'Mark a task as done', (y) => {
       return y.positional('id', {
@@ -145,8 +135,7 @@ function run(argv = process.argv) {
       const updated = markTaskDone(todos, args.id);
       if (updated === todos) {
         console.log('Task not found.');
-        process.exitCode = 1;
-        return;
+        process.exit(1);
       }
       saveTodos(updated);
       console.log(`Marked task ${args.id} as done.`);
@@ -160,8 +149,7 @@ function run(argv = process.argv) {
       const updated = removeTask(todos, args.id);
       if (updated.length === todos.length) {
         console.log('Task not found.');
-        process.exitCode = 1;
-        return;
+        process.exit(1);
       }
       saveTodos(updated);
       console.log(`Removed task ${args.id}.`);
@@ -172,8 +160,7 @@ function run(argv = process.argv) {
       const result = manageTodos(todos, 'list');
       if (!result.success) {
         console.error(result.error);
-        process.exitCode = 1;
-        return;
+        process.exit(1);
       }
       printTodos(result.data);
     })

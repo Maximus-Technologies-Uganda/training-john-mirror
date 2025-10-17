@@ -42,9 +42,7 @@ function isDuplicateTask(existing, text, dueDate) {
 
   return existing.some((task) => {
     const taskText = typeof task.text === 'string' ? task.text.trim().toLowerCase() : '';
-    const taskDue = task.dueDate instanceof Date
-      ? task.dueDate.getTime()
-      : (task.dueDate ? new Date(task.dueDate).getTime() : null);
+    const taskDue = task.dueDate ? normalizeDueDate(task.dueDate).getTime() : null;
     return taskText === normalizedText && taskDue === normalizedDueDate;
   });
 }
@@ -54,7 +52,7 @@ function addTask(tasks, text, dueDate = null, priority = PRIORITY_NORMAL) {
   const normalizedDueDate = normalizeDueDate(dueDate);
 
   if (isDuplicateTask(tasks, normalizedText, normalizedDueDate)) {
-    throw new Error('Error: Duplicate to-do item found.');
+    throw new Error('Duplicate to-do item found.');
   }
 
   const nextId = tasks.reduce((max, task) => Math.max(max, task.id ?? 0), 0) + 1;
@@ -129,9 +127,10 @@ function manageTodos(todos, command, options = {}) {
           data: updated
         };
       } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
         return {
           success: false,
-          error: error instanceof Error ? error.message : String(error)
+          error: message.startsWith('Error:') ? message : `Error: ${message}`
         };
       }
 
