@@ -41,6 +41,19 @@ jobs:
           name: test-results
           path: test-results/junit.xml
 
+      - name: Gather Coverage Reports
+        run: |
+          set -euo pipefail
+
+          mkdir -p review-artifacts
+
+          find . -type d -name coverage -print0 | while IFS= read -r -d '' dir; do
+            app_name="$(basename "$(dirname "$dir")")"
+            target="review-artifacts/coverage-${app_name}"
+            rm -rf "$target"
+            cp -R "$dir" "$target"
+          done
+
       - name: Upload Coverage Reports
         uses: actions/upload-artifact@v4
         with:
