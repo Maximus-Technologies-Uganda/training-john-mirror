@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { addExpense, summarizeExpenses, getExpenses } from '../src/expense-core.js';
+import { addExpense, summarizeExpenses, getExpenses, toCents } from '../src/expense-core.js';
 import { spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs';
@@ -95,9 +95,9 @@ describe('getExpenses validation', () => {
 
 it('should ignore expenses with invalid dates when filtering by month', () => {
   const expensesWithBadData = [
-    { category: 'Food', amount: 50, date: '2025-10-10T10:00:00.000Z' },
-    { category: 'Travel', amount: 100, date: 'this-is-not-a-date' },
-    { category: 'Food', amount: 25, date: '2025-10-15T12:00:00.000Z' }
+    { category: 'Food', amount: toCents(50), date: '2025-10-10T10:00:00.000Z' },
+    { category: 'Travel', amount: toCents(100), date: 'this-is-not-a-date' },
+    { category: 'Food', amount: toCents(25), date: '2025-10-15T12:00:00.000Z' }
   ];
 
   const result = getExpenses(expensesWithBadData, { month: 10 });
@@ -108,8 +108,8 @@ it('should ignore expenses with invalid dates when filtering by month', () => {
 
 it('should skip expenses with NaN dates during month filtering', () => {
   const expenses = [
-    { category: 'Food', amount: 50, date: '2025-11-03T08:00:00.000Z' },
-    { category: 'Travel', amount: 200, date: 'not-a-date' }
+    { category: 'Food', amount: toCents(50), date: '2025-11-03T08:00:00.000Z' },
+    { category: 'Travel', amount: toCents(200), date: 'not-a-date' }
   ];
 
   const result = getExpenses(expenses, { month: 11 });
