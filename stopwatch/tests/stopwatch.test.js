@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
@@ -8,16 +8,26 @@ import {
     stopStopwatch,
     formatElapsedTime,
     getStopwatchStatus,
-    formatStopwatchOutput
+    formatStopwatchOutput,
+    getElapsedTime
 } from '../src/stopwatch-core.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 describe('stopwatch-core', () => {
     let stopwatch;
+    let now;
+    let nowProvider;
 
     beforeEach(() => {
+        vi.useFakeTimers();
+        now = 1_000;
+        nowProvider = () => now;
         stopwatch = createStopwatch();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
     });
 
     describe('createStopwatch', () => {
@@ -30,15 +40,40 @@ describe('stopwatch-core', () => {
 
     describe('startStopwatch', () => {
         it('starts a new stopwatch', () => {
-            const started = startStopwatch(stopwatch);
+            const started = startStopwatch(stopwatch, nowProvider);
             expect(started.isRunning).toBe(true);
-            expect(started.startTime).toBeGreaterThan(0);
+            expect(started.startTime).toBe(now);
             expect(started.totalElapsed).toBe(0);
         });
 
         it('throws error when starting an already running stopwatch', () => {
-            const started = startStopwatch(stopwatch);
-            expect(() => startStopwatch(started)).toThrow('Stopwatch is already running');
+            const started = startStopwatch(stopwatch, nowProvider);
+            expect(() => startStopwatch(started, nowProvider)).toThrow('Stopwatch is already running');
+        });
+    });
+
+    describe('stopStopwatch', () => {
+        it('captures elapsed time using provided clock', () => {
+            let state = startStopwatch(stopwatch, nowProvider);
+            now += 5_000;
+            state = stopStopwatch(state, nowProvider);
+            expect(state.totalElapsed).toBe(5_000);
+        });
+    });
+
+    describe('getElapsedTime', () => {
+        it('computes elapsed time when running', () => {
+            let state = startStopwatch(stopwatch, nowProvider);
+            now += 2_500;
+            expect(getElapsedTime(state, nowProvider)).toBe(2_500);
+        });
+
+        it('remains static when stopped', () => {
+            let state = startStopwatch(stopwatch, nowProvider);
+            now += 2_500;
+            state = stopStopwatch(state, nowProvider);
+            now += 1_000;
+            expect(getElapsedTime(state, nowProvider)).toBe(2_500);
         });
     });
 

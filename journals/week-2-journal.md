@@ -21,3 +21,11 @@ Reflection:
 This week was successful even though the schedule was shuffled. Focusing on error paths and validation made the work feel much more professional. My first target for Week 3 is to be more disciplined with branching from day one and to apply a test-first mindset to new tasks.
 
 
+---
+### Evidence Links
+
+* **Capstone PR:** https://github.com/Maximus-Technologies-Uganda/training-john/pull/108
+* **Successful CI Run:** https://github.com/Maximus-Technologies-Uganda/training-john/pull/108/commits/22220e0c74a9ea1d6f6e8d8c4b81e54e693da133
+* **Review Packet Artifact:** https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs/18636044451/artifacts/4312324065
+* **Coverage Reports Artifact:** https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs/18636044451/artifacts/4312323978
+* **Test Results Artifact:** https://github.com/Maximus-Technologies-Uganda/training-john/actions/runs/18636044451/artifacts/4312323935
