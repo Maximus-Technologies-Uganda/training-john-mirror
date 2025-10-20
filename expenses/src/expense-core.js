@@ -23,6 +23,18 @@ export function validateOptions(options = {}) {
   return { success: true, value: { month, category: category?.trim() } };
 }
 
+function toCents(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) {
+    return NaN;
+  }
+  return Math.round(numeric * 100);
+}
+
+function fromCents(cents) {
+  return Number((Number(cents) / 100).toFixed(2));
+}
+
 /**
  * Adds a new expense to the expenses array without mutating the input.
  * @param {Array<Object>} expenses
@@ -32,9 +44,14 @@ export function validateOptions(options = {}) {
  * @returns {Array<Object>}
  */
 export function addExpense(expenses, category, amount, date = new Date()) {
+  const cents = toCents(amount);
+  if (!Number.isFinite(cents)) {
+    throw new Error('Amount must be a valid number.');
+  }
+
   const newExpense = {
     category,
-    amount,
+    amount: cents,
     date: date.toISOString()
   };
 
@@ -47,15 +64,26 @@ export function addExpense(expenses, category, amount, date = new Date()) {
  * @returns {{ total: number, byCategory: Record<string, number> }}
  */
 export function summarizeExpenses(expenses) {
-  return expenses.reduce(
+  const accumulator = expenses.reduce(
     (acc, expense) => {
-      const amount = typeof expense.amount === 'number' ? expense.amount : Number(expense.amount) || 0;
+      const amount = typeof expense.amount === 'number' ? expense.amount : toCents(expense.amount) || 0;
       acc.total += amount;
       acc.byCategory[expense.category] = (acc.byCategory[expense.category] || 0) + amount;
       return acc;
     },
     { total: 0, byCategory: {} }
   );
+
+  const summary = {
+    total: fromCents(accumulator.total),
+    byCategory: {}
+  };
+
+  for (const [category, value] of Object.entries(accumulator.byCategory)) {
+    summary.byCategory[category] = fromCents(value);
+  }
+
+  return summary;
 }
 
 /**
@@ -106,10 +134,13 @@ export function getExpenses(allExpenses, options = {}) {
       summary,
       expenses: filtered.map((expense) => ({
         ...expense,
+        amount: fromCents(expense.amount),
         timestamp: expense.date ?? null
       })),
       options: validation.value
     }
   };
 }
+
+export { fromCents, toCents };
 

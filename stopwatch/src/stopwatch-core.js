@@ -15,12 +15,20 @@ const createStopwatch = () => {
     };
 };
 
+const resolveNow = (nowProvider) => {
+    const value = typeof nowProvider === 'function' ? nowProvider() : Date.now();
+    if (!Number.isFinite(value)) {
+        throw new Error('Invalid time source provided to stopwatch');
+    }
+    return value;
+};
+
 /**
  * Starts the stopwatch
  * @param {Object} stopwatch - Current stopwatch state
  * @returns {Object} Updated stopwatch state
  */
-const startStopwatch = (stopwatch) => {
+const startStopwatch = (stopwatch, nowProvider = Date.now) => {
     if (!stopwatch || typeof stopwatch !== 'object') {
         throw new Error('startStopwatch requires a stopwatch object');
     }
@@ -29,9 +37,11 @@ const startStopwatch = (stopwatch) => {
         throw new Error('Stopwatch is already running');
     }
 
+    const currentTime = resolveNow(nowProvider);
+
     return {
         ...stopwatch,
-        startTime: Date.now(),
+        startTime: currentTime,
         isRunning: true
     };
 };
@@ -41,7 +51,7 @@ const startStopwatch = (stopwatch) => {
  * @param {Object} stopwatch - Current stopwatch state
  * @returns {Object} Updated stopwatch state with total elapsed time
  */
-const stopStopwatch = (stopwatch) => {
+const stopStopwatch = (stopwatch, nowProvider = Date.now) => {
     if (!stopwatch || typeof stopwatch !== 'object') {
         throw new Error('stopStopwatch requires a stopwatch object');
     }
@@ -50,7 +60,7 @@ const stopStopwatch = (stopwatch) => {
         throw new Error('Stopwatch has not been started');
     }
 
-    const currentTime = Date.now();
+    const currentTime = resolveNow(nowProvider);
     const elapsed = currentTime - stopwatch.startTime;
     const newTotalElapsed = stopwatch.totalElapsed + elapsed;
 
@@ -67,7 +77,7 @@ const stopStopwatch = (stopwatch) => {
  * @param {Object} stopwatch - Current stopwatch state
  * @returns {number} Elapsed time in milliseconds
  */
-const getElapsedTime = (stopwatch) => {
+const getElapsedTime = (stopwatch, nowProvider = Date.now) => {
     if (!stopwatch || typeof stopwatch !== 'object') {
         throw new Error('getElapsedTime requires a stopwatch object');
     }
@@ -76,7 +86,7 @@ const getElapsedTime = (stopwatch) => {
         return stopwatch.totalElapsed;
     }
 
-    const currentTime = Date.now();
+    const currentTime = resolveNow(nowProvider);
     const currentElapsed = currentTime - stopwatch.startTime;
     return stopwatch.totalElapsed + currentElapsed;
 };
@@ -99,14 +109,14 @@ const resetStopwatch = () => {
  * @param {number} milliseconds - Time in milliseconds
  * @returns {string} Formatted time string
  */
-const getStopwatchStatus = (stopwatch) => {
+const getStopwatchStatus = (stopwatch, nowProvider = Date.now) => {
     if (!stopwatch || typeof stopwatch !== 'object') {
         throw new Error('getStopwatchStatus requires a stopwatch object');
     }
 
     return {
         isRunning: Boolean(stopwatch.isRunning),
-        elapsedTime: getElapsedTime(stopwatch)
+        elapsedTime: getElapsedTime(stopwatch, nowProvider)
     };
 };
 

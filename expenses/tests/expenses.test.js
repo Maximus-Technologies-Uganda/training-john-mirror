@@ -5,15 +5,13 @@ import path from 'path';
 import fs from 'fs';
 
 describe('addExpense function', () => {
-  it('should add an expense to the list', () => {
+  it('should add an expense to the list storing cents', () => {
     const expenses = [];
-    const newExpense = addExpense(expenses, 'Food', 10);
-    
+    const newExpense = addExpense(expenses, 'Food', 10.5);
+
     expect(newExpense).toHaveLength(1);
-    expect(newExpense[0]).toMatchObject({
-      category: 'Food',
-      amount: 10
-    });
+    expect(newExpense[0].category).toBe('Food');
+    expect(newExpense[0].amount).toBe(1050);
     expect(newExpense[0]).toHaveProperty('date');
     expect(typeof newExpense[0].date).toBe('string');
     expect(newExpense[0].date).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
@@ -23,9 +21,9 @@ describe('addExpense function', () => {
 describe('summarizeExpenses function', () => {
   it('should correctly summarize a list of expenses', () => {
     const expenses = [
-      { id: 1, category: 'Food', amount: 10 },
-      { id: 2, category: 'Transport', amount: 5 },
-      { id: 3, category: 'Food', amount: 15 }
+      { id: 1, category: 'Food', amount: 1000 },
+      { id: 2, category: 'Transport', amount: 500 },
+      { id: 3, category: 'Food', amount: 1500 }
     ];
 
     const summary = summarizeExpenses(expenses);
@@ -123,18 +121,18 @@ it('should skip expenses with NaN dates during month filtering', () => {
 });
 
 it('should return a filtered summary when category filter is applied', () => {
-  const expenses = [
-    { category: 'Food', amount: 30, date: '2025-10-01T10:00:00.000Z' },
-    { category: 'Transport', amount: 20, date: '2025-10-02T09:00:00.000Z' },
-    { category: 'Food', amount: 15.5, date: '2025-10-03T08:30:00.000Z' },
-    { category: 'Entertainment', amount: 40, date: '2025-10-04T07:45:00.000Z' }
+    const expenses = [
+      { category: 'Food', amount: 3000, date: '2025-10-01T10:00:00.000Z' },
+      { category: 'Transport', amount: 2000, date: '2025-10-02T09:00:00.000Z' },
+      { category: 'Food', amount: 1550, date: '2025-10-03T08:30:00.000Z' },
+      { category: 'Entertainment', amount: 4000, date: '2025-10-04T07:45:00.000Z' }
   ];
 
   const result = getExpenses(expenses, { category: 'Food' });
 
   expect(result.success).toBe(true);
-  expect(result.data.summary.total).toBeCloseTo(45.5);
-  expect(result.data.summary.byCategory).toEqual({ Food: 45.5 });
+    expect(result.data.summary.total).toBe(45.5);
+    expect(result.data.summary.byCategory).toEqual({ Food: 45.5 });
   expect(result.data.expenses).toHaveLength(2);
   expect(result.data.expenses.every((expense) => expense.category === 'Food')).toBe(true);
   expect(result.data.options).toEqual({ category: 'Food' });

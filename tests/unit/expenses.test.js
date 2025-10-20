@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 // Make sure to import all functions
-import { addExpense, getExpenses, summarizeExpenses } from '../../expenses/src/expense-core.js';
+import { addExpense, getExpenses, summarizeExpenses, toCents } from '../../expenses/src/expense-core.js';
 
 function listExpenses(expenses) {
   const result = getExpenses(expenses);
@@ -16,10 +16,8 @@ describe('addExpense function', () => {
     const newExpense = addExpense(expenses, 'Food', 10);
     
     expect(newExpense).toHaveLength(1);
-    expect(newExpense[0]).toMatchObject({
-      category: 'Food',
-      amount: 10
-    });
+    expect(newExpense[0].category).toBe('Food');
+    expect(newExpense[0].amount).toBe(1000);
     expect(newExpense[0]).toHaveProperty('date');
     expect(typeof newExpense[0].date).toBe('string');
     expect(newExpense[0].date).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
@@ -47,8 +45,8 @@ describe('addExpense function', () => {
 describe('listExpenses function', () => {
   it('should format expenses with readable dates', () => {
     const expenses = [
-      { category: 'Food', amount: 10, date: '2024-01-15T10:30:00.000Z' },
-      { category: 'Transport', amount: 5, date: '2024-01-16T14:20:00.000Z' }
+      { category: 'Food', amount: toCents(10), date: '2024-01-15T10:30:00.000Z' },
+      { category: 'Transport', amount: toCents(5), date: '2024-01-16T14:20:00.000Z' }
     ];
 
     const formattedExpenses = listExpenses(expenses);
@@ -78,7 +76,7 @@ describe('listExpenses function', () => {
 
   it('should not mutate the original expenses array', () => {
     const expenses = [
-      { category: 'Food', amount: 10, date: '2024-01-15T10:30:00.000Z' }
+      { category: 'Food', amount: toCents(10), date: '2024-01-15T10:30:00.000Z' }
     ];
     const originalExpenses = [...expenses];
     
@@ -91,9 +89,9 @@ describe('listExpenses function', () => {
 describe('summarizeExpenses function', () => {
   it('should correctly summarize a list of expenses', () => {
     const expenses = [
-      { id: 1, category: 'Food', amount: 10 },
-      { id: 2, category: 'Transport', amount: 5 },
-      { id: 3, category: 'Food', amount: 15 }
+      { id: 1, category: 'Food', amount: toCents(10) },
+      { id: 2, category: 'Transport', amount: toCents(5) },
+      { id: 3, category: 'Food', amount: toCents(15) }
     ];
 
     const summary = summarizeExpenses(expenses);
@@ -114,8 +112,8 @@ describe('summarizeExpenses function', () => {
 
   it('should handle expenses with decimal amounts', () => {
     const expenses = [
-      { category: 'Food', amount: 10.50 },
-      { category: 'Transport', amount: 5.25 }
+      { category: 'Food', amount: toCents(10.50) },
+      { category: 'Transport', amount: toCents(5.25) }
     ];
 
     const summary = summarizeExpenses(expenses);
@@ -127,8 +125,8 @@ describe('summarizeExpenses function', () => {
 
   it('should not mutate the original expenses array', () => {
     const expenses = [
-      { category: 'Food', amount: 10 },
-      { category: 'Transport', amount: 5 }
+      { category: 'Food', amount: toCents(10) },
+      { category: 'Transport', amount: toCents(5) }
     ];
     const originalExpenses = [...expenses];
     
