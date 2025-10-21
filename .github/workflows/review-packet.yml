@@ -46,13 +46,21 @@ jobs:
           set -euo pipefail
 
           mkdir -p review-artifacts
+          mkdir -p _review/review-artifacts
 
           find . -type d -name coverage -print0 | while IFS= read -r -d '' dir; do
             app_name="$(basename "$(dirname "$dir")")"
             target="review-artifacts/coverage-${app_name}"
-            rm -rf "$target"
+            review_target="_review/review-artifacts/coverage-${app_name}"
+
+            rm -rf "$target" "$review_target"
             cp -R "$dir" "$target"
+            cp -R "$dir" "$review_target"
           done
+
+          if [ -f "review-artifacts/index.html" ]; then
+            cp -f "review-artifacts/index.html" "_review/review-artifacts/index.html"
+          fi
 
       - name: Upload Coverage Reports
         uses: actions/upload-artifact@v4
@@ -219,6 +227,19 @@ jobs:
               core.setFailed(`Failed to generate review packet: ${error.message}`);
               return;
             }
+
+      - name: Move Coverage Index into Review Packet
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p _review
+
+          if [ -f "review-artifacts/index.html" ]; then
+            mv -f "review-artifacts/index.html" "_review/"
+          else
+            echo "review-artifacts/index.html not found; skipping move."
+          fi
 
       - name: Upload review packet artifact
         uses: actions/upload-artifact@v4
