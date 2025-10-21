@@ -220,6 +220,19 @@ jobs:
               return;
             }
 
+      - name: Move Coverage Index into Review Packet
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p _review
+
+          if [ -f "review-artifacts/index.html" ]; then
+            mv -f "review-artifacts/index.html" "_review/"
+          else
+            echo "review-artifacts/index.html not found; skipping move."
+          fi
+
       - name: Upload review packet artifact
         uses: actions/upload-artifact@v4
         if: always()
