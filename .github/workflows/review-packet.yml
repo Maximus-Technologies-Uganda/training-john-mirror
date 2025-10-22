@@ -42,24 +42,42 @@ jobs:
           path: test-results/junit.xml
 
       - name: Gather Coverage Reports
+        shell: bash
         run: |
           set -euo pipefail
 
           mkdir -p review-artifacts
           mkdir -p _review/review-artifacts
 
-          find . -type d -name coverage -print0 | while IFS= read -r -d '' dir; do
+          found_index=false
+
+          while IFS= read -r -d '' dir; do
             app_name="$(basename "$(dirname "$dir")")"
             target="review-artifacts/coverage-${app_name}"
             review_target="_review/review-artifacts/coverage-${app_name}"
 
             rm -rf "$target" "$review_target"
-            cp -R "$dir" "$target"
-            cp -R "$dir" "$review_target"
-          done
+            mkdir -p "$target" "$review_target"
+            cp -R "$dir"/. "$target"/
+            cp -R "$dir"/. "$review_target"/
+
+            if [ "$found_index" = false ]; then
+              if [ -f "$dir/index.html" ]; then
+                cp -f "$dir/index.html" "review-artifacts/index.html"
+                cp -f "$dir/index.html" "_review/review-artifacts/index.html"
+                found_index=true
+              elif [ -f "$dir/lcov-report/index.html" ]; then
+                cp -f "$dir/lcov-report/index.html" "review-artifacts/index.html"
+                cp -f "$dir/lcov-report/index.html" "_review/review-artifacts/index.html"
+                found_index=true
+              fi
+            fi
+          done < <(find . -type d -name coverage -print0)
 
           if [ -f "review-artifacts/index.html" ]; then
             cp -f "review-artifacts/index.html" "_review/review-artifacts/index.html"
+          else
+            echo "No coverage index found; review packet will not include an index.html."
           fi
 
       - name: Upload Coverage Reports
@@ -228,17 +246,32 @@ jobs:
               return;
             }
 
-      - name: Move Coverage Index into Review Packet
+      - name: Ensure Coverage Index in Review Packet
         shell: bash
         run: |
           set -euo pipefail
 
-          mkdir -p _review
+          mkdir -p _review/review-artifacts
 
           if [ -f "review-artifacts/index.html" ]; then
-            mv -f "review-artifacts/index.html" "_review/"
+            cp -f "review-artifacts/index.html" "_review/review-artifacts/index.html"
+          elif [ -f "_review/review-artifacts/index.html" ]; then
+            echo "Coverage index already located in _review/review-artifacts.";
           else
-            echo "review-artifacts/index.html not found; skipping move."
+            echo "Coverage index not found; skipping."
+          fi
+
+      - name: Copy JUnit results into Review Packet
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p _review/test-results
+
+          if [ -f "test-results/junit.xml" ]; then
+            cp "test-results/junit.xml" "_review/test-results/junit.xml"
+          else
+            echo "test-results/junit.xml not found; skipping copy."
           fi
 
       - name: Upload review packet artifact
