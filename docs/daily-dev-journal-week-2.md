@@ -10,3 +10,9 @@
 * What was a key bug or issue that my tests or the CI process helped me find?  The coverage uplift effort surfaced gaps in the Expense app, and the added tests uncovered invalid-date filtering cases that would have slipped through without the coverage gate.
 * What is one concept from this week that was strongly reinforced for me?  Separating pure business logic from I/O proved invaluable: it keeps tests focused, stabilizes the CLI surface, and makes coverage easier to reason about.
 * What is my first target for improvement in Week 3?  I want to tighten the feedback loop by scripting repeatable coverage checks and linting YAML changes locally before raising PRs.
+
+---
+
+**Date:** 23rd October, 2025
+
+- 17:05 UTC — Hardened Expense and To-Do CLIs to store runtime data in `data/persistence/`, enforced positive-ID validation, and expanded fake-clock plus corrupt-file tests; confirmed full suite via `npm test`. (PR: _not yet opened_) (CI: _manual run, N/A_) (Artifacts: `review-artifacts/index.html`)
