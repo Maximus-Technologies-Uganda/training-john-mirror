@@ -8,40 +8,64 @@ import {
   markTaskDone,
   removeTask,
   manageTodos,
-  normalizeDueDate,
   getEndOfToday,
   PRIORITY_HIGH
 } from './todo-core.js';
 
-const DATA_FILE = path.resolve(process.cwd(), 'todos.json');
+const DEFAULT_DATA_FILE = path.resolve(process.cwd(), 'data', 'persistence', 'todo.json');
+
+function resolveDataFile() {
+  const override = process.env.TODO_DATA_FILE;
+  if (override && String(override).trim().length > 0) {
+    return path.resolve(override);
+  }
+  return DEFAULT_DATA_FILE;
+}
+
+const DATA_FILE = resolveDataFile();
+
+function ensureStorage(filePath) {
+  const directory = path.dirname(filePath);
+  if (!fs.existsSync(directory)) {
+    fs.mkdirSync(directory, { recursive: true });
+  }
+
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, '[]', 'utf8');
+  }
+}
 
 function loadTodos() {
   try {
-    if (fs.existsSync(DATA_FILE)) {
-      const raw = fs.readFileSync(DATA_FILE, 'utf8');
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        return parsed.map((todo) => ({
-          ...todo,
-          dueDate: todo.dueDate ? new Date(todo.dueDate) : null
-        }));
-      }
+    ensureStorage(DATA_FILE);
+
+    const raw = fs.readFileSync(DATA_FILE, 'utf8');
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      throw new Error('Stored todos data is not an array.');
     }
+
+    return parsed.map((todo) => ({
+      ...todo,
+      dueDate: todo.dueDate ? new Date(todo.dueDate) : null
+    }));
   } catch (error) {
-    console.error('Failed to load todos:', error.message);
+    console.error('Failed to load todos:', error instanceof Error ? error.message : String(error));
+    process.exit(1);
   }
-  return [];
 }
 
-function saveTodos(_todos) {
+function saveTodos(todos) {
   try {
-    const serializable = _todos.map((todo) => ({
+    ensureStorage(DATA_FILE);
+    const serializable = todos.map((todo) => ({
       ...todo,
       dueDate: todo.dueDate ? new Date(todo.dueDate).toISOString() : null
     }));
     fs.writeFileSync(DATA_FILE, JSON.stringify(serializable, null, 2));
   } catch (error) {
-    console.error('Failed to save todos:', error.message);
+    console.error('Failed to save todos:', error instanceof Error ? error.message : String(error));
+    process.exit(1);
   }
 }
 
@@ -66,6 +90,49 @@ function formatDueLabel(dueDate) {
   }
   const date = dueDate instanceof Date ? dueDate : new Date(dueDate);
   return Number.isNaN(date.getTime()) ? '' : ` (due: ${date.toLocaleDateString()})`;
+}
+
+function resolveDueDate(args) {
+  if (args.dueToday) {
+    return getEndOfToday();
+  }
+
+  if (typeof args.due !== 'string') {
+    return null;
+  }
+
+  const trimmedDue = args.due.trim();
+  if (trimmedDue.length === 0) {
+    return null;
+  }
+
+  if (trimmedDue.toLowerCase() === 'today') {
+    return getEndOfToday();
+  }
+
+  const parsed = new Date(trimmedDue);
+  if (Number.isNaN(parsed.getTime())) {
+    console.error('Error: Only "Today" or ISO date strings are supported for --due flag');
+    process.exit(1);
+  }
+
+  return parsed;
+}
+
+function assertPositiveInteger(value, errorMessage) {
+  const id = Number(value);
+  if (!Number.isInteger(id) || id <= 0) {
+    console.error(errorMessage);
+    process.exit(1);
+  }
+  return id;
+}
+
+function ensureTodoExists(todos, id, actionDescription) {
+  if (!todos.some((todo) => todo.id === id)) {
+    console.error(`Error: No task found with id ${id} to ${actionDescription}.`);
+    process.exit(1);
+  }
 }
 
 function run(argv = process.argv) {
@@ -94,21 +161,7 @@ function run(argv = process.argv) {
           describe: 'Mark task as high priority'
         });
     }, (args) => {
-      let dueDate = null;
-
-      if (args.dueToday) {
-        dueDate = getEndOfToday();
-      } else if (typeof args.due === 'string') {
-        const trimmedDue = args.due.trim();
-        if (trimmedDue.length > 0) {
-          if (trimmedDue.toLowerCase() === 'today') {
-            dueDate = getEndOfToday();
-          } else {
-            console.error('Error: Only "Today" is supported for --due flag');
-            process.exit(1);
-          }
-        }
-      }
+      const dueDate = resolveDueDate(args);
 
       const result = manageTodos(todos, 'add', {
         text: args.text,
@@ -132,13 +185,11 @@ function run(argv = process.argv) {
         type: 'number'
       });
     }, (args) => {
-      const updated = markTaskDone(todos, args.id);
-      if (updated === todos) {
-        console.log('Task not found.');
-        process.exit(1);
-      }
+      const targetId = assertPositiveInteger(args.id, 'Error: Valid positive integer id is required to mark a to-do as done.');
+      ensureTodoExists(todos, targetId, 'mark as done');
+      const updated = markTaskDone(todos, targetId);
       saveTodos(updated);
-      console.log(`Marked task ${args.id} as done.`);
+      console.log(`Marked task ${targetId} as done.`);
     })
     .command('remove <id>', 'Remove a task', (y) => {
       return y.positional('id', {
@@ -146,13 +197,11 @@ function run(argv = process.argv) {
         type: 'number'
       });
     }, (args) => {
-      const updated = removeTask(todos, args.id);
-      if (updated.length === todos.length) {
-        console.log('Task not found.');
-        process.exit(1);
-      }
+      const targetId = assertPositiveInteger(args.id, 'Error: Valid positive integer id is required to remove a to-do.');
+      ensureTodoExists(todos, targetId, 'remove');
+      const updated = removeTask(todos, targetId);
       saveTodos(updated);
-      console.log(`Removed task ${args.id}.`);
+      console.log(`Removed task ${targetId}.`);
     })
     .command('list', 'List all tasks', () => {
       return undefined;

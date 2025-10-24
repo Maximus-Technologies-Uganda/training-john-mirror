@@ -1,8 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { addExpense, summarizeExpenses, getExpenses, toCents } from '../src/expense-core.js';
+import {
+  addExpense,
+  summarizeExpenses,
+  getExpenses,
+  toCents,
+  fromCents
+} from '../src/expense-core.js';
 import { spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 
 describe('addExpense function', () => {
   it('should add an expense to the list storing cents', () => {
@@ -28,10 +35,10 @@ describe('summarizeExpenses function', () => {
 
     const summary = summarizeExpenses(expenses);
 
-    // Check the total
+    // Check the total in dollars
     expect(summary.total).toBe(30);
 
-    // Check the breakdown by category
+    // Check the breakdown by category in dollars
     expect(summary.byCategory.Food).toBe(25);
     expect(summary.byCategory.Transport).toBe(5);
   });
@@ -321,10 +328,20 @@ describe('CLI filtering functionality', () => {
       expectedExitCode: 0,
       expectedOutput: 'Category: Transport',
       shouldContain: true
+    },
+    {
+      name: 'should filter by month and category combination',
+      args: ['--month', '10', '--category', 'Food'],
+      expectedExitCode: 0,
+      expectedOutput: 'Expense Summary for October:',
+      shouldContain: true,
+      additional: (stdout) => {
+        expect(stdout).toContain('Category: Food');
+      }
     }
   ];
 
-  filteringTestCases.forEach(({ name, args, expectedExitCode, expectedOutput, shouldContain }) => {
+  filteringTestCases.forEach(({ name, args, expectedExitCode, expectedOutput, shouldContain, additional }) => {
     it(name, async () => {
       const result = await runCLI(args);
 
@@ -332,7 +349,20 @@ describe('CLI filtering functionality', () => {
 
       if (shouldContain) {
         expect(result.stdout).toContain(expectedOutput);
+        if (typeof additional === 'function') {
+          additional(result.stdout);
+        }
       }
     });
+  });
+
+  it('should show empty summary when month and category filters have no matches', async () => {
+    const result = await runCLI(['--month', '1', '--category', 'Nonexistent']);
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('Expense Summary for January:');
+    expect(result.stdout).toContain('Category: Nonexistent');
+    expect(result.stdout).toContain('Total: $0.00');
+    expect(result.stdout).toContain('No expenses found for the specified filters.');
   });
 });

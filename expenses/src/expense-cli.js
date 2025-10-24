@@ -3,19 +3,74 @@ import path from 'path';
 import yargs from 'yargs/yargs';
 import { hideBin } from 'yargs/helpers';
 import { fileURLToPath } from 'url';
-import { getExpenses } from './expense-core.js';
+import { getExpenses, toCents } from './expense-core.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const dataFile = path.resolve(__dirname, '..', 'expenses.json');
+const defaultDataFile = path.resolve(__dirname, '..', '..', 'data', 'persistence', 'expenses.json');
+
+function resolveDataFile() {
+  const override = process.env.EXPENSES_DATA_FILE;
+  if (override && String(override).trim().length > 0) {
+    return path.resolve(override);
+  }
+
+  return defaultDataFile;
+}
+
+const dataFile = resolveDataFile();
+
+function ensureFileReady(targetFile) {
+  const directory = path.dirname(targetFile);
+  if (!fs.existsSync(directory)) {
+    fs.mkdirSync(directory, { recursive: true });
+  }
+
+  if (!fs.existsSync(targetFile)) {
+    fs.writeFileSync(targetFile, '[]', 'utf8');
+  }
+}
+
+function normalizeExpense(record, index) {
+  if (!record || typeof record !== 'object') {
+    throw new Error(`Expense at index ${index} is not an object.`);
+  }
+
+  const category = typeof record.category === 'string' && record.category.trim().length > 0
+    ? record.category.trim()
+    : null;
+  if (!category) {
+    throw new Error(`Expense at index ${index} is missing a valid category.`);
+  }
+
+  const amount = Number.isInteger(record.amount) ? record.amount : toCents(record.amount);
+  if (!Number.isFinite(amount)) {
+    throw new Error(`Expense at index ${index} has an invalid amount.`);
+  }
+
+  const date = record.date ? new Date(record.date) : new Date();
+  if (Number.isNaN(date.getTime())) {
+    throw new Error(`Expense at index ${index} has an invalid date.`);
+  }
+
+  return {
+    category,
+    amount,
+    date: date.toISOString()
+  };
+}
 
 function loadExpenses() {
   try {
-    if (fs.existsSync(dataFile)) {
-      const raw = fs.readFileSync(dataFile, 'utf8');
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
+    ensureFileReady(dataFile);
+
+    const raw = fs.readFileSync(dataFile, 'utf8') || '[]';
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      throw new Error('Stored expenses data is not an array.');
     }
+
+    return parsed.map((record, index) => normalizeExpense(record, index));
   } catch (error) {
     console.error('Failed to load expenses data:', error.message);
     process.exit(1);
@@ -26,7 +81,9 @@ function loadExpenses() {
 
 function _saveExpenses(expenses) {
   try {
-    fs.writeFileSync(dataFile, JSON.stringify(expenses, null, 2));
+    ensureFileReady(dataFile);
+    const normalized = expenses.map((record, index) => normalizeExpense(record, index));
+    fs.writeFileSync(dataFile, JSON.stringify(normalized, null, 2));
     return true;
   } catch (error) {
     console.error('Failed to save expenses data:', error.message);

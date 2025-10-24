@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import fs from 'fs';
+import path from 'path';
 import {
   manageTodos,
   addTask,
@@ -354,9 +356,26 @@ describe('manageTodos clear command', () => {
   });
 });
 
+const TEST_DATA_FILE = path.join(process.cwd(), 'todo', 'todos.test.json');
+const TEST_DATA_DIR = path.dirname(TEST_DATA_FILE);
+
+function ensureTestDir() {
+  if (!fs.existsSync(TEST_DATA_DIR)) {
+    fs.mkdirSync(TEST_DATA_DIR, { recursive: true });
+  }
+}
+
+function cleanTestData() {
+  ensureTestDir();
+  if (fs.existsSync(TEST_DATA_FILE)) {
+    fs.unlinkSync(TEST_DATA_FILE);
+  }
+}
+
 // Helper function to run CLI commands in-process
 async function runCLI(args) {
   const originalArgv = process.argv.slice();
+  const originalEnv = process.env.TODO_DATA_FILE;
   const logs = [];
   const errors = [];
   let exitCode = 0;
@@ -373,6 +392,8 @@ async function runCLI(args) {
   });
 
   process.argv = ['node', 'todo-cli.js', ...args];
+  ensureTestDir();
+  process.env.TODO_DATA_FILE = TEST_DATA_FILE;
 
   try {
     const cliModule = await import('../src/todo-cli.js');
@@ -389,6 +410,11 @@ async function runCLI(args) {
     }
   } finally {
     process.argv = originalArgv;
+    if (originalEnv === undefined) {
+      delete process.env.TODO_DATA_FILE;
+    } else {
+      process.env.TODO_DATA_FILE = originalEnv;
+    }
     consoleLogSpy.mockRestore();
     consoleErrorSpy.mockRestore();
     exitSpy.mockRestore();
@@ -403,22 +429,14 @@ async function runCLI(args) {
 
 describe('CLI --due Today functionality', () => {
   beforeEach(() => {
-    // Mock the current date for consistent testing
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2025-09-30T14:30:00.000Z'));
+    cleanTestData();
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    // Clean up any test data files
-    try {
-      const fs = require('fs');
-      if (fs.existsSync('todos.json')) {
-        fs.unlinkSync('todos.json');
-      }
-    } catch {
-      // Ignore cleanup errors
-    }
+    cleanTestData();
   });
 
   it('should add task with --due Today flag', async () => {
@@ -456,27 +474,11 @@ describe('CLI --due Today functionality', () => {
 
 describe('CLI duplicate guard functionality', () => {
   beforeEach(() => {
-    // Clean up any test data files
-    try {
-      const fs = require('fs');
-      if (fs.existsSync('todos.json')) {
-        fs.unlinkSync('todos.json');
-      }
-    } catch {
-      // Ignore cleanup errors
-    }
+    cleanTestData();
   });
 
   afterEach(() => {
-    // Clean up any test data files
-    try {
-      const fs = require('fs');
-      if (fs.existsSync('todos.json')) {
-        fs.unlinkSync('todos.json');
-      }
-    } catch {
-      // Ignore cleanup errors
-    }
+    cleanTestData();
   });
 
   it('should prevent adding exact duplicate task', async () => {
@@ -517,10 +519,7 @@ describe('CLI duplicate guard functionality', () => {
 
 describe('CLI high priority behavior', () => {
   beforeEach(() => {
-    try {
-      const fs = require('fs');
-      if (fs.existsSync('todos.json')) fs.unlinkSync('todos.json');
-    } catch (e) { void e; }
+    cleanTestData();
   });
 
   it('should mark task as high priority when --highPriority is set', async () => {
@@ -547,12 +546,120 @@ describe('CLI invalid --due flag handling', () => {
   afterEach(() => {
     process.argv = originalArgv.slice();
     vi.restoreAllMocks();
+    cleanTestData();
   });
 
   it('should print error and exit(1) when --due is invalid', async () => {
     const result = await runCLI(['add', 'My new task', '--due', 'Tomorrow']);
 
     expect(result.exitCode).toBe(1);
-    expect(result.stderr).toContain('Error: Only "Today" is supported for --due flag');
+    expect(result.stderr).toContain('Error: Only "Today" or ISO date strings are supported for --due flag');
+  });
+});
+
+describe('CLI --due Yesterday functionality', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2025-09-30T14:30:00.000Z'));
+    cleanTestData();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    cleanTestData();
+  });
+
+  it('should reject --due Yesterday relative to mocked clock', async () => {
+    const result = await runCLI(['add', 'Yesterday task', '--due', 'Yesterday']);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain('Error: Only "Today" or ISO date strings are supported for --due flag');
+  });
+
+  it('allows ISO due dates on following day when provided explicitly', async () => {
+    const nextDay = new Date('2025-10-01T10:00:00.000Z').toISOString();
+    const result = await runCLI(['add', 'Tomorrow task', '--due', nextDay]);
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain('Tomorrow task');
+    expect(result.stdout).toContain('(due:');
+  });
+});
+
+describe('CLI invalid id handling', () => {
+  beforeEach(() => {
+    cleanTestData();
+  });
+
+  it('fails when marking done with non-numeric id', async () => {
+    const result = await runCLI(['done', 'abc']);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain('Valid positive integer id');
+  });
+
+  it('fails when marking done with missing task', async () => {
+    const result = await runCLI(['done', '1']);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain('No task found with id 1');
+  });
+
+  it('fails when marking done with negative id', async () => {
+    const result = await runCLI(['done', '-4']);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain('Valid positive integer id');
+  });
+
+  it('fails when removing with non-numeric id', async () => {
+    const result = await runCLI(['remove', 'xyz']);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain('Valid positive integer id');
+  });
+
+  it('fails when removing a missing task', async () => {
+    const first = await runCLI(['remove', '3']);
+    expect(first.exitCode).toBe(1);
+    expect(first.stderr).toContain('No task found with id 3');
+
+    const second = await runCLI(['remove', '3']);
+    expect(second.exitCode).toBe(1);
+    expect(second.stderr).toContain('No task found with id 3');
+  });
+});
+
+describe('CLI error handling scenarios', () => {
+  beforeEach(() => {
+    cleanTestData();
+  });
+
+  afterEach(() => {
+    cleanTestData();
+  });
+
+  it('exits with failure when todos data file is corrupt', async () => {
+    ensureTestDir();
+    fs.writeFileSync(TEST_DATA_FILE, '{ not valid json }');
+
+    const result = await runCLI(['list']);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain('Failed to load todos:');
+  });
+
+  it('exits with failure when marking non-existent task done', async () => {
+    const result = await runCLI(['done', '999']);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain('No task found with id 999');
+  });
+
+  it('exits with failure when removing non-existent task', async () => {
+    const result = await runCLI(['remove', '999']);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain('No task found with id 999');
   });
 });
