@@ -102,6 +102,32 @@ fix: resolve memory leak in data processing (ISSUE-456)
 3. Ensure auto-linking patterns are correctly configured
 4. Check for error messages in Linear or GitHub logs
 
+## Automated Sub-Issue Sync
+
+### Overview
+- Workflow file: `.github/workflows/sync-linear-subtasks.yml`
+- Script entry point: `npm run sync:linear` (runs `scripts/sync-linear-subtasks.mjs`)
+- Trigger: Pushes to non-`main` branches that modify `specs/001-ui-scaffold-spec/tasks.md`; manual `workflow_dispatch` is available.
+
+### Configuration
+1. Add `LINEAR_API_KEY` secret to the repository (already configured).
+2. Add `LINEAR_PARENT_ISSUE_ID` secret containing the Linear parent issue ID (e.g., `TEAM-123`).
+3. Optional: Set `LINEAR_TASKS_FILE` secret/env if the tasks source file changes.
+
+### Parent Issue Template Suggestion
+- Title: `UI Scaffold Initiative: Linear Sync Tracker`
+- Description: Outline Phase 1-6 objectives and specify that sub-issues are maintained automatically by GitHub Actions.
+
+### Expected Behavior
+- Each task line in `specs/001-ui-scaffold-spec/tasks.md` creates or updates a Linear sub-issue with consistent titling.
+- Task completion toggles the Linear state between the team's `Unstarted` (or backlog-equivalent) and `Completed` states.
+- Issue descriptions include phase/section metadata and reference the originating markdown line.
+
+### Troubleshooting
+- Review workflow logs for `Created/Updated` counts; zero indicates parsing or credential issues.
+- Confirm the parent issue belongs to a team with both `Unstarted` and `Completed` states available.
+- For manual re-syncs, trigger the workflow dispatch and optionally override the parent issue ID input.
+
 #### Auto-Linking Not Working
 1. Verify branch naming follows convention
 2. Check PR titles include issue references
