@@ -55,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Temperature converter CLI detection logic for more robust execution
 
 ### Security
+
 - Added comprehensive input validation to prevent invalid temperature conversions
 - Implemented proper error handling with non-zero exit codes for all validation failures
 

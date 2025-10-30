@@ -74,6 +74,14 @@ Primary persona filters tasks to show only those due today using deterministic d
 - **FR-007**: All interactive elements MUST be accessible via keyboard navigation order, include visible focus states, and expose associated labels for assistive technologies.
 - **FR-008**: The interface MUST expose an aria-live region for form and list feedback, ensuring errors or confirmations are announced without requiring additional user action.
 - **FR-009**: The UI MUST display an informative empty state when no tasks match the current filter or after all tasks are removed.
+- **FR-010**: The UI MUST consume task management operations from `apps/todo/core/` and avoid re-implementing business rules client-side.
+- **FR-011**: Date-based behaviors (rendering, filtering, validation) MUST rely on a single shared clock utility so that deterministic tests can inject fixed times.
+
+### Testing Requirements
+
+- **TR-001**: Component tests using Vitest + React Testing Library MUST achieve at least 60% statement coverage for `apps/todo/ui/`.
+- **TR-002**: Component tests MUST cover the add, duplicate-blocking, mark-done toggle, and due-today filter flows using a fake clock for boundary validation.
+- **TR-003**: A Playwright smoke test MUST exercise the sequence add → mark done → filter due today → remove and upload resulting traces to the review packet.
 
 ### Key Entities
 
@@ -96,3 +104,6 @@ Primary persona filters tasks to show only those due today using deterministic d
 - **SC-002**: 100% of attempted duplicate entries surface a clear error message and do not increase the task count during controlled QA tests.
 - **SC-003**: At least 90% of accessibility checklist items specific to inputs, buttons, focus states, and aria-live usage pass during audit.
 - **SC-004**: During functional testing, users complete the add -> mark done -> filter due today -> remove flow in under 2 minutes without assistance.
+- **SC-005**: RTL coverage reports show ≥60% statement coverage for `apps/todo/ui/`, and the coverage index link is attached to the PR.
+- **SC-006**: The Playwright smoke test passes in CI with traces uploaded to the review packet and linked in the PR verification steps.
+- **SC-007**: The submitted PR titled `feat(todo-ui): ... (LIN-TODO)` includes screenshots, verification steps, and references to the review packet per Tuesday’s Definition of Done.
