@@ -10,6 +10,7 @@
     "todo:remove": "node cli/todo.js remove"
   },
   "dependencies": {
+    "@linear/sdk": "^63.0.0",
     "axios": "^1.12.2",
     "yargs": "^18.0.0"
   },
