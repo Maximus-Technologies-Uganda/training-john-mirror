@@ -5,7 +5,7 @@ on:
     branches-ignore:
       - main
     paths:
-      - specs/001-ui-scaffold-spec/tasks.md
+      - specs/001-ui-implement-todo-ui/tasks.md
       - scripts/sync-linear-subtasks.mjs
       - .github/workflows/sync-linear-subtasks.yml
   workflow_dispatch:
