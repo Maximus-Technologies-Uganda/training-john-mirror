@@ -1,0 +1,175 @@
+openapi: 3.0.3
+info:
+  title: Todo UI Local API
+  version: 1.0.0
+  description: |
+    Contract describing the shape of interactions between the React UI layer and the shared `todo-core`
+    module. Although executed in-memory, the schema ensures deterministic mocks for tests and documents
+    expected payloads for each user action.
+servers:
+  - url: http://localhost
+paths:
+  /tasks:
+    get:
+      summary: List tasks (optionally filtered to due today)
+      parameters:
+        - in: query
+          name: dueToday
+          schema:
+            type: boolean
+          description: When true, only include incomplete tasks whose dueDate matches the provided clock date.
+      responses:
+        '200':
+          description: Successful retrieval of tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskListResponse'
+    post:
+      summary: Add a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTaskRequest'
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddTaskResponse'
+        '409':
+          description: Duplicate task detected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /tasks/{taskId}/done:
+    patch:
+      summary: Toggle task completion
+      parameters:
+        - $ref: '#/components/parameters/TaskIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                done:
+                  type: boolean
+              required:
+                - done
+      responses:
+        '200':
+          description: Updated task state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /tasks/{taskId}:
+    delete:
+      summary: Remove task
+      parameters:
+        - $ref: '#/components/parameters/TaskIdParam'
+      responses:
+        '200':
+          description: Deletion succeeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required:
+                  - success
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  parameters:
+    TaskIdParam:
+      name: taskId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+  schemas:
+    Task:
+      type: object
+      required:
+        - id
+        - text
+        - done
+        - priority
+      properties:
+        id:
+          type: integer
+        text:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+        done:
+          type: boolean
+        priority:
+          type: string
+          enum: [high, normal]
+    TaskListResponse:
+      type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+        hiddenCount:
+          type: integer
+          minimum: 0
+          description: Number of tasks filtered out by the current view (e.g., dueToday hides completed tasks).
+      required:
+        - tasks
+        - hiddenCount
+    AddTaskRequest:
+      type: object
+      properties:
+        text:
+          type: string
+        dueDate:
+          type: string
+          format: date
+          nullable: true
+        priority:
+          type: string
+          enum: [high, normal]
+      required:
+        - text
+    AddTaskResponse:
+      type: object
+      properties:
+        task:
+          $ref: '#/components/schemas/Task'
+      required:
+        - task
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+

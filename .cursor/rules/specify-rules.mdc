@@ -1,0 +1,30 @@
+﻿# training-john Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2025-10-30
+
+## Active Technologies
+
+- TypeScript 5.6 + React 18 (Vite) + `react`, `react-dom`, `@vitejs/plugin-react`, shared `todo-core` wrapper (001-implement-todo-ui)
+
+## Project Structure
+
+```text
+backend/
+frontend/
+tests/
+```
+
+## Commands
+
+npm test; npm run lint
+
+## Code Style
+
+TypeScript 5.6 + React 18 (Vite): Follow standard conventions
+
+## Recent Changes
+
+- 001-implement-todo-ui: Added TypeScript 5.6 + React 18 (Vite) + `react`, `react-dom`, `@vitejs/plugin-react`, shared `todo-core` wrapper
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

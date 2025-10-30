@@ -5,6 +5,12 @@
 **Status**: Draft  
 **Input**: User description: "Title: Tuesday: To-Do UI Implementation (Deterministic & Boundaries)Context: This specification outlines the feature development for the To-Do UI, based on the Week 3 Workbook. The objective is to build a robust and deterministic UI that connects to the Week 2 core logic, paying close attention to boundary conditions and error handling.Core Requirements: To-Do UI Implementation:Folder: apps/todo/ui/.Logic: Must import all business logic from apps/todo/core/.Core Functionality: Implement UI for: Add, List, Done (mark as complete), and Remove tasks.Feature dueToday: Implement the dueToday filter functionality.Error Handling: Prevent duplicate tasks (based on text + due date). The UI must display a clear error message in an aria-live region.Accessibility (a11y):Implement all checks from specs/todo/ux-checklist.md.Ensure all inputs/buttons are labeled, keyboard navigable, and have focus states.Testing (To-Do UI):Vitest (RTL): Implement component tests to meet >=60% statement coverage.Tests must include:add -> list length increments.duplicate -> blocked with error message.mark done -> toggles state.dueToday boundary logic (yesterday/today/tomorrow) using a fake clock.Playwright: Implement a smoke test for the flow: add -> mark done -> filter due today -> remove.Pull Request:Branch Name: feature/LIN-TODO-ui-todo.PR Title: feat(todo-ui): ... (LIN-TODO).PR description must include screenshots, verification steps, and links to the Review Packet and Coverage Index.Definition of Done:The To-Do UI is fully functional as per the spec.md and Tuesday's goals.RTL test coverage is >=60%.Playwright smoke test is passing.CI is green, and all artifacts (UI coverage, Playwright traces) are uploaded to the packet"
 
+## Clarifications
+
+### Session 2025-10-30
+
+- Q: Should the dueToday filter show only incomplete items or all tasks due today? → A: Show only tasks due today that are still not done
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Add and View Tasks Reliably (Priority: P1)
@@ -39,7 +45,7 @@ Primary persona marks tasks done and confirms the status change while preserving
 
 ### User Story 3 - Focus on Today's Commitments (Priority: P3)
 
-Primary persona filters tasks to show only those due today using deterministic date handling and can revert to the full list.
+Primary persona filters tasks to show only those due today and still not marked done using deterministic date handling and can revert to the full list.
 
 **Why this priority**: Due-today visibility helps users execute daily plans and is specifically called out in Tuesday's goals.
 
@@ -70,7 +76,7 @@ Primary persona filters tasks to show only those due today using deterministic d
 - **FR-003**: The system MUST prevent saving tasks when another task exists with the same normalized text and due date, and MUST surface an aria-live error message explaining the duplication.
 - **FR-004**: Users MUST be able to mark any listed task as complete and revert completion via the same control without page reloads.
 - **FR-005**: Users MUST be able to remove a task from the list, after which it no longer appears in the current or future filtered views.
-- **FR-006**: The UI MUST provide a due-today filter control that limits the list to tasks whose due date matches the current local date and offers a clear option to return to the full list.
+- **FR-006**: The UI MUST provide a due-today filter control that limits the list to tasks whose due date matches the current local date and are still marked not done, and offers a clear option to return to the full list.
 - **FR-007**: All interactive elements MUST be accessible via keyboard navigation order, include visible focus states, and expose associated labels for assistive technologies.
 - **FR-008**: The interface MUST expose an aria-live region for form and list feedback, ensuring errors or confirmations are announced without requiring additional user action.
 - **FR-009**: The UI MUST display an informative empty state when no tasks match the current filter or after all tasks are removed.
