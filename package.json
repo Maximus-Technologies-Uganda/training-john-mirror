@@ -9,6 +9,7 @@
     "test:ci": "npm run test -- --run --coverage",
     "lint": "eslint .",
     "sync:linear": "node scripts/sync-linear-subtasks.mjs",
+    "sync:specs": "node scripts/sync-spec-to-linear.mjs",
     "todo:remove": "node cli/todo.js remove"
   },
   "dependencies": {

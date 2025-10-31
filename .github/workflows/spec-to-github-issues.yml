@@ -1,0 +1,46 @@
+name: Spec → GitHub Issues sync
+
+on:
+  push:
+    branches:
+      - development
+    paths:
+      - specs/**/spec.md
+
+jobs:
+  sync:
+    if: ${{ github.event.repository.private == true }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get changed spec files
+        id: changed-files
+        run: |
+          # Get the list of changed spec.md files
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep 'specs/.*/spec\.md$' || true)
+          echo "changed_files=$CHANGED_FILES" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Issues
+        run: |
+          # Loop through each changed spec.md file
+          for spec_file in ${{ steps.changed-files.outputs.changed_files }}; do
+            if [ -f "$spec_file" ]; then
+              # Extract the title from the H1 heading
+              TITLE=$(grep -m 1 '^# ' "$spec_file" | sed 's/^# //' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//' || echo "Untitled Spec")
+
+              # Create the issue body with a link to the spec file
+              BODY="This issue tracks the implementation of the feature specification.
+
+**Specification**: [${spec_file}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/${spec_file})
+
+This GitHub Issue is automatically created when the specification file is updated."
+
+              # Create the GitHub Issue
+              gh issue create \
+                --title "$TITLE" \
+                --body "$BODY" \
+                --label "specification"
+            fi
+          done
