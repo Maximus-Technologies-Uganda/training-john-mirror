@@ -1,0 +1,309 @@
+openapi: 3.0.3
+info:
+  title: To-Do Core API
+  description: Business logic API consumed by the To-Do UI
+  version: 1.0.0
+  contact:
+    name: To-Do Core Module
+
+servers:
+  - url: 'src/todo-core.js'
+    description: Local business logic module
+
+paths:
+  /manageTodos:
+    post:
+      summary: Execute a todo management command
+      description: Main entry point for all todo operations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                todos:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Task'
+                  default: []
+                command:
+                  type: string
+                  enum: [add, done, remove, list, clear]
+                options:
+                  $ref: '#/components/schemas/CommandOptions'
+              required:
+                - command
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Task'
+                required:
+                  - success
+                  - data
+        '400':
+          description: Operation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                required:
+                  - success
+                  - error
+
+  /addTask:
+    post:
+      summary: Add a new task
+      description: Convenience function for adding tasks with error throwing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                todos:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Task'
+                  default: []
+                text:
+                  type: string
+                  minLength: 1
+                dueDate:
+                  type: string
+                  format: date-time
+                  nullable: true
+                priority:
+                  type: string
+                  enum: [normal, high]
+                  default: normal
+              required:
+                - text
+      responses:
+        '200':
+          description: Task added successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid input or duplicate task
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error: Duplicate to-do item found."
+
+  /markTaskDone:
+    post:
+      summary: Mark a task as completed
+      description: Convenience function for marking tasks done
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                todos:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Task'
+                  default: []
+                id:
+                  type: integer
+                  minimum: 1
+              required:
+                - id
+      responses:
+        '200':
+          description: Task marked as done
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid task ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error: Valid numeric id is required to mark a to-do as done."
+
+  /removeTask:
+    post:
+      summary: Remove a task
+      description: Convenience function for removing tasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                todos:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Task'
+                  default: []
+                id:
+                  type: integer
+                  minimum: 1
+              required:
+                - id
+      responses:
+        '200':
+          description: Task removed successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid task ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error: Valid numeric id is required to remove a to-do."
+
+  /listTasks:
+    post:
+      summary: List and filter tasks
+      description: Retrieve tasks with optional filtering and sorting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                todos:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Task'
+                  default: []
+                options:
+                  $ref: '#/components/schemas/ListOptions'
+              required:
+                - todos
+      responses:
+        '200':
+          description: Tasks retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          description: Unique task identifier
+        text:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: Task description
+        done:
+          type: boolean
+          default: false
+          description: Completion status
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+          description: Due date in ISO format
+        priority:
+          type: string
+          enum: [normal, high]
+          default: normal
+          description: Task priority level
+      required:
+        - id
+        - text
+        - done
+
+    CommandOptions:
+      type: object
+      properties:
+        text:
+          type: string
+          description: Task text for add command
+        dueDate:
+          type: string
+          format: date-time
+          nullable: true
+          description: Due date for add command
+        highPriority:
+          type: boolean
+          default: false
+          description: Priority flag for add command
+        id:
+          type: integer
+          minimum: 1
+          description: Task ID for done/remove commands
+        filterDueDate:
+          type: string
+          format: date-time
+          description: Due date filter for list command
+        filterHighPriority:
+          type: boolean
+          default: false
+          description: High priority filter for list command
+
+    ListOptions:
+      type: object
+      properties:
+        filterDueDate:
+          type: string
+          format: date-time
+          description: Filter tasks by due date
+        filterHighPriority:
+          type: boolean
+          default: false
+          description: Filter for high priority tasks only
+
+  securitySchemes:
+    none:
+      type: http
+      scheme: none
+      description: No authentication required for local business logic
