@@ -39,4 +39,4 @@ Tuesday: To-Do UI Implementation (Deterministic & Boundaries)
 - [📖 Research](./specs/001-implement-todo-ui/research.md)
 
 ---
-*Generated from spec sync on 2025-10-30*
+*Generated from spec sync on 2025-10-31*
