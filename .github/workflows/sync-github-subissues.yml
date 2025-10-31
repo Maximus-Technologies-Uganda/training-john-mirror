@@ -1,0 +1,38 @@
+name: Sync GitHub Sub-Issues
+
+on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - specs/**/tasks.md
+      - scripts/sync-github-subissues.mjs
+      - .github/workflows/sync-github-subissues.yml
+  workflow_dispatch:
+    inputs:
+      tasksFile:
+        description: 'Specific tasks.md file to sync (optional - syncs all if not set)'
+        required: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run GitHub sync
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TASKS_FILE: ${{ github.event.inputs.tasksFile }}
+        run: npm run sync:github

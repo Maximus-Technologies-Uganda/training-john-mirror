@@ -1,22 +1,45 @@
 import axios from 'axios';
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { resolve, join } from 'node:path';
+import { readdirSync, statSync } from 'node:fs';
 
 const linearApiKey = process.env.LINEAR_API_KEY;
-const parentIssueId = process.env.LINEAR_PARENT_ISSUE_ID;
-const tasksFileRelative = process.env.LINEAR_TASKS_FILE ?? 'specs/001-ui-scaffold-spec/tasks.md';
+const tasksFileRelative = process.env.LINEAR_TASKS_FILE ?? '';
 
 if (!linearApiKey) {
   console.error('Missing required environment variable: LINEAR_API_KEY');
   process.exit(1);
 }
 
-if (!parentIssueId) {
-  console.error('Missing required environment variable: LINEAR_PARENT_ISSUE_ID');
-  process.exit(1);
+function findTasksFiles(dirPath, files = []) {
+  const items = readdirSync(dirPath);
+
+  for (const item of items) {
+    const fullPath = join(dirPath, item);
+    const stat = statSync(fullPath);
+
+    if (stat.isDirectory() && !item.startsWith('.')) {
+      findTasksFiles(fullPath, files);
+    } else if (item === 'tasks.md') {
+      files.push(fullPath);
+    }
+  }
+
+  return files;
 }
 
-const tasksFilePath = resolve(process.cwd(), tasksFileRelative);
+function getParentIssueId(specDir) {
+  // Try environment variables first: LINEAR_PARENT_ISSUE_ID_<SPEC_NAME>
+  const specName = specDir.split('/').pop().toUpperCase().replace(/[^A-Z0-9]/g, '_');
+  const envVar = `LINEAR_PARENT_ISSUE_ID_${specName}`;
+  const envValue = process.env[envVar];
+  if (envValue) {
+    return envValue;
+  }
+
+  // Fallback to general LINEAR_PARENT_ISSUE_ID
+  return process.env.LINEAR_PARENT_ISSUE_ID;
+}
 
 const client = axios.create({
   baseURL: 'https://api.linear.app/graphql',
@@ -138,13 +161,14 @@ function selectStateIds(states) {
   };
 }
 
-async function main() {
-  const markdown = readFileSync(tasksFilePath, 'utf8');
+async function syncTasksFile(tasksFile, parentIssueId) {
+  const relativePath = tasksFile.replace(/\\/g, '/').replace(/^.*\/specs\//, 'specs/');
+  const markdown = readFileSync(tasksFile, 'utf8');
   const tasks = parseTasks(markdown);
 
   if (!tasks.length) {
-    console.warn(`No tasks detected in ${tasksFileRelative}. Nothing to sync.`);
-    return;
+    console.warn(`No tasks detected in ${relativePath}. Skipping.`);
+    return { created: 0, updated: 0, unchanged: 0 };
   }
 
   const parentQuery = `
@@ -183,7 +207,7 @@ async function main() {
   const parentIssue = parentData?.issue;
 
   if (!parentIssue) {
-    throw new Error(`Linear parent issue ${parentIssueId} not found.`);
+    throw new Error(`Linear parent issue ${parentIssueId} not found for ${relativePath}.`);
   }
 
   const teamStates = parentIssue.team?.states?.nodes ?? [];
@@ -194,14 +218,14 @@ async function main() {
     existingIssues.set(child.title, child);
   }
 
-  console.log(`Syncing ${tasks.length} tasks to Linear parent ${parentIssue.identifier} (${parentIssue.title}).`);
+  console.log(`Syncing ${tasks.length} tasks from ${relativePath} to Linear parent ${parentIssue.identifier} (${parentIssue.title}).`);
 
   let created = 0;
   let updated = 0;
   let unchanged = 0;
 
   for (const task of tasks) {
-    const description = buildDescription(task, tasksFileRelative);
+    const description = buildDescription(task, relativePath);
     const desiredStateId = task.checked ? stateIds.completed : stateIds.unstarted;
 
     const existing = existingIssues.get(task.title);
@@ -269,7 +293,56 @@ async function main() {
     updated += 1;
   }
 
-  console.log('Sync complete:', { created, updated, unchanged });
+  console.log(`File ${relativePath} sync complete:`, { created, updated, unchanged });
+  return { created, updated, unchanged };
+}
+
+async function main() {
+  const specsDir = resolve(process.cwd(), 'specs');
+
+  // If a specific tasks file is provided, use only that one
+  const tasksFiles = tasksFileRelative
+    ? [resolve(process.cwd(), tasksFileRelative)]
+    : findTasksFiles(specsDir);
+
+  if (!tasksFiles.length) {
+    console.warn(`No tasks.md files found${tasksFileRelative ? ` at ${tasksFileRelative}` : ` in ${specsDir}`}. Nothing to sync.`);
+    return;
+  }
+
+  console.log(`Found ${tasksFiles.length} tasks.md file(s) to sync to Linear sub-issues.`);
+
+  let totalCreated = 0;
+  let totalUpdated = 0;
+  let totalUnchanged = 0;
+
+  for (const tasksFile of tasksFiles) {
+    // Extract spec directory name for parent issue ID lookup
+    const specDirMatch = tasksFile.match(/specs[\/\\]([^/\\]+)/);
+    if (!specDirMatch) {
+      console.warn(`Could not determine spec directory for ${tasksFile}. Skipping.`);
+      continue;
+    }
+
+    const specDir = specDirMatch[1];
+    const parentIssueId = getParentIssueId(specDir);
+
+    if (!parentIssueId) {
+      console.warn(`No parent issue ID found for spec ${specDir}. Set LINEAR_PARENT_ISSUE_ID_${specDir.toUpperCase().replace(/[^A-Z0-9]/g, '_')} or LINEAR_PARENT_ISSUE_ID. Skipping.`);
+      continue;
+    }
+
+    try {
+      const stats = await syncTasksFile(tasksFile, parentIssueId);
+      totalCreated += stats.created;
+      totalUpdated += stats.updated;
+      totalUnchanged += stats.unchanged;
+    } catch (error) {
+      console.error(`Failed to sync ${tasksFile}:`, error.message);
+    }
+  }
+
+  console.log('Overall sync complete:', { created: totalCreated, updated: totalUpdated, unchanged: totalUnchanged });
 }
 
 main().catch((error) => {
