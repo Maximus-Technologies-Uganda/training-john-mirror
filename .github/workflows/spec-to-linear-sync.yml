@@ -3,7 +3,7 @@ name: Spec → Linear sync
 on:
   push:
     branches:
-      - main
+      - development
     paths:
       - 'specs/**/spec.md'
       - 'specs/**/plan.md'
