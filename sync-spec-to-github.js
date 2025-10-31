@@ -6,7 +6,6 @@
 
 import { Octokit } from '@octokit/rest';
 import fs from 'fs';
-import path from 'path';
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,

@@ -250,7 +250,7 @@ function getPhaseLabels(phaseTitle) {
 
 function getPhaseAcceptanceCriteria(phaseTitle) {
   const criteria = {
-    'Phase 1: Setup (Shared Infrastructure)': '- ✅ Workspace scripts functional\n- ✅ \`npm run dev\` launches basic app\n- ✅ Shared packages properly configured',
+    'Phase 1: Setup (Shared Infrastructure)': '- ✅ Workspace scripts functional\n- ✅ `npm run dev` launches basic app\n- ✅ Shared packages properly configured',
     'Phase 2: Foundational (Blocking Prerequisites)': '- ✅ RTL tests run successfully\n- ✅ Reducer handles core actions\n- ✅ Clock service supports fake clocks\n- ✅ LiveRegion component provides feedback',
     'Phase 3: User Story 1 - Add and View Tasks Reliably': '- ✅ User Story 1 functional with passing RTL tests\n- ✅ SC-001, SC-002 met\n- ✅ Duplicate prevention working\n- ✅ Aria-live feedback operational',
     'Phase 4: User Story 2 - Complete Tasks with Confidence': '- ✅ User Stories 1 and 2 operate with passing tests\n- ✅ FR-004, FR-005 met\n- ✅ Task completion and removal working\n- ✅ Focus management implemented',

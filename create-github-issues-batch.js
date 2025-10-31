@@ -69,7 +69,7 @@ async function createAllIssues() {
   try {
     execSync('gh --version', { stdio: 'pipe' });
     console.log('✅ GitHub CLI is available');
-  } catch (error) {
+  } catch (_error) {
     console.error('❌ GitHub CLI not found. Please install it first:');
     console.error('   https://cli.github.com/');
     console.error('   Then run: gh auth login');
@@ -80,7 +80,7 @@ async function createAllIssues() {
   try {
     execSync('gh auth status', { stdio: 'pipe' });
     console.log('✅ GitHub CLI is authenticated');
-  } catch (error) {
+  } catch (_error) {
     console.error('❌ Not authenticated with GitHub CLI. Please run:');
     console.error('   gh auth login');
     process.exit(1);
