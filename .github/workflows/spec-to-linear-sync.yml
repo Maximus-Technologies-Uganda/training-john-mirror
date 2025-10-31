@@ -1,0 +1,52 @@
+name: Spec → Linear sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'specs/**/spec.md'
+      - 'specs/**/plan.md'
+
+jobs:
+  sync-spec:
+    name: Sync spec to Linear
+    # Only run in private repos (mirror/public won't run)
+    if: ${{ github.event.repository.private == true }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install sync tool
+        run: |
+          npm --version
+          # Placeholder: install your private sync script if applicable
+          echo "Using repo script to sync"
+      - name: Export env for spec sync
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_SHA: ${{ github.sha }}
+          GH_REF_NAME: ${{ github.ref_name }}
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          LINEAR_TEAM_ID: ${{ secrets.LINEAR_TEAM_ID }}
+        shell: bash
+        run: |
+          {
+            printf 'GITHUB_REPOSITORY=%s\n' "$GH_REPO"
+            printf 'GITHUB_SHA=%s\n' "$GH_SHA"
+            printf 'GITHUB_REF_NAME=%s\n' "$GH_REF_NAME"
+            printf 'LINEAR_API_KEY=%s\n' "$LINEAR_API_KEY"
+            printf 'LINEAR_TEAM_ID=%s\n' "$LINEAR_TEAM_ID"
+          } >> "$GITHUB_ENV"
+      - name: Run sync script
+        run: |
+          if [ -f .specify/scripts/node/spec-to-linear.mjs ]; then
+            node .specify/scripts/node/spec-to-linear.mjs
+          else
+            echo "No spec-to-linear script found; skipping without failure."
+          fi
