@@ -17,7 +17,7 @@ function checkDevServer() {
   try {
     const result = execSync('curl -s -o /dev/null -w "%{http_code}" http://localhost:5173', { encoding: 'utf8' });
     return result.trim() === '200';
-  } catch (_error) {
+  } catch {
     return false;
   }
 }
@@ -27,7 +27,7 @@ function startDevServer() {
   console.log('🚀 Starting development server...');
   try {
     execSync('npm run dev', { stdio: 'inherit', timeout: 30000 });
-  } catch (error) {
+  } catch {
     console.log('⚠️ Dev server may already be running or failed to start');
   }
 }
@@ -41,7 +41,7 @@ function runBrowserTest(browser) {
     execSync(command, { stdio: 'inherit' });
     console.log(`✅ ${browser} tests passed`);
     return true;
-  } catch (error) {
+  } catch {
     console.log(`❌ ${browser} tests failed`);
     return false;
   }
