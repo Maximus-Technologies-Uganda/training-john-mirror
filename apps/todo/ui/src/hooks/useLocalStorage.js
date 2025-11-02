@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
-import { isLocalStorageAvailable, safeJsonParse, safeJsonStringify, getUserFriendlyErrorMessage } from '../utils/errorUtils.js'
+import { useState, useEffect, useCallback } from 'react';
+import { isLocalStorageAvailable, safeJsonParse, safeJsonStringify, getUserFriendlyErrorMessage } from '../utils/errorUtils.js';
 
 /**
  * Custom hook for persistent localStorage state management with graceful error handling
@@ -10,66 +10,66 @@ import { isLocalStorageAvailable, safeJsonParse, safeJsonStringify, getUserFrien
  */
 function useLocalStorage(key, defaultValue, onError = null) {
   // Check if localStorage is available
-  const isStorageAvailable = isLocalStorageAvailable()
+  const isStorageAvailable = isLocalStorageAvailable();
 
   // Initialize state with value from localStorage or default
   const [storedValue, setStoredValue] = useState(() => {
     if (!isStorageAvailable) {
-      return defaultValue
+      return defaultValue;
     }
 
     try {
-      const item = window.localStorage.getItem(key)
-      return item ? safeJsonParse(item, defaultValue) : defaultValue
+      const item = window.localStorage.getItem(key);
+      return item ? safeJsonParse(item, defaultValue) : defaultValue;
     } catch (error) {
-      const friendlyMessage = getUserFriendlyErrorMessage(error, `Failed to load saved data for "${key}"`)
-      // eslint-disable-next-line no-console
-      console.warn(`Error reading localStorage key "${key}":`, error)
+      const friendlyMessage = getUserFriendlyErrorMessage(error, `Failed to load saved data for "${key}"`);
+       
+      console.warn(`Error reading localStorage key "${key}":`, error);
 
       if (onError) {
-        onError(friendlyMessage, error)
+        onError(friendlyMessage, error);
       }
 
-      return defaultValue
+      return defaultValue;
     }
-  })
+  });
 
   // Update localStorage whenever the state changes
   useEffect(() => {
     if (!isStorageAvailable) {
-      return
+      return;
     }
 
     try {
-      const serializedValue = safeJsonStringify(storedValue)
-      window.localStorage.setItem(key, serializedValue)
+      const serializedValue = safeJsonStringify(storedValue);
+      window.localStorage.setItem(key, serializedValue);
     } catch (error) {
-      const friendlyMessage = getUserFriendlyErrorMessage(error, `Failed to save data for "${key}"`)
-      // eslint-disable-next-line no-console
-      console.warn(`Error setting localStorage key "${key}":`, error)
+      const friendlyMessage = getUserFriendlyErrorMessage(error, `Failed to save data for "${key}"`);
+       
+      console.warn(`Error setting localStorage key "${key}":`, error);
 
       if (onError) {
-        onError(friendlyMessage, error)
+        onError(friendlyMessage, error);
       }
     }
-  }, [key, storedValue, isStorageAvailable, onError])
+  }, [key, storedValue, isStorageAvailable, onError]);
 
   // Enhanced setter that also handles errors
   const setValue = useCallback((value) => {
     try {
-      setStoredValue(value)
+      setStoredValue(value);
     } catch (error) {
-      const friendlyMessage = getUserFriendlyErrorMessage(error, 'Failed to update application state')
-      // eslint-disable-next-line no-console
-      console.error('Error updating state:', error)
+      const friendlyMessage = getUserFriendlyErrorMessage(error, 'Failed to update application state');
+       
+      console.error('Error updating state:', error);
 
       if (onError) {
-        onError(friendlyMessage, error)
+        onError(friendlyMessage, error);
       }
     }
-  }, [onError])
+  }, [onError]);
 
-  return [storedValue, setValue, isStorageAvailable]
+  return [storedValue, setValue, isStorageAvailable];
 }
 
-export default useLocalStorage
+export default useLocalStorage;

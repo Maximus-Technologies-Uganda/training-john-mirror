@@ -15,18 +15,18 @@ export function getAriaAttributes(label, describedBy = null, required = false, e
   const attributes = {
     'aria-label': label,
     'aria-required': required
-  }
+  };
 
   if (describedBy) {
-    attributes['aria-describedby'] = describedBy
+    attributes['aria-describedby'] = describedBy;
   }
 
   if (errorId) {
-    attributes['aria-invalid'] = true
-    attributes['aria-describedby'] = errorId
+    attributes['aria-invalid'] = true;
+    attributes['aria-describedby'] = errorId;
   }
 
-  return attributes
+  return attributes;
 }
 
 /**
@@ -40,21 +40,21 @@ export function getAriaAttributes(label, describedBy = null, required = false, e
 export function getButtonAriaAttributes(label, description = null, expanded = null, pressed = null) {
   const attributes = {
     'aria-label': label
-  }
+  };
 
   if (description) {
-    attributes['aria-description'] = description
+    attributes['aria-description'] = description;
   }
 
   if (expanded !== null) {
-    attributes['aria-expanded'] = expanded
+    attributes['aria-expanded'] = expanded;
   }
 
   if (pressed !== null) {
-    attributes['aria-pressed'] = pressed
+    attributes['aria-pressed'] = pressed;
   }
 
-  return attributes
+  return attributes;
 }
 
 /**
@@ -69,7 +69,7 @@ export function getListItemAriaAttributes(index, total, label) {
     'aria-label': `${label}, ${index + 1} of ${total}`,
     'aria-setsize': total,
     'aria-posinset': index + 1
-  }
+  };
 }
 
 /**
@@ -82,12 +82,12 @@ export function getListItemAriaAttributes(index, total, label) {
  * @returns {boolean} True if focus was set
  */
 export function focusFirstFocusableElement(container) {
-  const focusableElements = getFocusableElements(container)
+  const focusableElements = getFocusableElements(container);
   if (focusableElements.length > 0) {
-    focusableElements[0].focus()
-    return true
+    focusableElements[0].focus();
+    return true;
   }
-  return false
+  return false;
 }
 
 /**
@@ -96,12 +96,12 @@ export function focusFirstFocusableElement(container) {
  * @returns {boolean} True if focus was set
  */
 export function focusLastFocusableElement(container) {
-  const focusableElements = getFocusableElements(container)
+  const focusableElements = getFocusableElements(container);
   if (focusableElements.length > 0) {
-    focusableElements[focusableElements.length - 1].focus()
-    return true
+    focusableElements[focusableElements.length - 1].focus();
+    return true;
   }
-  return false
+  return false;
 }
 
 /**
@@ -119,14 +119,14 @@ export function getFocusableElements(container) {
     'details',
     '[tabindex]:not([tabindex="-1"])',
     '[contenteditable="true"]'
-  ]
+  ];
 
   return Array.from(container.querySelectorAll(focusableSelectors.join(',')))
     .filter(element => {
       // Check if element is visible
-      const rect = element.getBoundingClientRect()
-      return rect.width > 0 && rect.height > 0 && window.getComputedStyle(element).visibility !== 'hidden'
-    })
+      const rect = element.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0 && window.getComputedStyle(element).visibility !== 'hidden';
+    });
 }
 
 /**
@@ -136,40 +136,40 @@ export function getFocusableElements(container) {
  * @returns {function} Cleanup function to remove focus trap
  */
 export function trapFocus(container, onEscape = null) {
-  const focusableElements = getFocusableElements(container)
-  if (focusableElements.length === 0) return () => {}
+  const focusableElements = getFocusableElements(container);
+  if (focusableElements.length === 0) return () => {};
 
-  let currentFocusIndex = 0
+  let currentFocusIndex = 0;
 
   const handleKeyDown = (event) => {
     if (event.key === 'Escape' && onEscape) {
-      onEscape()
-      return
+      onEscape();
+      return;
     }
 
     if (event.key === 'Tab') {
-      event.preventDefault()
+      event.preventDefault();
 
       if (event.shiftKey) {
         // Shift + Tab: move to previous
-        currentFocusIndex = currentFocusIndex > 0 ? currentFocusIndex - 1 : focusableElements.length - 1
+        currentFocusIndex = currentFocusIndex > 0 ? currentFocusIndex - 1 : focusableElements.length - 1;
       } else {
         // Tab: move to next
-        currentFocusIndex = currentFocusIndex < focusableElements.length - 1 ? currentFocusIndex + 1 : 0
+        currentFocusIndex = currentFocusIndex < focusableElements.length - 1 ? currentFocusIndex + 1 : 0;
       }
 
-      focusableElements[currentFocusIndex].focus()
+      focusableElements[currentFocusIndex].focus();
     }
-  }
+  };
 
-  container.addEventListener('keydown', handleKeyDown)
+  container.addEventListener('keydown', handleKeyDown);
 
   // Focus first element
-  focusableElements[0].focus()
+  focusableElements[0].focus();
 
   return () => {
-    container.removeEventListener('keydown', handleKeyDown)
-  }
+    container.removeEventListener('keydown', handleKeyDown);
+  };
 }
 
 /**
@@ -185,53 +185,53 @@ export function trapFocus(container, onEscape = null) {
 export function announceToScreenReader(message, priority = 'polite', role = 'status') {
   // Input validation
   if (!message || typeof message !== 'string') {
-    // eslint-disable-next-line no-console
-    console.warn('announceToScreenReader: message must be a non-empty string')
-    return
+     
+    console.warn('announceToScreenReader: message must be a non-empty string');
+    return;
   }
 
   if (!['polite', 'assertive'].includes(priority)) {
-    // eslint-disable-next-line no-console
-    console.warn('announceToScreenReader: priority must be "polite" or "assertive"')
-    priority = 'polite'
+     
+    console.warn('announceToScreenReader: priority must be "polite" or "assertive"');
+    priority = 'polite';
   }
 
   if (typeof role !== 'string') {
-    // eslint-disable-next-line no-console
-    console.warn('announceToScreenReader: role must be a string')
-    role = 'status'
+     
+    console.warn('announceToScreenReader: role must be a string');
+    role = 'status';
   }
 
   // Remove any existing announcement
-  const existingAnnouncement = document.getElementById('sr-announcement')
+  const existingAnnouncement = document.getElementById('sr-announcement');
   if (existingAnnouncement) {
-    existingAnnouncement.remove()
+    existingAnnouncement.remove();
   }
 
   // Create new announcement element
-  const announcement = document.createElement('div')
-  announcement.id = 'sr-announcement'
-  announcement.setAttribute('aria-live', priority)
-  announcement.setAttribute('aria-atomic', 'true')
-  announcement.setAttribute('role', role)
-  announcement.style.position = 'absolute'
-  announcement.style.left = '-10000px'
-  announcement.style.width = '1px'
-  announcement.style.height = '1px'
-  announcement.style.overflow = 'hidden'
+  const announcement = document.createElement('div');
+  announcement.id = 'sr-announcement';
+  announcement.setAttribute('aria-live', priority);
+  announcement.setAttribute('aria-atomic', 'true');
+  announcement.setAttribute('role', role);
+  announcement.style.position = 'absolute';
+  announcement.style.left = '-10000px';
+  announcement.style.width = '1px';
+  announcement.style.height = '1px';
+  announcement.style.overflow = 'hidden';
 
   // Add message
-  announcement.textContent = message
+  announcement.textContent = message;
 
   // Add to DOM
-  document.body.appendChild(announcement)
+  document.body.appendChild(announcement);
 
   // Clean up after announcement
   setTimeout(() => {
     if (announcement.parentNode) {
-      announcement.parentNode.removeChild(announcement)
+      announcement.parentNode.removeChild(announcement);
     }
-  }, 1000)
+  }, 1000);
 }
 
 /**
@@ -239,7 +239,7 @@ export function announceToScreenReader(message, priority = 'polite', role = 'sta
  * @param {string} message - Error message to announce
  */
 export function announceError(message) {
-  announceToScreenReader(message, 'assertive', 'alert')
+  announceToScreenReader(message, 'assertive', 'alert');
 }
 
 /**
@@ -247,7 +247,7 @@ export function announceError(message) {
  * @param {string} message - Success message to announce
  */
 export function announceSuccess(message) {
-  announceToScreenReader(message, 'polite', 'status')
+  announceToScreenReader(message, 'polite', 'status');
 }
 
 /**
@@ -261,21 +261,21 @@ export function announceSuccess(message) {
  * @param {function} onEscape - Callback when escape is pressed
  */
 export function handleListKeyboardNavigation(event, onSelect = null, onEscape = null) {
-  const { key } = event
+  const { key } = event;
 
   switch (key) {
     case 'Enter':
     case ' ':
-      event.preventDefault()
-      if (onSelect) onSelect()
-      break
+      event.preventDefault();
+      if (onSelect) onSelect();
+      break;
     case 'Escape':
-      event.preventDefault()
-      if (onEscape) onEscape()
-      break
+      event.preventDefault();
+      if (onEscape) onEscape();
+      break;
     default:
       // Allow other keys to bubble up
-      break
+      break;
   }
 }
 
@@ -290,37 +290,37 @@ export function handleListKeyboardNavigation(event, onSelect = null, onEscape = 
  * @param {function} actions.onMoveDown - Move down callback
  */
 export function handleTodoKeyboardNavigation(event, actions = {}) {
-  const { key } = event
-  const { onToggle, onEdit, onDelete, onMoveUp, onMoveDown } = actions
+  const { key } = event;
+  const { onToggle, onEdit, onDelete, onMoveUp, onMoveDown } = actions;
 
   switch (key) {
     case 'Enter':
-      event.preventDefault()
-      if (onEdit) onEdit()
-      break
+      event.preventDefault();
+      if (onEdit) onEdit();
+      break;
     case ' ':
-      event.preventDefault()
-      if (onToggle) onToggle()
-      break
+      event.preventDefault();
+      if (onToggle) onToggle();
+      break;
     case 'Delete':
     case 'Backspace':
-      event.preventDefault()
-      if (onDelete) onDelete()
-      break
+      event.preventDefault();
+      if (onDelete) onDelete();
+      break;
     case 'ArrowUp':
       if (event.altKey) {
-        event.preventDefault()
-        if (onMoveUp) onMoveUp()
+        event.preventDefault();
+        if (onMoveUp) onMoveUp();
       }
-      break
+      break;
     case 'ArrowDown':
       if (event.altKey) {
-        event.preventDefault()
-        if (onMoveDown) onMoveDown()
+        event.preventDefault();
+        if (onMoveDown) onMoveDown();
       }
-      break
+      break;
     default:
-      break
+      break;
   }
 }
 
@@ -339,7 +339,7 @@ export function generateFormIds(baseId) {
     labelId: `${baseId}-label`,
     errorId: `${baseId}-error`,
     descriptionId: `${baseId}-description`
-  }
+  };
 }
 
 /**
@@ -350,21 +350,21 @@ export function generateFormIds(baseId) {
  * @returns {object} ARIA attributes for the input element
  */
 export function getFormFieldAriaAttributes(fieldId, hasError = false, description = null) {
-  const ids = generateFormIds(fieldId)
+  const ids = generateFormIds(fieldId);
 
   const attributes = {
     id: ids.inputId,
     'aria-labelledby': ids.labelId
-  }
+  };
 
   if (hasError) {
-    attributes['aria-invalid'] = true
-    attributes['aria-describedby'] = ids.errorId
+    attributes['aria-invalid'] = true;
+    attributes['aria-describedby'] = ids.errorId;
   } else if (description) {
-    attributes['aria-describedby'] = ids.descriptionId
+    attributes['aria-describedby'] = ids.descriptionId;
   }
 
-  return attributes
+  return attributes;
 }
 
 /**
@@ -377,10 +377,10 @@ export function getFormFieldAriaAttributes(fieldId, hasError = false, descriptio
  * @returns {HTMLElement} Skip link element
  */
 export function createSkipLink(targetId) {
-  const skipLink = document.createElement('a')
-  skipLink.href = `#${targetId}`
-  skipLink.textContent = 'Skip to main content'
-  skipLink.className = 'skip-link'
+  const skipLink = document.createElement('a');
+  skipLink.href = `#${targetId}`;
+  skipLink.textContent = 'Skip to main content';
+  skipLink.className = 'skip-link';
   skipLink.style.cssText = `
     position: absolute;
     top: -40px;
@@ -391,17 +391,17 @@ export function createSkipLink(targetId) {
     text-decoration: none;
     z-index: 100;
     border-radius: 4px;
-  `
+  `;
 
   skipLink.addEventListener('focus', () => {
-    skipLink.style.top = '6px'
-  })
+    skipLink.style.top = '6px';
+  });
 
   skipLink.addEventListener('blur', () => {
-    skipLink.style.top = '-40px'
-  })
+    skipLink.style.top = '-40px';
+  });
 
-  return skipLink
+  return skipLink;
 }
 
 /**
@@ -410,21 +410,21 @@ export function createSkipLink(targetId) {
  */
 export function isHighContrastMode() {
   // Create a test element to check computed styles
-  const testElement = document.createElement('div')
+  const testElement = document.createElement('div');
   testElement.style.cssText = `
     position: absolute;
     left: -9999px;
     background-color: rgb(31, 41, 55);
     color: rgb(255, 255, 255);
-  `
-  document.body.appendChild(testElement)
+  `;
+  document.body.appendChild(testElement);
 
-  const computedStyle = window.getComputedStyle(testElement)
-  const backgroundColor = computedStyle.backgroundColor
-  const color = computedStyle.color
+  const computedStyle = window.getComputedStyle(testElement);
+  const backgroundColor = computedStyle.backgroundColor;
+  const color = computedStyle.color;
 
-  document.body.removeChild(testElement)
+  document.body.removeChild(testElement);
 
   // Check if colors are different (indicating high contrast mode)
-  return backgroundColor !== color
+  return backgroundColor !== color;
 }

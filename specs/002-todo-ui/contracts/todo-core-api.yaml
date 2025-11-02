@@ -307,3 +307,4 @@ components:
       type: http
       scheme: none
       description: No authentication required for local business logic
+

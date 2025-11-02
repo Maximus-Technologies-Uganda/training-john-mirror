@@ -270,3 +270,4 @@ main().catch((error) => {
   console.error('Failed to sync GitHub sub-issues:', error instanceof Error ? error.message : error);
   process.exit(1);
 });
+

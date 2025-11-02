@@ -1,49 +1,49 @@
-import { useState, useMemo, useCallback, useEffect } from 'react'
-import useLocalStorage from './useLocalStorage.js'
+import { useState, useMemo, useCallback } from 'react';
+import useLocalStorage from './useLocalStorage.js';
 
 // Constants
-const PRIORITY_NORMAL = 'normal'
+const PRIORITY_NORMAL = 'normal';
 
 // Utility functions (simplified versions for now)
 function normalizeText(text = '') {
-  return String(text).trim().toLowerCase()
+  return String(text).trim().toLowerCase();
 }
 
 function normalizeDueDate(due) {
-  if (!due) return null
-  if (typeof due === 'string') return due // Already an ISO string
-  if (due instanceof Date) return due.toISOString()
-  const parsed = new Date(due)
-  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString()
+  if (!due) return null;
+  if (typeof due === 'string') return due; // Already an ISO string
+  if (due instanceof Date) return due.toISOString();
+  const parsed = new Date(due);
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
 }
 
 function isDuplicate(todos, text, dueDate) {
-  const normalizedText = normalizeText(text)
-  const normalizedDue = normalizeDueDate(dueDate)
+  const normalizedText = normalizeText(text);
+  const normalizedDue = normalizeDueDate(dueDate);
 
   return todos.some(todo => {
-    const todoTextMatches = normalizeText(todo.text) === normalizedText
-    const todoDueMatches = normalizeDueDate(todo.dueDate) === normalizedDue
-    return todoTextMatches && todoDueMatches
-  })
+    const todoTextMatches = normalizeText(todo.text) === normalizedText;
+    const todoDueMatches = normalizeDueDate(todo.dueDate) === normalizedDue;
+    return todoTextMatches && todoDueMatches;
+  });
 }
 
 function formatDuplicateError() {
-  return 'Error: Duplicate to-do item found.'
+  return 'Error: Duplicate to-do item found.';
 }
 
 function computeNextId(todos) {
-  return todos.length > 0 ? Math.max(...todos.map(todo => todo.id)) + 1 : 1
+  return todos.length > 0 ? Math.max(...todos.map(todo => todo.id)) + 1 : 1;
 }
 
 // Simplified core functions
 function addTask(todos, text, dueDate = null, priority = PRIORITY_NORMAL) {
   if (!text?.trim()) {
-    throw new Error('To-do text is required.')
+    throw new Error('To-do text is required.');
   }
 
   if (isDuplicate(todos, text, dueDate)) {
-    throw new Error(formatDuplicateError())
+    throw new Error(formatDuplicateError());
   }
 
   const newTodo = {
@@ -51,20 +51,20 @@ function addTask(todos, text, dueDate = null, priority = PRIORITY_NORMAL) {
     text: text.trim(),
     done: false,
     dueDate: normalizeDueDate(dueDate),
-    priority: priority
-  }
+    priority
+  };
 
-  return [...todos, newTodo]
+  return [...todos, newTodo];
 }
 
 function markTaskDone(todos, id) {
   return todos.map(todo =>
     todo.id === id ? { ...todo, done: !todo.done } : todo
-  )
+  );
 }
 
 function removeTask(todos, id) {
-  return todos.filter(todo => todo.id !== id)
+  return todos.filter(todo => todo.id !== id);
 }
 
 /**
@@ -86,109 +86,109 @@ function removeTask(todos, id) {
  */
 function useTodos() {
   // UI state
-  const [filterDueToday, setFilterDueToday] = useState(false)
-  const [error, setError] = useState(null)
+  const [filterDueToday, setFilterDueToday] = useState(false);
+  const [error, setError] = useState(null);
 
   // Error handler for localStorage issues
   const handleStorageError = useCallback((friendlyMessage, originalError) => {
-    // eslint-disable-next-line no-console
-    console.error('Storage error:', originalError)
-    setError(friendlyMessage)
-  }, [])
+     
+    console.error('Storage error:', originalError);
+    setError(friendlyMessage);
+  }, []);
 
   // Persistent storage for todos with error handling
-  const [todos, setTodos, isStorageAvailable] = useLocalStorage('todo-tasks', [], handleStorageError)
+  const [todos, setTodos, isStorageAvailable] = useLocalStorage('todo-tasks', [], handleStorageError);
 
   // Clear error after 5 seconds
-  const clearError = useCallback(() => setError(null), [])
+  const clearError = useCallback(() => setError(null), []);
 
   // Add a new todo
   const addTodo = useCallback((text, dueDate = null, priority = PRIORITY_NORMAL) => {
     try {
-      setError(null)
+      setError(null);
 
       // Validate input
-      const trimmedText = text?.trim()
+      const trimmedText = text?.trim();
       if (!trimmedText) {
-        setError('Error: To-do text is required.')
-        return false
+        setError('Error: To-do text is required.');
+        return false;
       }
 
       // Check for duplicates
       if (isDuplicate(todos, text, dueDate)) {
-        setError(formatDuplicateError())
-        return false
+        setError(formatDuplicateError());
+        return false;
       }
 
       // Use core logic to add task
-      const updatedTodos = addTask(todos, trimmedText, dueDate, priority)
-      setTodos(updatedTodos)
-      return true
+      const updatedTodos = addTask(todos, trimmedText, dueDate, priority);
+      setTodos(updatedTodos);
+      return true;
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('Error adding todo:', err)
-      setError('Error: Failed to add task.')
-      return false
+       
+      console.error('Error adding todo:', err);
+      setError('Error: Failed to add task.');
+      return false;
     }
-  }, [todos])
+  }, [todos]);
 
   // Remove a todo by ID
   const removeTodo = useCallback((id) => {
     try {
-      setError(null)
-      const updatedTodos = removeTask(todos, id)
-      setTodos(updatedTodos)
-      return true
+      setError(null);
+      const updatedTodos = removeTask(todos, id);
+      setTodos(updatedTodos);
+      return true;
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('Error removing todo:', err)
-      setError('Error: Failed to remove task.')
-      return false
+       
+      console.error('Error removing todo:', err);
+      setError('Error: Failed to remove task.');
+      return false;
     }
-  }, [todos])
+  }, [todos]);
 
   // Toggle todo completion status
   const toggleTodo = useCallback((id) => {
     try {
-      setError(null)
-      const updatedTodos = markTaskDone(todos, id)
-      setTodos(updatedTodos)
-      return true
+      setError(null);
+      const updatedTodos = markTaskDone(todos, id);
+      setTodos(updatedTodos);
+      return true;
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('Error toggling todo:', err)
-      setError('Error: Failed to update task.')
-      return false
+       
+      console.error('Error toggling todo:', err);
+      setError('Error: Failed to update task.');
+      return false;
     }
-  }, [todos])
+  }, [todos]);
 
   // Get filtered todos based on due date filter
   const filteredTodos = useMemo(() => {
     if (!filterDueToday) {
-      return todos
+      return todos;
     }
 
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    const endOfToday = new Date(today)
-    endOfToday.setHours(23, 59, 59, 999)
+    const endOfToday = new Date(today);
+    endOfToday.setHours(23, 59, 59, 999);
 
     return todos.filter(todo => {
-      if (!todo.dueDate) return false
+      if (!todo.dueDate) return false;
 
-      const dueDate = new Date(todo.dueDate)
-      if (Number.isNaN(dueDate.getTime())) return false
+      const dueDate = new Date(todo.dueDate);
+      if (Number.isNaN(dueDate.getTime())) return false;
 
       // Check if due date is today (from start to end of today)
-      return dueDate >= today && dueDate <= endOfToday
-    })
-  }, [todos, filterDueToday])
+      return dueDate >= today && dueDate <= endOfToday;
+    });
+  }, [todos, filterDueToday]);
 
   // Get todos count for display (based on all todos, not filtered)
-  const todosCount = todos.length
-  const completedCount = todos.filter(todo => todo.done).length
-  const pendingCount = todosCount - completedCount
+  const todosCount = todos.length;
+  const completedCount = todos.filter(todo => todo.done).length;
+  const pendingCount = todosCount - completedCount;
 
   return {
     // State
@@ -209,7 +209,7 @@ function useTodos() {
     toggleTodo,
     setFilterDueToday,
     clearError
-  }
+  };
 }
 
-export default useTodos
+export default useTodos;

@@ -11,13 +11,13 @@
  */
 export function safeExecute(fn, fallback = null, errorMessage = '') {
   try {
-    return fn()
+    return fn();
   } catch (error) {
     if (errorMessage) {
-      // eslint-disable-next-line no-console
-      console.warn(errorMessage, error)
+       
+      console.warn(errorMessage, error);
     }
-    return fallback
+    return fallback;
   }
 }
 
@@ -27,12 +27,12 @@ export function safeExecute(fn, fallback = null, errorMessage = '') {
  */
 export function isLocalStorageAvailable() {
   try {
-    const testKey = '__storage_test__'
-    localStorage.setItem(testKey, 'test')
-    localStorage.removeItem(testKey)
-    return true
-  } catch (error) {
-    return false
+    const testKey = '__storage_test__';
+    localStorage.setItem(testKey, 'test');
+    localStorage.removeItem(testKey);
+    return true;
+  } catch (_error) {
+    return false;
   }
 }
 
@@ -47,7 +47,7 @@ export function safeJsonParse(jsonString, fallback = null) {
     () => JSON.parse(jsonString),
     fallback,
     'Error parsing JSON:'
-  )
+  );
 }
 
 /**
@@ -61,7 +61,7 @@ export function safeJsonStringify(value, fallback = 'null') {
     () => JSON.stringify(value),
     fallback,
     'Error stringifying JSON:'
-  )
+  );
 }
 
 /**
@@ -72,24 +72,24 @@ export function safeJsonStringify(value, fallback = 'null') {
  */
 export function getUserFriendlyErrorMessage(error, fallback = 'An unexpected error occurred') {
   if (typeof error === 'string') {
-    return error
+    return error;
   }
 
   if (error instanceof Error) {
     // Handle specific error types
     if (error.name === 'QuotaExceededError') {
-      return 'Storage limit exceeded. Please clear some space and try again.'
+      return 'Storage limit exceeded. Please clear some space and try again.';
     }
 
     if (error.name === 'NetworkError') {
-      return 'Network error. Please check your connection and try again.'
+      return 'Network error. Please check your connection and try again.';
     }
 
     // Return the error message if it's user-friendly
     if (error.message && error.message.length < 100) {
-      return error.message
+      return error.message;
     }
   }
 
-  return fallback
+  return fallback;
 }

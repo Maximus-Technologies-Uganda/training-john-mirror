@@ -11,13 +11,13 @@
  */
 export function safeExecute(fn, fallback = null, errorMessage = '') {
   try {
-    return fn()
+    return fn();
   } catch (error) {
     if (errorMessage) {
-      // eslint-disable-next-line no-console
-      console.error(errorMessage, error)
+       
+      console.error(errorMessage, error);
     }
-    return fallback
+    return fallback;
   }
 }
 
@@ -32,7 +32,7 @@ export function safeJsonParse(jsonString, fallback = null) {
     () => JSON.parse(jsonString),
     fallback,
     'Error parsing JSON:'
-  )
+  );
 }
 
 /**
@@ -46,7 +46,7 @@ export function safeJsonStringify(obj, fallback = '{}') {
     () => JSON.stringify(obj),
     fallback,
     'Error stringifying JSON:'
-  )
+  );
 }
 
 /**
@@ -57,21 +57,21 @@ export function safeJsonStringify(obj, fallback = '{}') {
  * @returns {Promise} Promise that resolves with operation result or rejects
  */
 export async function withRetry(operation, maxRetries = 3, delay = 1000) {
-  let lastError
+  let lastError;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      return await operation()
+      return await operation();
     } catch (error) {
-      lastError = error
+      lastError = error;
 
       if (attempt < maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, delay))
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
   }
 
-  throw lastError
+  throw lastError;
 }
 
 /**
@@ -87,12 +87,12 @@ export const localStorageUtils = {
   getItem: (key, fallback = null) => {
     return safeExecute(
       () => {
-        const item = localStorage.getItem(key)
-        return item ? safeJsonParse(item, fallback) : fallback
+        const item = localStorage.getItem(key);
+        return item ? safeJsonParse(item, fallback) : fallback;
       },
       fallback,
       `Error reading from localStorage key "${key}":`
-    )
+    );
   },
 
   /**
@@ -104,12 +104,12 @@ export const localStorageUtils = {
   setItem: (key, value) => {
     return safeExecute(
       () => {
-        localStorage.setItem(key, safeJsonStringify(value))
-        return true
+        localStorage.setItem(key, safeJsonStringify(value));
+        return true;
       },
       false,
       `Error writing to localStorage key "${key}":`
-    )
+    );
   },
 
   /**
@@ -120,12 +120,12 @@ export const localStorageUtils = {
   removeItem: (key) => {
     return safeExecute(
       () => {
-        localStorage.removeItem(key)
-        return true
+        localStorage.removeItem(key);
+        return true;
       },
       false,
       `Error removing localStorage key "${key}":`
-    )
+    );
   },
 
   /**
@@ -135,16 +135,16 @@ export const localStorageUtils = {
   isAvailable: () => {
     return safeExecute(
       () => {
-        const testKey = '__storage_test__'
-        localStorage.setItem(testKey, 'test')
-        localStorage.removeItem(testKey)
-        return true
+        const testKey = '__storage_test__';
+        localStorage.setItem(testKey, 'test');
+        localStorage.removeItem(testKey);
+        return true;
       },
       false,
       'localStorage is not available:'
-    )
+    );
   }
-}
+};
 
 /**
  * Creates a debounced version of a function
@@ -153,11 +153,11 @@ export const localStorageUtils = {
  * @returns {Function} Debounced function
  */
 export function debounce(func, delay) {
-  let timeoutId
+  let timeoutId;
   return (...args) => {
-    clearTimeout(timeoutId)
-    timeoutId = setTimeout(() => func.apply(null, args), delay)
-  }
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func.apply(null, args), delay);
+  };
 }
 
 /**
@@ -168,9 +168,9 @@ export function debounce(func, delay) {
  */
 export function handlePromiseRejection(promise, onError = () => {}) {
   return promise.catch(error => {
-    // eslint-disable-next-line no-console
-    console.error('Unhandled promise rejection:', error)
-    onError(error)
-    return null // Return null to prevent further propagation
-  })
+     
+    console.error('Unhandled promise rejection:', error);
+    onError(error);
+    return null; // Return null to prevent further propagation
+  });
 }

@@ -107,3 +107,4 @@ main().catch((error) => {
   console.error('Test failed:', error instanceof Error ? error.message : error);
   process.exit(1);
 });
+

@@ -318,7 +318,7 @@ async function main() {
 
   for (const tasksFile of tasksFiles) {
     // Extract spec directory name for parent issue ID lookup
-    const specDirMatch = tasksFile.match(/specs[\/\\]([^/\\]+)/);
+    const specDirMatch = tasksFile.match(/specs[/\\]([^/\\]+)/);
     if (!specDirMatch) {
       console.warn(`Could not determine spec directory for ${tasksFile}. Skipping.`);
       continue;

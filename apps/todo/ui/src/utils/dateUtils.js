@@ -9,18 +9,18 @@
  * @returns {Date|null} Parsed Date object or null if invalid
  */
 export function parseDate(date) {
-  if (!date) return null
+  if (!date) return null;
 
   if (date instanceof Date) {
-    return isNaN(date.getTime()) ? null : date
+    return isNaN(date.getTime()) ? null : date;
   }
 
   if (typeof date === 'string') {
-    const parsed = new Date(date)
-    return isNaN(parsed.getTime()) ? null : parsed
+    const parsed = new Date(date);
+    return isNaN(parsed.getTime()) ? null : parsed;
   }
 
-  return null
+  return null;
 }
 
 /**
@@ -29,8 +29,8 @@ export function parseDate(date) {
  * @returns {string|null} ISO date string or null
  */
 export function formatDateISO(date) {
-  const parsed = parseDate(date)
-  return parsed ? parsed.toISOString() : null
+  const parsed = parseDate(date);
+  return parsed ? parsed.toISOString() : null;
 }
 
 /**
@@ -40,17 +40,17 @@ export function formatDateISO(date) {
  * @returns {string} Formatted date string or empty string
  */
 export function formatDateDisplay(date, options = {}) {
-  const parsed = parseDate(date)
-  if (!parsed) return ''
+  const parsed = parseDate(date);
+  if (!parsed) return '';
 
   const defaultOptions = {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
     ...options
-  }
+  };
 
-  return parsed.toLocaleDateString(undefined, defaultOptions)
+  return parsed.toLocaleDateString(undefined, defaultOptions);
 }
 
 /**
@@ -60,12 +60,12 @@ export function formatDateDisplay(date, options = {}) {
  * @returns {boolean} True if the date is today
  */
 export function isToday(date, referenceDate = new Date()) {
-  const parsed = parseDate(date)
-  if (!parsed) return false
+  const parsed = parseDate(date);
+  if (!parsed) return false;
 
-  const ref = parseDate(referenceDate) || new Date()
+  const ref = parseDate(referenceDate) || new Date();
 
-  return parsed.toDateString() === ref.toDateString()
+  return parsed.toDateString() === ref.toDateString();
 }
 
 /**
@@ -75,19 +75,19 @@ export function isToday(date, referenceDate = new Date()) {
  * @returns {boolean} True if the date is in the past
  */
 export function isOverdue(date, referenceDate = new Date()) {
-  const parsed = parseDate(date)
-  if (!parsed) return false
+  const parsed = parseDate(date);
+  if (!parsed) return false;
 
-  const ref = parseDate(referenceDate) || new Date()
+  const ref = parseDate(referenceDate) || new Date();
 
   // Set time to start of day for fair comparison
-  const parsedStartOfDay = new Date(parsed)
-  parsedStartOfDay.setHours(0, 0, 0, 0)
+  const parsedStartOfDay = new Date(parsed);
+  parsedStartOfDay.setHours(0, 0, 0, 0);
 
-  const refStartOfDay = new Date(ref)
-  refStartOfDay.setHours(0, 0, 0, 0)
+  const refStartOfDay = new Date(ref);
+  refStartOfDay.setHours(0, 0, 0, 0);
 
-  return parsedStartOfDay < refStartOfDay
+  return parsedStartOfDay < refStartOfDay;
 }
 
 /**
@@ -97,19 +97,19 @@ export function isOverdue(date, referenceDate = new Date()) {
  * @returns {boolean} True if the date is in the future
  */
 export function isUpcoming(date, referenceDate = new Date()) {
-  const parsed = parseDate(date)
-  if (!parsed) return false
+  const parsed = parseDate(date);
+  if (!parsed) return false;
 
-  const ref = parseDate(referenceDate) || new Date()
+  const ref = parseDate(referenceDate) || new Date();
 
   // Set time to start of day for fair comparison
-  const parsedStartOfDay = new Date(parsed)
-  parsedStartOfDay.setHours(0, 0, 0, 0)
+  const parsedStartOfDay = new Date(parsed);
+  parsedStartOfDay.setHours(0, 0, 0, 0);
 
-  const refStartOfDay = new Date(ref)
-  refStartOfDay.setHours(0, 0, 0, 0)
+  const refStartOfDay = new Date(ref);
+  refStartOfDay.setHours(0, 0, 0, 0);
 
-  return parsedStartOfDay > refStartOfDay
+  return parsedStartOfDay > refStartOfDay;
 }
 
 /**
@@ -118,9 +118,9 @@ export function isUpcoming(date, referenceDate = new Date()) {
  * @returns {Date} Start of today
  */
 export function getStartOfToday(referenceDate = new Date()) {
-  const date = new Date(referenceDate)
-  date.setHours(0, 0, 0, 0)
-  return date
+  const date = new Date(referenceDate);
+  date.setHours(0, 0, 0, 0);
+  return date;
 }
 
 /**
@@ -129,9 +129,9 @@ export function getStartOfToday(referenceDate = new Date()) {
  * @returns {Date} End of today
  */
 export function getEndOfToday(referenceDate = new Date()) {
-  const date = new Date(referenceDate)
-  date.setHours(23, 59, 59, 999)
-  return date
+  const date = new Date(referenceDate);
+  date.setHours(23, 59, 59, 999);
+  return date;
 }
 
 /**
@@ -141,13 +141,13 @@ export function getEndOfToday(referenceDate = new Date()) {
  * @returns {boolean} True if the date is today
  */
 export function isDueToday(date, referenceDate = new Date()) {
-  const parsed = parseDate(date)
-  if (!parsed) return false
+  const parsed = parseDate(date);
+  if (!parsed) return false;
 
-  const startOfToday = getStartOfToday(referenceDate)
-  const endOfToday = getEndOfToday(referenceDate)
+  const startOfToday = getStartOfToday(referenceDate);
+  const endOfToday = getEndOfToday(referenceDate);
 
-  return parsed >= startOfToday && parsed <= endOfToday
+  return parsed >= startOfToday && parsed <= endOfToday;
 }
 
 /**
@@ -158,16 +158,16 @@ export function isDueToday(date, referenceDate = new Date()) {
  * @returns {boolean} True if the date is due today (timezone-aware)
  */
 export function isDueTodayTimezoneAware(date, referenceDate = new Date()) {
-  const parsed = parseDate(date)
-  if (!parsed) return false
+  const parsed = parseDate(date);
+  if (!parsed) return false;
 
-  const ref = parseDate(referenceDate) || new Date()
+  const ref = parseDate(referenceDate) || new Date();
 
   // Get the date parts in local timezone to avoid timezone issues
-  const parsedDate = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate())
-  const refDate = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate())
+  const parsedDate = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+  const refDate = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate());
 
-  return parsedDate.getTime() === refDate.getTime()
+  return parsedDate.getTime() === refDate.getTime();
 }
 
 /**
@@ -177,23 +177,23 @@ export function isDueTodayTimezoneAware(date, referenceDate = new Date()) {
  * @returns {string} Relative time description
  */
 export function getRelativeTimeString(date, referenceDate = new Date()) {
-  const parsed = parseDate(date)
-  if (!parsed) return ''
+  const parsed = parseDate(date);
+  if (!parsed) return '';
 
-  const ref = parseDate(referenceDate) || new Date()
+  const ref = parseDate(referenceDate) || new Date();
 
-  const diffTime = parsed.getTime() - ref.getTime()
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  const diffTime = parsed.getTime() - ref.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return 'Today'
-  if (diffDays === 1) return 'Tomorrow'
-  if (diffDays === -1) return 'Yesterday'
-  if (diffDays > 1 && diffDays <= 7) return `In ${diffDays} days`
-  if (diffDays < -1 && diffDays >= -7) return `${Math.abs(diffDays)} days ago`
-  if (diffDays > 7) return 'Future'
-  if (diffDays < -7) return 'Past'
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Tomorrow';
+  if (diffDays === -1) return 'Yesterday';
+  if (diffDays > 1 && diffDays <= 7) return `In ${diffDays} days`;
+  if (diffDays < -1 && diffDays >= -7) return `${Math.abs(diffDays)} days ago`;
+  if (diffDays > 7) return 'Future';
+  if (diffDays < -7) return 'Past';
 
-  return formatDateDisplay(parsed)
+  return formatDateDisplay(parsed);
 }
 
 /**
@@ -202,10 +202,10 @@ export function getRelativeTimeString(date, referenceDate = new Date()) {
  * @returns {boolean} True if valid ISO date
  */
 export function isValidISODate(dateString) {
-  if (typeof dateString !== 'string') return false
+  if (typeof dateString !== 'string') return false;
 
-  const date = new Date(dateString)
-  return !isNaN(date.getTime())
+  const date = new Date(dateString);
+  return !isNaN(date.getTime());
 }
 
 /**
@@ -216,7 +216,7 @@ export function isValidISODate(dateString) {
  * @returns {Date} Date object
  */
 export function createDate(year, month, day) {
-  return new Date(year, month - 1, day)
+  return new Date(year, month - 1, day);
 }
 
 /**
@@ -226,19 +226,19 @@ export function createDate(year, month, day) {
  * @returns {number} -1 if date1 < date2, 0 if equal, 1 if date1 > date2
  */
 export function compareDates(date1, date2) {
-  const d1 = parseDate(date1)
-  const d2 = parseDate(date2)
+  const d1 = parseDate(date1);
+  const d2 = parseDate(date2);
 
-  if (!d1 && !d2) return 0
-  if (!d1) return -1
-  if (!d2) return 1
+  if (!d1 && !d2) return 0;
+  if (!d1) return -1;
+  if (!d2) return 1;
 
-  const start1 = getStartOfToday(d1)
-  const start2 = getStartOfToday(d2)
+  const start1 = getStartOfToday(d1);
+  const start2 = getStartOfToday(d2);
 
-  if (start1 < start2) return -1
-  if (start1 > start2) return 1
-  return 0
+  if (start1 < start2) return -1;
+  if (start1 > start2) return 1;
+  return 0;
 }
 
 /**
@@ -247,5 +247,5 @@ export function compareDates(date1, date2) {
  * @returns {Array<Date|string|null>} Sorted dates
  */
 export function sortDates(dates) {
-  return [...dates].sort(compareDates)
+  return [...dates].sort(compareDates);
 }

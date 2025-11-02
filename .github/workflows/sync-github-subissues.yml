@@ -36,3 +36,4 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TASKS_FILE: ${{ github.event.inputs.tasksFile }}
         run: npm run sync:github
+

@@ -124,3 +124,4 @@
 - **Persistence**: Throttle localStorage writes (every 500ms)
 - **Memory**: Limit to 100 tasks for performance
 - **Search/Filter**: Client-side only, no server requests
+
