@@ -3,8 +3,10 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'node',
-    include: ['**/*.{test,spec}.js'],
+    environment: 'jsdom',
+    setupFiles: ['apps/todo/ui/src/test-setup.js'],
+    include: ['**/*.test.js', '**/*.test.jsx'],
+    exclude: ['**/e2e/**', 'apps/**/ui/e2e/**', '**/*.spec.js', '**/*.spec.jsx'],
     testTimeout: 10000, // 10 second timeout for tests
     coverage: {
       provider: 'v8',

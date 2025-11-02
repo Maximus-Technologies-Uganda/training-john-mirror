@@ -50,7 +50,8 @@ export function formatDateDisplay(date, options = {}) {
     ...options
   };
 
-  return parsed.toLocaleDateString(undefined, defaultOptions);
+  // Use 'en-GB' locale for day-month-year format instead of month-day-year
+  return parsed.toLocaleDateString('en-GB', defaultOptions);
 }
 
 /**

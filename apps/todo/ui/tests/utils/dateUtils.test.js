@@ -80,7 +80,7 @@ describe('dateUtils', () => {
     it('formats date for display', () => {
       const date = new Date('2025-01-15T12:00:00Z');
       const result = formatDateDisplay(date);
-      expect(result).toMatch(/\d{1,2} \w+ \d{4}/); // e.g., "15 Jan 2025"
+      expect(result).toBe('15 Jan 2025');
     });
 
     it('returns empty string for invalid dates', () => {

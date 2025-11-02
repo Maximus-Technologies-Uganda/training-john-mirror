@@ -1,6 +1,4 @@
 import { test, expect } from '@playwright/test';
-
-test.describe('Todo App Basic Functionality', () => {
   test('should load the todo app', async ({ page }) => {
     await page.goto('/');
 
@@ -139,4 +137,3 @@ test.describe('Todo App Basic Functionality', () => {
     // The error clearing happens in AddTodoForm, not globally
     await expect(page.locator('.todo-error')).toBeVisible();
   });
-});

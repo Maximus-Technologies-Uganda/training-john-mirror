@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Cross-Browser Compatibility', () => {
-  test.describe.configure({ mode: 'parallel' });
+// Configure tests to run in parallel
+test.describe.configure({ mode: 'parallel' });
 
   test('should load application in all browsers', async ({ page, browserName }) => {
     await page.goto('/');
@@ -232,4 +232,3 @@ test.describe('Browser-Specific Compatibility', () => {
 
     console.log('✅ Chrome-specific tests passed');
   });
-});
