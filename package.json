@@ -2,7 +2,9 @@
   "name": "training-john",
   "version": "0.1.0",
   "private": true,
-  "workspaces": ["apps/*/ui"],
+  "workspaces": [
+    "apps/*/ui"
+  ],
   "type": "module",
   "scripts": {
     "test": "node scripts/run-vitest.mjs",
@@ -10,6 +12,7 @@
     "lint": "eslint .",
     "sync:linear": "node scripts/sync-linear-subtasks.mjs",
     "sync:specs": "node scripts/sync-spec-to-linear.mjs",
+    "sync:github": "node scripts/sync-github-subissues.mjs",
     "todo:remove": "node cli/todo.js remove"
   },
   "dependencies": {
@@ -20,6 +23,7 @@
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.36.0",
+    "jsdom": "^27.1.0",
     "vitest": "^3.2.4"
   },
   "vitest": {

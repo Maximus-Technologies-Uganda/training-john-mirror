@@ -12,6 +12,8 @@ on:
 
 jobs:
   sync:
+    # Only run in private repos for security (Linear API key protection)
+    if: ${{ github.event.repository.private == true }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

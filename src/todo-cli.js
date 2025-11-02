@@ -4,7 +4,6 @@ import { hideBin } from 'yargs/helpers';
 import { manageTodos, getEndOfToday } from './todo-core.js';
 import fs from 'fs';
 import path from 'path';
-import os from 'os';
 import { fileURLToPath } from 'url';
 
 const modulePath = fileURLToPath(import.meta.url);
@@ -22,7 +21,7 @@ function resolveDataFile() {
 
 const baseDataFile = resolveDataFile();
 let dataFile = baseDataFile;
-let cleanupFile = null;
+let _cleanupFile = null;
 
 function prepareDataFile() {
   if (process.env.TODO_DATA_FILE && String(process.env.TODO_DATA_FILE).trim()) {
@@ -33,7 +32,7 @@ function prepareDataFile() {
 
   if (process.env.VITEST) {
     dataFile = path.resolve(process.cwd(), 'todos.json');
-    cleanupFile = null;
+    _cleanupFile = null;
     ensureFileReady(dataFile);
     return;
   }
