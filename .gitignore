@@ -72,3 +72,10 @@ review-packet/
 test-results/
 build/artifacts/test-results/
 junit.xml
+
+# UI app build artifacts
+apps/*/ui/dist/
+apps/*/ui/node_modules/
+apps/*/ui/coverage/
+apps/*/ui/test-results/
+apps/*/ui/playwright-report/

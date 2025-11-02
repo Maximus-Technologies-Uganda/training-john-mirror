@@ -1,0 +1,49 @@
+{
+  "name": "todo-ui",
+  "version": "1.0.0",
+  "description": "To-Do UI component with full CRUD operations",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest --config vitest.config.js",
+    "test:ui": "vitest --config vitest.config.js --ui",
+    "test:run": "vitest --config vitest.config.js run",
+    "test:coverage": "vitest --config vitest.config.js run --coverage --bail=false",
+    "test:watch": "vitest --config vitest.config.js",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
+    "e2e:debug": "playwright test --debug",
+    "e2e:chromium": "playwright test --project=chromium",
+    "e2e:firefox": "playwright test --project=firefox",
+    "e2e:webkit": "playwright test --project=webkit",
+    "e2e:mobile": "playwright test --project=\"Mobile Chrome\" --project=\"Mobile Safari\"",
+    "e2e:compatibility": "node test-cross-browser.js",
+    "e2e:compatibility:playwright": "playwright test cross-browser-compatibility.spec.js",
+    "e2e:report": "playwright show-report",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@testing-library/jest-dom": "^6.1.0",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.5.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "eslint": "^8.50.0",
+    "eslint-plugin-react": "^7.33.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "jsdom": "^23.0.0",
+    "playwright": "^1.40.0",
+    "vite": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}

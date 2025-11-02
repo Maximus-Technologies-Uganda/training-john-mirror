@@ -37,8 +37,8 @@ jobs:
         env:
           LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
           LINEAR_PARENT_ISSUE_ID: ${{ github.event.inputs.parentIssueId || secrets.LINEAR_PARENT_ISSUE_ID }}
-          LINEAR_PARENT_ISSUE_ID_001_UI_SCAFFOLD_SPEC: ${{ secrets.LINEAR_PARENT_ISSUE_ID_001_UI_SCAFFOLD_SPEC }}
-          LINEAR_PARENT_ISSUE_ID_002_TODO_UI: ${{ secrets.LINEAR_PARENT_ISSUE_ID_002_TODO_UI }}
+          LINEAR_PARENT_ISSUE_ID_001: ${{ secrets.LINEAR_PARENT_ISSUE_ID_001 || '' }}
+          LINEAR_PARENT_ISSUE_ID_002: ${{ secrets.LINEAR_PARENT_ISSUE_ID_002 || '' }}
           LINEAR_TASKS_FILE: ${{ github.event.inputs.tasksFile }}
         run: npm run sync:linear
 

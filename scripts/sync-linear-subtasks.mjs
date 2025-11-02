@@ -29,9 +29,9 @@ function findTasksFiles(dirPath, files = []) {
 }
 
 function getParentIssueId(specDir) {
-  // Try environment variables first: LINEAR_PARENT_ISSUE_ID_<SPEC_NAME>
-  const specName = specDir.split('/').pop().toUpperCase().replace(/[^A-Z0-9]/g, '_');
-  const envVar = `LINEAR_PARENT_ISSUE_ID_${specName}`;
+  // Try environment variables first: LINEAR_PARENT_ISSUE_ID_<SPEC_ID>
+  const specId = specDir.split('/').pop().split('-')[0]; // Extract the numeric ID (e.g., '001' from '001-ui-scaffold-spec')
+  const envVar = `LINEAR_PARENT_ISSUE_ID_${specId}`;
   const envValue = process.env[envVar];
   if (envValue) {
     return envValue;
@@ -328,7 +328,7 @@ async function main() {
     const parentIssueId = getParentIssueId(specDir);
 
     if (!parentIssueId) {
-      console.warn(`No parent issue ID found for spec ${specDir}. Set LINEAR_PARENT_ISSUE_ID_${specDir.toUpperCase().replace(/[^A-Z0-9]/g, '_')} or LINEAR_PARENT_ISSUE_ID. Skipping.`);
+      console.warn(`No parent issue ID found for spec ${specDir}. Set LINEAR_PARENT_ISSUE_ID_${specDir.split('/').pop().split('-')[0]} or LINEAR_PARENT_ISSUE_ID. Skipping.`);
       continue;
     }
 
