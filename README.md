@@ -16,8 +16,22 @@ This repository is configured with:
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js (v14 or higher)
+- Node.js (v18 or higher)
 - No additional dependencies required
+
+### UI Foundations
+**For developing React UI applications in `apps/*/ui/` workspaces:**
+
+- **Node.js**: v18+ (required for modern React tooling)
+- **Playwright**: Browser automation for E2E testing (installed automatically with UI workspaces)
+- **Modern browsers**: Chrome, Firefox, Safari for testing (Playwright handles this)
+
+**UI workspaces are configured with:**
+- Vite for fast development and building
+- Vitest + React Testing Library for unit/component testing (≥60% coverage required)
+- Playwright for E2E smoke testing
+- ESLint with React rules
+- Hot reload development server on port 3000
 
 ### Installation
 ```bash

@@ -73,7 +73,7 @@ function parseSpecTitle(markdown) {
   return null;
 }
 
-function buildDescription(specPath, title) {
+function buildDescription(specPath, _title) {
   const relativePath = specPath.replace(/\\/g, '/');
   const lines = [];
   lines.push('> _This issue is managed automatically from the feature specification. Manual edits may be overwritten._');

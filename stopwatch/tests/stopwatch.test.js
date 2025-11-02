@@ -63,7 +63,7 @@ describe('stopwatch-core', () => {
 
     describe('getElapsedTime', () => {
         it('computes elapsed time when running', () => {
-            let state = startStopwatch(stopwatch, nowProvider);
+            const state = startStopwatch(stopwatch, nowProvider);
             now += 2_500;
             expect(getElapsedTime(state, nowProvider)).toBe(2_500);
         });

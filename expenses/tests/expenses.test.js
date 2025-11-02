@@ -3,13 +3,11 @@ import {
   addExpense,
   summarizeExpenses,
   getExpenses,
-  toCents,
-  fromCents
+  toCents
 } from '../src/expense-core.js';
 import { spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs';
-import os from 'os';
 
 describe('addExpense function', () => {
   it('should add an expense to the list storing cents', () => {
