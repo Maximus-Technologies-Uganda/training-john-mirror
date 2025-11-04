@@ -1,0 +1,270 @@
+openapi: 3.0.3
+info:
+  title: Expense Core API
+  description: API specification for expense business logic module
+  version: 1.0.0
+  contact:
+    name: Expense Core Module
+
+servers:
+  - url: apps/expense/core/
+    description: Expense core business logic module
+
+paths:
+  /add-expense:
+    post:
+      summary: Add a new expense
+      description: Creates a new expense entry with validation
+      operationId: addExpense
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseInput'
+      responses:
+        '200':
+          description: Expense added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Expense'
+        '400':
+          description: Invalid expense data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Duplicate expense (uniqueness constraint violation)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /get-expenses:
+    get:
+      summary: Retrieve all expenses
+      description: Returns all expense entries
+      operationId: getExpenses
+      responses:
+        '200':
+          description: List of all expenses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Expense'
+
+  /filter-expenses:
+    post:
+      summary: Filter expenses by criteria
+      description: Returns expenses matching the specified filter criteria
+      operationId: filterExpenses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseFilter'
+      responses:
+        '200':
+          description: Filtered list of expenses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Expense'
+
+  /validate-expense:
+    post:
+      summary: Validate expense data
+      description: Validates expense input data without creating the expense
+      operationId: validateExpense
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExpenseInput'
+      responses:
+        '200':
+          description: Validation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+        '400':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrors'
+
+components:
+  schemas:
+    ExpenseInput:
+      type: object
+      required:
+        - amount
+        - description
+        - month
+        - category
+      properties:
+        amount:
+          type: integer
+          description: Amount in cents (e.g., 1050 for $10.50)
+          minimum: 1
+          maximum: 99999999
+          example: 1050
+        description:
+          type: string
+          description: Expense description
+          minLength: 1
+          maxLength: 200
+          example: "Coffee and pastry"
+        month:
+          type: string
+          description: Full month name
+          enum:
+            - January
+            - February
+            - March
+            - April
+            - May
+            - June
+            - July
+            - August
+            - September
+            - October
+            - November
+            - December
+          example: "January"
+        category:
+          type: string
+          description: Expense category (predefined or custom)
+          minLength: 1
+          maxLength: 100
+          example: "Food"
+
+    Expense:
+      type: object
+      required:
+        - id
+        - amount
+        - description
+        - month
+        - category
+      properties:
+        id:
+          type: string
+          description: Unique expense identifier
+          example: "exp-001"
+        amount:
+          type: integer
+          description: Amount in cents
+          minimum: 1
+          example: 1050
+        description:
+          type: string
+          description: Expense description
+          example: "Coffee and pastry"
+        month:
+          type: string
+          description: Full month name
+          enum:
+            - January
+            - February
+            - March
+            - April
+            - May
+            - June
+            - July
+            - August
+            - September
+            - October
+            - November
+            - December
+          example: "January"
+        category:
+          type: string
+          description: Expense category
+          example: "Food"
+
+    ExpenseFilter:
+      type: object
+      properties:
+        month:
+          type: string
+          description: Filter by month (optional)
+          enum:
+            - January
+            - February
+            - March
+            - April
+            - May
+            - June
+            - July
+            - August
+            - September
+            - October
+            - November
+            - December
+        category:
+          type: string
+          description: Filter by category (optional)
+          minLength: 1
+
+    ValidationResult:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          description: Whether the input is valid
+          example: true
+
+    ValidationErrors:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+
+    ValidationError:
+      type: object
+      required:
+        - field
+        - message
+      properties:
+        field:
+          type: string
+          description: Field that failed validation
+          enum:
+            - amount
+            - description
+            - month
+            - category
+          example: "month"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Please select a valid month"
+
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: "Duplicate expense already exists"
+        code:
+          type: string
+          description: Error code for programmatic handling
+          example: "DUPLICATE_EXPENSE"
