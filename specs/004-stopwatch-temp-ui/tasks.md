@@ -40,15 +40,15 @@
 **Purpose**: Project initialization and basic structure for both UI applications
 
 - [X] T001 Create Stopwatch UI project structure per implementation plan in `apps/stopwatch/ui/`
-- [ ] T002 Create Temp Converter UI project structure per implementation plan in `apps/temp/ui/`
-- [ ] T003 [P] Initialize TypeScript React Stopwatch project with required dependencies in `apps/stopwatch/ui/package.json`
-- [ ] T004 [P] Initialize TypeScript React Temp project with required dependencies in `apps/temp/ui/package.json`
-- [ ] T005 [P] Configure Vitest testing framework in `apps/stopwatch/ui/vitest.config.ts`
-- [ ] T006 [P] Configure Vitest testing framework in `apps/temp/ui/vitest.config.ts`
-- [ ] T007 [P] Configure Playwright E2E testing in `apps/stopwatch/ui/playwright.config.ts`
-- [ ] T008 [P] Configure Playwright E2E testing in `apps/temp/ui/playwright.config.ts`
-- [ ] T009 [P] Setup ESLint and Prettier configuration in `apps/stopwatch/ui/`
-- [ ] T010 [P] Setup ESLint and Prettier configuration in `apps/temp/ui/`
+- [X] T002 Create Temp Converter UI project structure per implementation plan in `apps/temp/ui/`
+- [X] T003 [P] Initialize TypeScript React Stopwatch project with required dependencies in `apps/stopwatch/ui/package.json`
+- [X] T004 [P] Initialize TypeScript React Temp project with required dependencies in `apps/temp/ui/package.json`
+- [X] T005 [P] Configure Vitest testing framework in `apps/stopwatch/ui/vitest.config.ts`
+- [X] T006 [P] Configure Vitest testing framework in `apps/temp/ui/vitest.config.ts`
+- [X] T007 [P] Configure Playwright E2E testing in `apps/stopwatch/ui/playwright.config.ts`
+- [X] T008 [P] Configure Playwright E2E testing in `apps/temp/ui/playwright.config.ts`
+- [X] T009 [P] Setup ESLint and Prettier configuration in `apps/stopwatch/ui/`
+- [X] T010 [P] Setup ESLint and Prettier configuration in `apps/temp/ui/`
 
 ---
 
