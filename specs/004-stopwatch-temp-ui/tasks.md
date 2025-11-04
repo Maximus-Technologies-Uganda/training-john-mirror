@@ -20,6 +20,21 @@
 
 ---
 
+## Pre-Phase 1: Constitutional Verification Gate
+
+**Purpose**: Verify prerequisites and constitutional compliance before project initialization
+
+**⚠️ BLOCKING GATE**: Must complete before Phase 1. If any check fails, escalate and adjust plan.md.
+
+- [ ] V001 Verify `apps/stopwatch/core/` has documented CLI interface (Principle 1: CLI Outcomes First compliance check)
+- [ ] V002 Verify `apps/temp/core/` has documented CLI interface (Principle 1: CLI Outcomes First compliance check)
+- [ ] V003 Confirm test environment supports Vitest + React Testing Library + Playwright (Principle 2 requirement)
+- [ ] V004 Confirm monorepo structure allows independent app builds (Principle 4: Story-Centered Planning requirement)
+
+**Checkpoint**: All verifications pass; proceed to Phase 1
+
+---
+
 ## Phase 1: Setup (Shared Infrastructure)
 
 **Purpose**: Project initialization and basic structure for both UI applications
@@ -146,6 +161,7 @@
 - [ ] T045 [P] [US4] Component test for "Stopwatch is already stopped" error in `apps/stopwatch/ui/tests/components/StopwatchControls.test.tsx`
 - [ ] T046 [P] [US4] Component test for error auto-dismissal on state fix in `apps/stopwatch/ui/tests/components/ErrorBanner.test.tsx`
 - [ ] T047 [P] [US4] Hook test for validation in useStopwatch (lap without start, stop twice) in `apps/stopwatch/ui/tests/hooks/useStopwatch.test.ts`
+- [ ] T047b [P] [US4] Integration test for race conditions: rapid concurrent Lap + Stop clicks in `apps/stopwatch/ui/tests/hooks/useStopwatch.test.ts` (Covers FR-007: handle rapid consecutive operations without race conditions)
 
 ### Implementation for US4
 
@@ -154,7 +170,7 @@
 - [ ] T050 [US4] Implement error state management in useStopwatch with auto-dismiss logic in `apps/stopwatch/ui/src/hooks/useStopwatch.ts`
 - [ ] T051 [US4] Display inline error messages near buttons using ErrorBanner in `apps/stopwatch/ui/src/components/StopwatchControls.tsx`
 - [ ] T052 [US4] Add keyboard accessibility to error messages (ARIA live regions for announcements)
-- [ ] T053 Create main Stopwatch container component in `apps/stopwatch/ui/src/components/Stopwatch.tsx` integrating all controls, display, and lap list
+- [ ] T053 [US4] Create initial Stopwatch container component in `apps/stopwatch/ui/src/components/Stopwatch.tsx` connecting Start/Lap/Stop/Reset controls, display, lap list, and error state management (US1-4 integration point - Stage 1)
 
 **Checkpoint**: Stopwatch UI complete with full error handling (all 4 user stories)
 
@@ -264,6 +280,7 @@
 
 - [ ] T084 [P] [US9] Component test for UnitSelectors showing only C and F options in `apps/temp/ui/tests/components/UnitSelectors.test.tsx`
 - [ ] T085 [P] [US9] Hook test for invalid unit rejection in useTempConversion in `apps/temp/ui/tests/hooks/useTempConversion.test.ts`
+- [ ] T085b [P] [US9] Utility test for negative temperature conversion (-40°C = -40°F) in `apps/temp/ui/tests/utils/formatting.test.ts` (Covers FR-017: handle negative temperature values correctly)
 
 ### Implementation for US9
 
@@ -281,8 +298,8 @@
 
 ### Container Components & Integration
 
-- [ ] T089 Create main Stopwatch component tree connecting all sub-components in `apps/stopwatch/ui/src/components/Stopwatch.tsx`
-- [ ] T090 Create main TempConverter component tree connecting all sub-components in `apps/temp/ui/src/components/TempConverter.tsx`
+- [ ] T089 Create final TempConverter container component tree in `apps/temp/ui/src/components/TempConverter.tsx` connecting TemperatureInput, UnitSelectors, ConversionResult, and error state management (US5-9 integration point - Final Stage)
+- [ ] T090 Integrate all Stopwatch sub-components: StopwatchDisplay + StopwatchControls + LapList + ErrorBanner into main Stopwatch component in `apps/stopwatch/ui/src/components/Stopwatch.tsx` (Stage 2 - Final integration after T053 foundational container)
 - [ ] T091 [P] Create App.tsx entry point for Stopwatch UI in `apps/stopwatch/ui/src/App.tsx`
 - [ ] T092 [P] Create App.tsx entry point for Temp UI in `apps/temp/ui/src/App.tsx`
 - [ ] T093 [P] Create index.tsx root entry for Stopwatch UI in `apps/stopwatch/ui/src/index.tsx`
@@ -314,13 +331,24 @@
 
 - [ ] T103 Generate Vitest coverage report for Stopwatch UI (target ≥50% statement coverage) in `apps/stopwatch/ui/`
 - [ ] T104 Generate Vitest coverage report for Temp UI (target ≥50% statement coverage) in `apps/temp/ui/`
-- [ ] T105 Verify all error paths are tested (lap before start, stop twice, non-numeric, identical units)
+- [ ] T105 Verify all error paths are tested (lap before start, stop twice, non-numeric, identical units, race conditions)
 - [ ] T106 Verify all edge cases are tested (>50 laps virtual scrolling, extended times, negative temps, decimals)
 
 ### Documentation
 
 - [ ] T107 Create README.md for Stopwatch UI with usage and test instructions in `apps/stopwatch/ui/README.md`
 - [ ] T108 Create README.md for Temp Converter UI with usage and test instructions in `apps/temp/ui/README.md`
+
+---
+
+## Phase 13: Learning & Continuous Improvement (Sustainable Learning Cadence - Principle 5)
+
+**Purpose**: Post-implementation retrospective and knowledge capture for sustainable learning
+
+- [ ] T109 Conduct retrospective meeting: document lessons learned, challenges, solutions, and architectural decisions in `specs/004-stopwatch-temp-ui/RETROSPECTIVE.md`
+- [ ] T110 Update training artifacts: capture patterns, anti-patterns, and best practices discovered during implementation in project wiki/docs
+- [ ] T111 Identify refactoring opportunities and create backlog items for technical debt (if any) in project tracking system
+- [ ] T112 Journal session: update `specs/004-stopwatch-temp-ui/LEARNING_LOG.md` with team reflections and recommendations for future features
 
 ---
 
@@ -345,33 +373,25 @@ Phase 10: US8 (Temp Same Units)  │   │
 Phase 11: US9 (Temp Unit Valid)  │   │
   ↓                              ↓   ↓
 Phase 12: Polish & Integration
+  ↓
+Phase 13: Learning & Continuous Improvement
 ```
 
 ### Parallel Execution Examples
 
-**During Phase 2 (Foundational)**:
-- T011-T015 (Stopwatch types, formatting, validation, core integration, ErrorBanner)
-- T016-T020 (Temp types, formatting, validation, core integration, ErrorBanner)
-- Can run completely in parallel (different apps)
+**During Phase 2 (Foundational)**: 100% parallelizable after T011
+- T011-T015 (Stopwatch) parallel with T016-T020 (Temp)
 
-**During Phase 3-6 (Stopwatch Stories)**:
-- T021-T023, T028-T030, T036-T038, T044-T047 (All test tasks) can run in parallel
-- T024-T035 (All Stopwatch implementation) can run in parallel except:
-  - T024 (StopwatchDisplay) blocks nothing
-  - T025, T032, T039, T040 (Button controls) can run in parallel
-  - T026, T033, T041, T042 (Hook methods) can run sequentially or parallel if no interdependencies
+**During Phase 3-6 (Stopwatch Stories)**: 70% parallelizable
+- All test tasks can run in parallel
+- Most component implementations can run in parallel
 
-**During Phase 7-11 (Temp Stories)**:
-- T054-T069, T076-T085 (All test tasks) can run in parallel
-- T058-T088 (All Temp implementation) can run in parallel except:
-  - T058 (TemperatureInput) blocks nothing
-  - T059, T079 (UnitSelectors) can run in parallel
-  - T061, T064, T069-081 (Hook logic) sequential within phase
+**During Phase 7-11 (Temp Stories)**: 75% parallelizable
+- All test tasks can run in parallel
+- Most component implementations can run in parallel
 
-**During Phase 12 (Polish)**:
-- T091-T098 (Container components, integration) can run in parallel
-- T097-T102 (Keyboard verification) can run in parallel
-- T103-T106 (Coverage reports) run after tests complete
+**During Phase 12 (Polish)**: 85% parallelizable
+- E2E tests, verification tasks, accessibility checks mostly parallel
 
 ---
 
@@ -381,18 +401,20 @@ Phase 12: Polish & Integration
 
 Focus on **User Story 1 (Stopwatch Start/Track)** + **User Story 5 (Temp C→F)**:
 
-1. Setup (Phase 1): T001-T010
-2. Foundational (Phase 2): T011-T020
-3. US1 (Phase 3): T021-T027
-4. US5 (Phase 7): T054-T062
+1. Pre-Phase 1 Verification: V001-V004
+2. Setup (Phase 1): T001-T010
+3. Foundational (Phase 2): T011-T020
+4. US1 (Phase 3): T021-T027
+5. US5 (Phase 7): T054-T062
 
 **MVP Demo**: Click Start on Stopwatch, watch MM:SS:MS increment. Enter 0 in Temp, select C→F, see 32°F.
 
 ### Incremental Delivery
 
-- **Week 1 (MVP)**: US1 + US5 (basic functionality)
+- **Week 1 (MVP)**: Pre-Phase 1 + Setup + Foundational + US1 + US5 (basic functionality)
 - **Week 2 (Core Complete)**: Add US2, US3, US4 (Stopwatch complete) + US6, US7, US8 (Temp near complete)
-- **Week 3 (Polish)**: US9 (edge case) + accessibility + Playwright smoke tests
+- **Week 3 (Polish)**: US9 (edge case) + Phase 12 (accessibility + Playwright smoke tests)
+- **Week 4 (Learning)**: Phase 13 (retrospective + training artifacts)
 
 ---
 
@@ -414,14 +436,17 @@ Focus on **User Story 1 (Stopwatch Start/Track)** + **User Story 5 (Temp C→F)*
 
 ## Definition of Done
 
-- [ ] All 106 tasks completed
+- [ ] Pre-Phase 1 verification passed (V001-V004)
+- [ ] All 112 tasks completed (Phase 1-13)
 - [ ] Vitest component tests pass for both UIs (≥50% statement coverage)
 - [ ] Playwright E2E smoke tests pass for both UIs
-- [ ] All error states tested and working (4 Stopwatch + 3 Temp error scenarios)
-- [ ] All edge cases handled (>50 laps virtual scrolling, extended times, negative temps, decimals)
+- [ ] All error states tested and working (5 Stopwatch + 4 Temp error scenarios including race conditions)
+- [ ] All edge cases handled (>50 laps virtual scrolling, extended times, negative temps, decimals, race conditions)
 - [ ] Keyboard navigation verified for all controls
 - [ ] ARIA labels verified for screen reader support
 - [ ] Both UIs run locally without errors
 - [ ] Coverage reports generated and reviewed
 - [ ] READMEs written with test instructions
+- [ ] Retrospective completed with lessons learned (Phase 13)
+- [ ] Training artifacts updated (Phase 13)
 
