@@ -39,7 +39,7 @@
 
 **Purpose**: Project initialization and basic structure for both UI applications
 
-- [ ] T001 Create Stopwatch UI project structure per implementation plan in `apps/stopwatch/ui/`
+- [X] T001 Create Stopwatch UI project structure per implementation plan in `apps/stopwatch/ui/`
 - [ ] T002 Create Temp Converter UI project structure per implementation plan in `apps/temp/ui/`
 - [ ] T003 [P] Initialize TypeScript React Stopwatch project with required dependencies in `apps/stopwatch/ui/package.json`
 - [ ] T004 [P] Initialize TypeScript React Temp project with required dependencies in `apps/temp/ui/package.json`
