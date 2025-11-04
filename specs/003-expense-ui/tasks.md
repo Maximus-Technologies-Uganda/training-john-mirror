@@ -185,14 +185,14 @@
 
 **Purpose**: Improvements that affect multiple user stories and final quality assurance
 
-- [ ] T050 [P] Implement comprehensive error boundaries in apps/expense/ui/src/components/ErrorBoundary.tsx
-- [ ] T051 [P] Add loading states and skeleton components in apps/expense/ui/src/components/LoadingState.tsx
-- [ ] T052 Run accessibility audit and fix any remaining issues
-- [ ] T053 Verify 60%+ test coverage across all components and utilities
-- [ ] T054 [P] Documentation updates in specs/003-expense-ui/
-- [ ] T055 Performance optimization and bundle size optimization
-- [ ] T056 Final E2E test validation for all user stories
-- [ ] T057 Code cleanup and TypeScript strict mode compliance
+- [x] T050 [P] Implement comprehensive error boundaries in apps/expense/ui/src/components/ErrorBoundary.tsx
+- [x] T051 [P] Add loading states and skeleton components in apps/expense/ui/src/components/LoadingState.tsx
+- [x] T052 Run accessibility audit and fix any remaining issues
+- [x] T053 Verify 60%+ test coverage across all components and utilities
+- [x] T054 [P] Documentation updates in specs/003-expense-ui/
+- [x] T055 Performance optimization and bundle size optimization
+- [x] T056 Final E2E test validation for all user stories
+- [x] T057 Code cleanup and TypeScript strict mode compliance
 
 ---
 
