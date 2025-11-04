@@ -261,7 +261,7 @@ describe('withErrorBoundary HOC', () => {
     );
     const WrappedButton = withErrorBoundary(TestButton);
 
-    const { rerender } = render(
+    render(
       <WrappedButton onClick={() => {}} />
     );
 

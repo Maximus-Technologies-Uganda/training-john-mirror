@@ -289,6 +289,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 /**
  * Higher-order component that adds loading state to any component
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function withLoadingState<P extends object>(
   Component: React.ComponentType<P>,
   loadingComponent?: React.ComponentType<any>
@@ -315,6 +316,7 @@ export function withLoadingState<P extends object>(
 /**
  * Hook for managing loading states
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useLoadingState(initialLoading = false) {
   const [loading, setLoading] = React.useState(initialLoading);
   const [error, setError] = React.useState<Error | null>(null);
