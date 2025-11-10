@@ -67,6 +67,7 @@ export default [
       '*.min.js',
       'apps/*/ui/dist/',
       'apps/*/ui/test-results/',
+      '**/playwright.config.js', // Generated TypeScript output
     ],
   },
 ];
