@@ -15,6 +15,7 @@ import { render, screen, waitFor, act, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { Stopwatch } from '@/components/Stopwatch';
 
 describe('Stopwatch Container Component (T053, T090)', () => {
@@ -217,12 +218,39 @@ describe('Stopwatch Container Component (T053, T090)', () => {
 
       const lapButton = screen.getByTestId('button-lap');
 
-      // Try to lap without starting
-      await userEvent.click(lapButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('alert')).toBeInTheDocument();
+      // Try to lap without starting - wrap in act to ensure React processes updates
+      act(() => {
+        fireEvent.click(lapButton);
       });
+
+      // Force React to flush all pending updates synchronously
+      // This ensures the state update from the hook is processed and component re-renders
+      ReactDOM.flushSync(() => {
+        // Empty callback - just forces flush
+      });
+
+      // Advance timers to allow useEffect to run (if any)
+      act(() => {
+        vi.advanceTimersByTime(0);
+        vi.runOnlyPendingTimers();
+      });
+
+      // Flush again after timers
+      ReactDOM.flushSync(() => {
+        // Empty callback - just forces flush
+      });
+
+      // Error banner should be visible - status.hasError should be true
+      // which causes ErrorBanner to render
+      const errorMessage = screen.queryByText(/Cannot lap before starting/i);
+      if (!errorMessage) {
+        // Debug: log what's actually in the DOM
+        screen.debug();
+        throw new Error('Error message not found in DOM');
+      }
+      
+      expect(errorMessage).toBeInTheDocument();
+      expect(screen.getByRole('alert')).toBeInTheDocument();
     });
 
     it('should auto-dismiss errors', async () => {
@@ -230,25 +258,45 @@ describe('Stopwatch Container Component (T053, T090)', () => {
 
       const lapButton = screen.getByTestId('button-lap');
 
-      await userEvent.click(lapButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('alert')).toBeInTheDocument();
+      act(() => {
+        fireEvent.click(lapButton);
       });
+
+      // Flush React updates and advance timers to allow useEffect to run
+      act(() => {
+        vi.advanceTimersByTime(0);
+      });
+      
+      // Run all pending timers to process React effects
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      // Error banner should be visible
+      expect(screen.getByRole('alert')).toBeInTheDocument();
 
       // Advance time past auto-dismiss timeout (100ms)
       act(() => {
         vi.advanceTimersByTime(100);
       });
 
-      // Run pending timers to trigger nested setTimeout for fade-out
+      // Run pending timers to trigger auto-dismiss
       act(() => {
         vi.runOnlyPendingTimers();
       });
 
-      await waitFor(() => {
-        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      // Advance time for fade-out animation (300ms)
+      act(() => {
+        vi.advanceTimersByTime(300);
       });
+
+      // Run pending timers to complete fade-out
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      // Error should be dismissed
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
 
     it('should clear error on dismiss', async () => {
@@ -256,18 +304,45 @@ describe('Stopwatch Container Component (T053, T090)', () => {
 
       const lapButton = screen.getByTestId('button-lap');
 
-      await userEvent.click(lapButton);
-
-      await waitFor(() => {
-        expect(screen.getByRole('alert')).toBeInTheDocument();
+      act(() => {
+        fireEvent.click(lapButton);
       });
 
-      const dismissButton = screen.getByRole('button', { name: /Dismiss error/i });
-      await userEvent.click(dismissButton);
-
-      await waitFor(() => {
-        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      // Flush React updates and advance timers to allow useEffect to run
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
+      
+      // Run all pending timers to process React effects
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      // Error banner should be visible
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+
+      const dismissButton = screen.getByRole('button', { name: /dismiss error/i });
+      act(() => {
+        fireEvent.click(dismissButton);
+      });
+
+      // Flush React updates
+      act(() => {
+        vi.advanceTimersByTime(0);
+      });
+
+      // Advance timers for fade-out animation (300ms)
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+
+      // Run pending timers to complete fade-out
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
+
+      // Error should be cleared
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
   });
 
@@ -350,26 +425,41 @@ describe('Stopwatch Container Component (T053, T090)', () => {
         fireEvent.click(lapBtn);
       });
       
+      // Flush React updates and advance timers to allow useEffect to run
       act(() => {
         vi.advanceTimersByTime(0);
       });
+      
+      // Run all pending timers to process React effects
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
 
-      await waitFor(() => {
-        expect(screen.getByRole('alert')).toBeInTheDocument();
-      }, { timeout: 1000 });
+      // Error banner should be visible
+      expect(screen.getByRole('alert')).toBeInTheDocument();
 
       // Start the stopwatch - error should clear
       act(() => {
         fireEvent.click(startBtn);
       });
 
+      // Flush React updates
       act(() => {
         vi.advanceTimersByTime(0);
       });
+
+      // Advance timers for fade-out animation (300ms)
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+
+      // Run pending timers to complete fade-out
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
       
-      await waitFor(() => {
-        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-      }, { timeout: 1000 });
+      // Error should be cleared
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 
       // Now lap should work
       act(() => {
@@ -380,13 +470,18 @@ describe('Stopwatch Container Component (T053, T090)', () => {
         fireEvent.click(lapBtn);
       });
 
+      // Flush React updates
       act(() => {
         vi.advanceTimersByTime(0);
       });
+      
+      // Run all pending timers to process React effects
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
 
-      await waitFor(() => {
-        expect(screen.getByText('Laps (1)')).toBeInTheDocument();
-      }, { timeout: 1000 });
+      // Lap should appear
+      expect(screen.getByText('Laps (1)')).toBeInTheDocument();
     });
 
     it('should handle rapid Start-Stop cycles', () => {
@@ -479,16 +574,20 @@ describe('Stopwatch Container Component (T053, T090)', () => {
         fireEvent.click(lapBtn);
       });
 
+      // Flush React updates and advance timers to allow useEffect to run
       act(() => {
         vi.advanceTimersByTime(0);
       });
+      
+      // Run all pending timers to process React effects
+      act(() => {
+        vi.runOnlyPendingTimers();
+      });
 
-      // Wait for error banner to appear (error is set asynchronously)
-      await waitFor(() => {
-        const alert = screen.getByRole('alert');
-        expect(alert).toBeInTheDocument();
-        expect(alert).toHaveAttribute('aria-live', 'assertive');
-      }, { timeout: 1000 });
+      // Error banner should be visible with proper ARIA attributes
+      const alert = screen.getByRole('alert');
+      expect(alert).toBeInTheDocument();
+      expect(alert).toHaveAttribute('aria-live', 'assertive');
     });
   });
 });

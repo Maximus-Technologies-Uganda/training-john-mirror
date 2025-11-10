@@ -9,15 +9,15 @@
  * Formats elapsed time in milliseconds to MM:SS:MS string format
  * 
  * @param elapsedMs - Elapsed time in milliseconds
- * @param maxMs - Maximum milliseconds before capping (default: 99:59:99)
+ * @param maxMs - Maximum milliseconds before capping (default: 5999990 for 99:59:99)
  * @returns Formatted time string in MM:SS:MS format
  * 
  * @example
  * formatTime(5432) => "00:05:43"
  * formatTime(65432) => "01:05:43"
- * formatTime(359999) => "99:59:99"
+ * formatTime(5999990) => "99:59:99"
  */
-export function formatTime(elapsedMs: number, maxMs: number = 359999): string {
+export function formatTime(elapsedMs: number, maxMs: number = 5999990): string {
   // Cap at maximum to prevent overflow
   const cappedMs = Math.min(Math.max(0, elapsedMs), maxMs);
 

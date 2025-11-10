@@ -107,8 +107,12 @@ export function useStopwatch(autoDismissErrorMs = 5000, updateIntervalMs = 100):
         };
       }
 
-      // Clear error and start
-      startTimeRef.current = Date.now();
+      // Set ref time only if not already set (defensive check)
+      if (startTimeRef.current === null) {
+        startTimeRef.current = Date.now();
+      }
+
+      // Clear error and transition to running
       return {
         ...prev,
         mode: 'running',
@@ -126,7 +130,7 @@ export function useStopwatch(autoDismissErrorMs = 5000, updateIntervalMs = 100):
     }
 
     setState((prev) => {
-      // Validate
+      // Validate FIRST before any other logic
       const error = validateStop(prev.mode);
       if (error) {
         return {
@@ -135,22 +139,23 @@ export function useStopwatch(autoDismissErrorMs = 5000, updateIntervalMs = 100):
         };
       }
 
-      // Stop and accumulate elapsed time
-      if (startTimeRef.current !== null) {
-        const elapsed = Date.now() - startTimeRef.current;
-        return {
-          ...prev,
-          mode: 'stopped',
-          elapsedMs: prev.elapsedMs + elapsed,
-          hasError: false,
-          errorMessage: undefined,
-          errorTimestamp: undefined,
-        };
-      }
+      // Calculate elapsed delta safely using nullish coalescing
+      const elapsedDelta = startTimeRef.current 
+        ? Date.now() - startTimeRef.current 
+        : 0;
 
-      return prev;
+      // Always transition to stopped when validation passes
+      return {
+        ...prev,
+        mode: 'stopped',
+        elapsedMs: prev.elapsedMs + elapsedDelta,
+        hasError: false,
+        errorMessage: undefined,
+        errorTimestamp: undefined,
+      };
     });
 
+    // ALWAYS clear the ref after setState completes
     startTimeRef.current = null;
   }, []);
 
@@ -192,13 +197,17 @@ export function useStopwatch(autoDismissErrorMs = 5000, updateIntervalMs = 100):
 
   // Reset the stopwatch
   const reset = useCallback(() => {
+    // Stop any running interval
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
+      intervalRef.current = null;  // Explicit null assignment for clarity
     }
 
+    // Clear all refs
     startTimeRef.current = null;
     lapTimesRef.current = [];
 
+    // Reset state to initial
     setState(initialState);
   }, []);
 

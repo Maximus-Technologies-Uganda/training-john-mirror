@@ -16,8 +16,8 @@
  * - Disabled button handling
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach, act } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import React from 'react';
@@ -123,74 +123,94 @@ describe('Stopwatch UI - Keyboard Navigation (T097)', () => {
     });
 
     it('should activate Stop button with Enter key when running', async () => {
-      const user = userEvent.setup({ delay: null });
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
       render(<Stopwatch />);
 
       const startButton = screen.getByTestId('button-start');
       const stopButton = screen.getByTestId('button-stop');
 
       // Start the stopwatch first
-      await user.tab(); // Tab to Start button
-      await waitFor(() => {
-        expect(startButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Start button
       });
-      await user.keyboard('{Enter}');
+      expect(startButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard('{Enter}');
+      });
 
-      await waitFor(() => {
-        expect(startButton).toBeDisabled();
-        expect(stopButton).not.toBeDisabled();
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
+
+      expect(startButton).toBeDisabled();
+      expect(stopButton).not.toBeDisabled();
 
       // Tab to Stop button and press Enter
-      await user.tab(); // Tab to Stop button
-      await waitFor(() => {
-        expect(stopButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Stop button
       });
-      await user.keyboard('{Enter}');
+      expect(stopButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard('{Enter}');
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(0);
+      });
 
       // Verify Stop button is now disabled
-      await waitFor(() => {
-        expect(stopButton).toBeDisabled();
-      });
+      expect(stopButton).toBeDisabled();
 
       // Verify Start button is now enabled
       expect(startButton).not.toBeDisabled();
     });
 
     it('should activate Lap button with Enter key when running', async () => {
-      const user = userEvent.setup({ delay: null });
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
       render(<Stopwatch />);
 
       const startButton = screen.getByTestId('button-start');
       const lapButton = screen.getByTestId('button-lap');
 
       // Start the stopwatch first
-      await user.tab(); // Tab to Start button
-      await waitFor(() => {
-        expect(startButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Start button
       });
-      await user.keyboard('{Enter}');
+      expect(startButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard('{Enter}');
+      });
 
-      await waitFor(() => {
-        expect(lapButton).not.toBeDisabled();
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
+
+      expect(lapButton).not.toBeDisabled();
 
       // Tab to Lap button and press Enter
-      await user.tab(); // Tab to Stop button
-      await user.tab(); // Tab to Lap button
-      await waitFor(() => {
-        expect(lapButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Stop button
+        await user.tab(); // Tab to Lap button
       });
-      await user.keyboard('{Enter}');
+      expect(lapButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard('{Enter}');
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(0);
+      });
 
       // Verify lap was recorded
-      await waitFor(() => {
-        expect(screen.getByText('Laps (1)')).toBeInTheDocument();
-      });
+      expect(screen.getByText('Laps (1)')).toBeInTheDocument();
     });
 
     it('should activate Reset button with Enter key', async () => {
-      const user = userEvent.setup({ delay: null });
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
       render(<Stopwatch />);
 
       const startButton = screen.getByTestId('button-start');
@@ -198,39 +218,67 @@ describe('Stopwatch UI - Keyboard Navigation (T097)', () => {
       const display = screen.getByTestId('stopwatch-display');
 
       // Start and then stop to have some state
-      await user.tab(); // Tab to Start button
-      await waitFor(() => {
-        expect(startButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Start button
       });
-      await user.keyboard('{Enter}');
+      expect(startButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard('{Enter}');
+      });
 
-      await waitFor(() => {
-        expect(startButton).toBeDisabled();
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
+
+      expect(startButton).toBeDisabled();
 
       const stopButton = screen.getByTestId('button-stop');
-      await user.tab(); // Tab to Stop button
-      await waitFor(() => {
-        expect(stopButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Stop button
       });
-      await user.keyboard('{Enter}');
+      expect(stopButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard('{Enter}');
+      });
 
-      await waitFor(() => {
-        expect(stopButton).toBeDisabled();
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
+
+      expect(stopButton).toBeDisabled();
 
       // Tab to Reset button and press Enter
-      await user.tab(); // Tab to Reset button
-      await waitFor(() => {
-        expect(resetButton).toHaveFocus();
+      // After stop, Start is disabled, so tab should go to Reset
+      await act(async () => {
+        await user.tab(); // Tab to Reset button
       });
-      await user.keyboard('{Enter}');
+      
+      // Focus might be on Reset or Start (if Start re-enabled), verify Reset is accessible
+      const focusedElement = document.activeElement;
+      if (focusedElement === resetButton) {
+        await act(async () => {
+          await user.keyboard('{Enter}');
+        });
+      } else {
+        // If focus moved to Start, tab again to Reset
+        await act(async () => {
+          await user.tab(); // Tab to Reset button
+        });
+        expect(resetButton).toHaveFocus();
+        await act(async () => {
+          await user.keyboard('{Enter}');
+        });
+      }
+
+      act(() => {
+        vi.advanceTimersByTime(0);
+      });
 
       // Verify reset occurred
-      await waitFor(() => {
-        expect(display).toHaveTextContent('00:00:00');
-        expect(startButton).not.toBeDisabled();
-      });
+      expect(display).toHaveTextContent('00:00:00');
+      expect(startButton).not.toBeDisabled();
     });
 
     it('should not activate disabled buttons with Enter key', async () => {
@@ -256,97 +304,122 @@ describe('Stopwatch UI - Keyboard Navigation (T097)', () => {
 
   describe('Space key activation', () => {
     it('should activate Start button with Space key', async () => {
-      const user = userEvent.setup({ delay: null });
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
       render(<Stopwatch />);
 
       const startButton = screen.getByTestId('button-start');
       const stopButton = screen.getByTestId('button-stop');
 
       // Focus Start button and press Space
-      await user.tab(); // Tab to Start button
-      await waitFor(() => {
-        expect(startButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Start button
       });
-      await user.keyboard(' ');
+      expect(startButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard(' ');
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(0);
+      });
 
       // Verify Start button is now disabled (stopwatch started)
-      await waitFor(() => {
-        expect(startButton).toBeDisabled();
-      });
+      expect(startButton).toBeDisabled();
 
       // Verify Stop button is now enabled
       expect(stopButton).not.toBeDisabled();
     });
 
     it('should activate Stop button with Space key when running', async () => {
-      const user = userEvent.setup({ delay: null });
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
       render(<Stopwatch />);
 
       const startButton = screen.getByTestId('button-start');
       const stopButton = screen.getByTestId('button-stop');
 
       // Start the stopwatch first
-      await user.tab(); // Tab to Start button
-      await waitFor(() => {
-        expect(startButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Start button
       });
-      await user.keyboard(' ');
+      expect(startButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard(' ');
+      });
 
-      await waitFor(() => {
-        expect(startButton).toBeDisabled();
-        expect(stopButton).not.toBeDisabled();
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
+
+      expect(startButton).toBeDisabled();
+      expect(stopButton).not.toBeDisabled();
 
       // Tab to Stop button and press Space
-      await user.tab(); // Tab to Stop button
-      await waitFor(() => {
-        expect(stopButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Stop button
       });
-      await user.keyboard(' ');
+      expect(stopButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard(' ');
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(0);
+      });
 
       // Verify Stop button is now disabled
-      await waitFor(() => {
-        expect(stopButton).toBeDisabled();
-      });
+      expect(stopButton).toBeDisabled();
 
       // Verify Start button is now enabled
       expect(startButton).not.toBeDisabled();
     });
 
     it('should activate Lap button with Space key when running', async () => {
-      const user = userEvent.setup({ delay: null });
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
       render(<Stopwatch />);
 
       const startButton = screen.getByTestId('button-start');
       const lapButton = screen.getByTestId('button-lap');
 
       // Start the stopwatch first
-      await user.tab(); // Tab to Start button
-      await waitFor(() => {
-        expect(startButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Start button
       });
-      await user.keyboard(' ');
+      expect(startButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard(' ');
+      });
 
-      await waitFor(() => {
-        expect(lapButton).not.toBeDisabled();
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
+
+      expect(lapButton).not.toBeDisabled();
 
       // Tab to Lap button and press Space
-      await user.tab(); // Tab to Stop button
-      await user.tab(); // Tab to Lap button
-      await waitFor(() => {
-        expect(lapButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Stop button
+        await user.tab(); // Tab to Lap button
       });
-      await user.keyboard(' ');
+      expect(lapButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard(' ');
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(0);
+      });
 
       // Verify lap was recorded
-      await waitFor(() => {
-        expect(screen.getByText('Laps (1)')).toBeInTheDocument();
-      });
+      expect(screen.getByText('Laps (1)')).toBeInTheDocument();
     });
 
     it('should activate Reset button with Space key', async () => {
-      const user = userEvent.setup({ delay: null });
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
       render(<Stopwatch />);
 
       const startButton = screen.getByTestId('button-start');
@@ -354,45 +427,73 @@ describe('Stopwatch UI - Keyboard Navigation (T097)', () => {
       const display = screen.getByTestId('stopwatch-display');
 
       // Start and then stop to have some state
-      await user.tab(); // Tab to Start button
-      await waitFor(() => {
-        expect(startButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Start button
       });
-      await user.keyboard(' ');
+      expect(startButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard(' ');
+      });
 
-      await waitFor(() => {
-        expect(startButton).toBeDisabled();
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
+
+      expect(startButton).toBeDisabled();
 
       const stopButton = screen.getByTestId('button-stop');
-      await user.tab(); // Tab to Stop button
-      await waitFor(() => {
-        expect(stopButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Stop button
       });
-      await user.keyboard(' ');
+      expect(stopButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard(' ');
+      });
 
-      await waitFor(() => {
-        expect(stopButton).toBeDisabled();
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
+
+      expect(stopButton).toBeDisabled();
 
       // Tab to Reset button and press Space
-      await user.tab(); // Tab to Reset button
-      await waitFor(() => {
-        expect(resetButton).toHaveFocus();
+      // After stop, Start is disabled, so tab should go to Reset
+      await act(async () => {
+        await user.tab(); // Tab to Reset button
       });
-      await user.keyboard(' ');
+      
+      // Focus might be on Reset or Start (if Start re-enabled), verify Reset is accessible
+      const focusedElement = document.activeElement;
+      if (focusedElement === resetButton) {
+        await act(async () => {
+          await user.keyboard(' ');
+        });
+      } else {
+        // If focus moved to Start, tab again to Reset
+        await act(async () => {
+          await user.tab(); // Tab to Reset button
+        });
+        expect(resetButton).toHaveFocus();
+        await act(async () => {
+          await user.keyboard(' ');
+        });
+      }
+
+      act(() => {
+        vi.advanceTimersByTime(0);
+      });
 
       // Verify reset occurred
-      await waitFor(() => {
-        expect(display).toHaveTextContent('00:00:00');
-        expect(startButton).not.toBeDisabled();
-      });
+      expect(display).toHaveTextContent('00:00:00');
+      expect(startButton).not.toBeDisabled();
     });
   });
 
   describe('Complete keyboard workflow', () => {
     it('should handle complete workflow using only keyboard', async () => {
-      const user = userEvent.setup({ delay: null });
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
       render(<Stopwatch />);
 
       const startButton = screen.getByTestId('button-start');
@@ -402,55 +503,86 @@ describe('Stopwatch UI - Keyboard Navigation (T097)', () => {
       const display = screen.getByTestId('stopwatch-display');
 
       // Step 1: Tab to Start and activate with Enter
-      await user.tab(); // Tab to Start button
-      await waitFor(() => {
-        expect(startButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Tab to Start button
       });
-      await user.keyboard('{Enter}');
+      expect(startButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard('{Enter}');
+      });
 
-      await waitFor(() => {
-        expect(startButton).toBeDisabled();
-        expect(stopButton).not.toBeDisabled();
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
+
+      expect(startButton).toBeDisabled();
+      expect(stopButton).not.toBeDisabled();
 
       // Step 2: Tab to Lap and activate with Space
-      // After start, Stop and Lap are enabled, Start is disabled
-      // Tab will skip disabled Start, go to Stop, then Lap
-      await user.tab(); // Skip disabled Start, go to Stop
-      await user.tab(); // Go to Lap
-      await waitFor(() => {
-        expect(lapButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Skip disabled Start, go to Stop
+        await user.tab(); // Go to Lap
       });
-      await user.keyboard(' ');
+      expect(lapButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard(' ');
+      });
 
-      await waitFor(() => {
-        expect(screen.getByText('Laps (1)')).toBeInTheDocument();
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
+
+      expect(screen.getByText('Laps (1)')).toBeInTheDocument();
 
       // Step 3: Tab to Stop and activate with Enter
-      await user.tab(); // Go to Reset
-      await user.tab({ shift: true }); // Shift+Tab back to Stop
-      await waitFor(() => {
-        expect(stopButton).toHaveFocus();
+      await act(async () => {
+        await user.tab(); // Go to Reset
+        await user.tab({ shift: true }); // Shift+Tab back to Stop
       });
-      await user.keyboard('{Enter}');
+      expect(stopButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard('{Enter}');
+      });
 
-      await waitFor(() => {
-        expect(stopButton).toBeDisabled();
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
+
+      expect(stopButton).toBeDisabled();
 
       // Step 4: Tab to Reset and activate with Space
-      await user.tab(); // Go to Reset
-      await waitFor(() => {
-        expect(resetButton).toHaveFocus();
+      // After stop, Start becomes enabled, so tab might go to Start first
+      await act(async () => {
+        await user.tab(); // Tab (might go to Start or Reset)
       });
-      await user.keyboard(' ');
+      
+      // Focus might be on Start (now enabled) or Reset
+      const focusedElement = document.activeElement;
+      if (focusedElement === resetButton) {
+        await act(async () => {
+          await user.keyboard(' ');
+        });
+      } else {
+        // If focus moved to Start, tab again to Reset
+        await act(async () => {
+          await user.tab(); // Tab to Reset button
+        });
+        expect(resetButton).toHaveFocus();
+        await act(async () => {
+          await user.keyboard(' ');
+        });
+      }
+
+      act(() => {
+        vi.advanceTimersByTime(0);
+      });
 
       // Verify reset occurred
-      await waitFor(() => {
-        expect(display).toHaveTextContent('00:00:00');
-        expect(startButton).not.toBeDisabled();
-      });
+      expect(display).toHaveTextContent('00:00:00');
+      expect(startButton).not.toBeDisabled();
     });
   });
 
@@ -470,30 +602,42 @@ describe('Stopwatch UI - Keyboard Navigation (T097)', () => {
     });
 
     it('should maintain focus order when buttons become enabled/disabled', async () => {
-      const user = userEvent.setup({ delay: null });
+      const user = userEvent.setup({ delay: null, advanceTimers: vi.advanceTimersByTime });
       render(<Stopwatch />);
 
       const startButton = screen.getByTestId('button-start');
       const stopButton = screen.getByTestId('button-stop');
+      const lapButton = screen.getByTestId('button-lap');
 
-      // Initially, Start is focused using tab
-      await user.tab(); // Tab to Start button
-      await waitFor(() => {
-        expect(startButton).toHaveFocus();
+      // Initially, Start is enabled, Stop/Lap are disabled
+      expect(startButton).not.toBeDisabled();
+      expect(stopButton).toBeDisabled();
+      expect(lapButton).toBeDisabled();
+
+      // Tab to Start and activate
+      await act(async () => {
+        await user.tab(); // Tab to Start button
+      });
+      expect(startButton).toHaveFocus();
+      
+      await act(async () => {
+        await user.keyboard('{Enter}');
       });
 
-      // Activate Start
-      await user.keyboard('{Enter}');
-
-      await waitFor(() => {
-        expect(startButton).toBeDisabled();
-        expect(stopButton).not.toBeDisabled();
+      act(() => {
+        vi.advanceTimersByTime(0);
       });
 
-      // Focus should remain on Start (even though disabled)
-      // Or move to next enabled button depending on implementation
-      const focusedElement = document.activeElement;
-      expect([startButton, stopButton]).toContain(focusedElement);
+      // After start, Start is disabled, Stop/Lap are enabled
+      expect(startButton).toBeDisabled();
+      expect(stopButton).not.toBeDisabled();
+      expect(lapButton).not.toBeDisabled();
+
+      // Focus should move to next enabled button (Stop)
+      await act(async () => {
+        await user.tab(); // Tab to Stop button
+      });
+      expect(stopButton).toHaveFocus();
     });
   });
 });

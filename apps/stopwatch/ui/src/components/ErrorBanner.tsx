@@ -64,7 +64,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({
         setShouldRender(false);
       }, 300);
     }
-  }, [status.hasError, autoDismissMs, onClearError]);
+  }, [status.hasError, status.errorMessage, autoDismissMs, onClearError]);
 
   if (!shouldRender) {
     return null;

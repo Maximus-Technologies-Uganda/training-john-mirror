@@ -2,13 +2,17 @@
  * StopwatchControls Component
  * 
  * Provides control buttons for the stopwatch (Start, Stop, Lap, Reset).
- * For User Story 1, we focus on the Start button functionality.
+ * Fully functional for User Stories 1 & 2 (Start, Lap, Stop, Reset).
  * 
  * Features:
  * - Start button to begin/resume timing
+ * - Lap button to record lap times (only enabled while running)
+ * - Stop button to pause timing
+ * - Reset button to clear all data
  * - Disabled states based on stopwatch mode
- * - Accessible keyboard navigation
+ * - Accessible keyboard navigation (Enter/Space)
  * - ARIA labels for screen readers
+ * - Color-coded buttons for visual hierarchy
  */
 
 import React from 'react';
@@ -61,7 +65,12 @@ export const StopwatchControls: React.FC<StopwatchControlsProps> = ({
     onReset?.();
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent, handler: () => void) => {
+  const handleKeyDown = (
+    event: React.KeyboardEvent,
+    disabled: boolean,
+    handler: () => void
+  ) => {
+    if (disabled) return;
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       handler();
@@ -84,9 +93,9 @@ export const StopwatchControls: React.FC<StopwatchControlsProps> = ({
       {/* Start Button */}
       <button
         onClick={handleStartClick}
-        onKeyDown={(e) => handleKeyDown(e, handleStartClick)}
-        aria-label={isRunning ? 'Resume stopwatch (currently running)' : 'Start stopwatch'}
-        disabled={false}
+        onKeyDown={(e) => handleKeyDown(e, isRunning, handleStartClick)}
+        aria-label={isRunning ? 'Start button disabled (stopwatch already running)' : 'Start stopwatch'}
+        disabled={isRunning}
         type="button"
         data-testid="button-start"
         style={{
@@ -119,7 +128,7 @@ export const StopwatchControls: React.FC<StopwatchControlsProps> = ({
       {onStop && (
         <button
           onClick={handleStopClick}
-          onKeyDown={(e) => handleKeyDown(e, handleStopClick)}
+          onKeyDown={(e) => handleKeyDown(e, !isRunning, handleStopClick)}
           aria-label="Stop stopwatch"
           disabled={!isRunning}
           type="button"
@@ -155,7 +164,7 @@ export const StopwatchControls: React.FC<StopwatchControlsProps> = ({
       {onLap && (
         <button
           onClick={handleLapClick}
-          onKeyDown={(e) => handleKeyDown(e, handleLapClick)}
+          onKeyDown={(e) => handleKeyDown(e, !isRunning, handleLapClick)}
           aria-label="Record lap"
           disabled={!isRunning}
           type="button"
@@ -191,7 +200,7 @@ export const StopwatchControls: React.FC<StopwatchControlsProps> = ({
       {onReset && (
         <button
           onClick={handleResetClick}
-          onKeyDown={(e) => handleKeyDown(e, handleResetClick)}
+          onKeyDown={(e) => handleKeyDown(e, false, handleResetClick)}
           aria-label="Reset stopwatch"
           disabled={false}
           type="button"

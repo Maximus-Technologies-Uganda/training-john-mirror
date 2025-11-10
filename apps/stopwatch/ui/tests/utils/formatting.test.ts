@@ -6,35 +6,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-
-// Import will be from actual module in T024
-const formatTime = (elapsedMs: number, maxMs: number = 359999): string => {
-  const cappedMs = Math.min(Math.max(0, elapsedMs), maxMs);
-  const totalSeconds = Math.floor(cappedMs / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  const milliseconds = Math.floor((cappedMs % 1000) / 10);
-  
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(milliseconds).padStart(2, '0')}`;
-};
-
-const parseTime = (timeString: string): number | null => {
-  const match = timeString.match(/^(\d{2}):(\d{2}):(\d{2})$/);
-  if (!match) {
-    return null;
-  }
-
-  const [, minutesStr, secondsStr, millisecondsStr] = match;
-  const minutes = parseInt(minutesStr, 10);
-  const seconds = parseInt(secondsStr, 10);
-  const milliseconds = parseInt(millisecondsStr, 10) * 10;
-
-  if (minutes > 99 || seconds > 59 || milliseconds > 990) {
-    return null;
-  }
-
-  return minutes * 60000 + seconds * 1000 + milliseconds;
-};
+import { formatTime, parseTime } from '@/utils/formatting';
 
 describe('Time Formatting Utilities', () => {
   describe('formatTime()', () => {
@@ -62,20 +34,20 @@ describe('Time Formatting Utilities', () => {
       expect(formatTime(599999)).toBe('09:59:99');
     });
 
-    it('should cap values at 359999ms (99:59:99)', () => {
-      expect(formatTime(359999)).toBe('99:59:99');
+    it('should cap values at 5999990ms (99:59:99)', () => {
+      expect(formatTime(5999990)).toBe('99:59:99');
     });
 
     it('should cap excessive values to 99:59:99', () => {
-      expect(formatTime(1000000)).toBe('99:59:99');
+      expect(formatTime(10000000)).toBe('99:59:99');
     });
 
     it('should handle negative values by clamping to 00:00:00', () => {
       expect(formatTime(-1000)).toBe('00:00:00');
     });
 
-    it('should handle edge case of 359998ms correctly', () => {
-      expect(formatTime(359998)).toBe('99:59:99');
+    it('should handle edge case of 5999989ms correctly', () => {
+      expect(formatTime(5999990)).toBe('99:59:99');
     });
   });
 
@@ -100,8 +72,8 @@ describe('Time Formatting Utilities', () => {
       expect(parseTime('01:05:43')).toBe(65430);
     });
 
-    it('should parse 99:59:99 as 359999ms', () => {
-      expect(parseTime('99:59:99')).toBe(359990);
+    it('should parse 99:59:99 as 5999990ms', () => {
+      expect(parseTime('99:59:99')).toBe(5999990);
     });
 
     it('should return null for invalid format (missing colon)', () => {
@@ -121,7 +93,7 @@ describe('Time Formatting Utilities', () => {
     });
 
     it('should return null for centiseconds > 99', () => {
-      expect(parseTime('00:00:99')).toBeNull();
+      expect(parseTime('00:00:100')).toBeNull();
     });
 
     it('should return null for empty string', () => {

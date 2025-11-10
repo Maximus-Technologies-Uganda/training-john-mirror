@@ -4,7 +4,7 @@
  * Provides functions to validate stopwatch state and prevent invalid transitions
  */
 
-import type { StopwatchMode, StopwatchState, StopwatchErrorType } from '../types/stopwatch';
+import type { StopwatchMode, StopwatchState } from '../types/stopwatch';
 import { StopwatchErrorType } from '../types/stopwatch';
 
 /**
