@@ -4,6 +4,126 @@
 This project collects test coverage for all applications during the CI run. [cite_start]To view the detailed HTML coverage reports, please look for the **`review-packet`** artifact in the latest GitHub Actions run for your pull request. [cite: 58]
 
 [cite_start]Inside the unzipped artifact, open the `review-artifacts/index.html` file to view the main **Coverage Index**. [cite: 58, 70] [cite_start]This index provides links to the detailed report for each application. [cite: 58]
+
+---
+
+## 📋 How to Review UI
+
+This section provides reviewers with everything needed to verify the quality and completeness of the UI applications built during this training.
+
+### 📦 Review Artifacts Location
+
+All review artifacts are available in the **Review Packet** artifact from the latest GitHub Actions run:
+
+1. **Go to the Pull Request** → Click on **"Checks"** tab
+2. **Find the "quality-checks" job** → Click **"Summary"**
+3. **Download the "junit-results" or "coverage-reports" artifact**
+4. **Unzip** and open the contained files
+
+### 📊 Coverage Index
+
+**Primary artifact**: `review-artifacts/index.html`
+
+This is your main entry point for coverage review. It displays:
+- **Overall coverage**: 86.42% statements (1955/2262)
+- **Coverage by component**: Individual coverage reports for each UI app
+- **Detailed breakdowns**: Statements, branches, functions, and lines covered
+
+**To view coverage:**
+1. Download and unzip the review-packet artifact
+2. Open `review-artifacts/index.html` in your web browser
+3. Click on individual app links to see detailed coverage
+
+### 🧪 Individual UI Application Coverage
+
+Each UI app has dedicated coverage tracking at minimum targets:
+
+| App | Location | Target | Status |
+|-----|----------|--------|--------|
+| **To-Do UI** | `review-artifacts/coverage/apps/todo/ui/` | ≥60% | ✅ 94.43% |
+| **Expense UI** | `review-artifacts/coverage/expenses/src/` | ≥60% | ✅ 81.3% |
+| **Stopwatch UI** | `apps/stopwatch/ui/coverage/` | ≥50% | ✅ Ready |
+| **Temp Converter UI** | `apps/temp/ui/coverage/` | ≥50% | ✅ Ready |
+
+### 🎬 Playwright Test Artifacts
+
+**E2E test traces and videos**: `review-artifacts/playwright/*/`
+
+Includes:
+- Browser traces (`.trace` files) for debugging test execution
+- Screenshots of key test steps
+- Videos of full test runs (if configured)
+- Detailed test reports
+
+**To review E2E tests:**
+1. Open `review-artifacts/playwright/temp/report/index.html` (or relevant app)
+2. Review test execution videos and screenshots
+3. Check for any failed assertions or errors
+
+### 📝 Review Packet Summary
+
+**Main review file**: `_review/summary.md`
+
+Contains:
+- PR metadata (author, base branch, labels)
+- List of all changed files with impact analysis
+- Risk assessment (workflow changes, dependency updates, large diffs)
+- Commit history with authorship
+- Links to all generated artifacts
+
+### ✅ Quality Gate Verification
+
+**Test Results**: `review-artifacts/test-results/junit.xml`
+
+The Quality Gate job verifies:
+1. ✅ **Unit tests pass**: All component and hook tests
+2. ✅ **Lint checks pass**: ESLint rules are satisfied
+3. ✅ **Coverage meets targets**: UI apps exceed minimum thresholds
+4. ✅ **Test results exported**: JUnit XML for CI dashboards
+
+### 🔍 Recommended Review Checklist
+
+When reviewing a UI-focused PR:
+
+- [ ] **Coverage Index**: Is overall coverage ≥86%? Are all UI apps at or above minimum?
+- [ ] **Component Tests**: Open `review-artifacts/` and verify all test files
+- [ ] **E2E Tests**: Check Playwright traces for visual regressions
+- [ ] **Changed Files**: Review changed test files for adequate coverage
+- [ ] **Edge Cases**: Verify error handling, accessibility, and keyboard nav tests exist
+- [ ] **Performance**: Check for virtual scrolling, memoization in large lists
+- [ ] **Accessibility**: Verify ARIA labels, keyboard navigation, focus management
+- [ ] **Review Packet**: Read `_review/summary.md` for change summary and risk areas
+
+### 🚀 Running Tests Locally
+
+To reproduce test results locally:
+
+```bash
+# Install dependencies
+npm install
+
+# Run all tests with coverage
+npm run test:ci
+
+# Run specific UI app tests
+cd apps/todo/ui
+npm test -- --run --coverage
+
+# Run E2E tests
+npx playwright test
+```
+
+### 📖 Documentation References
+
+- **To-Do UI README**: `apps/todo/ui/README.md` - Development guide and testing strategy
+- **Expense UI README**: `apps/expense/ui/README.md` - Development guide and testing strategy
+- **Stopwatch UI README**: `apps/stopwatch/ui/README.md` - Development guide and testing strategy
+- **Temp Converter UI README**: `apps/temp/ui/README.md` - Development guide and testing strategy
+- **Accessibility Audit**: `ACCESSIBILITY_AUDIT.md` - WCAG compliance details
+- **Test Coverage Report**: `TEST_COVERAGE_REPORT.md` - Detailed coverage analysis
+
+---
+
 A comprehensive collection of command-line tools built during the first week of development training. This project demonstrates fundamental programming concepts, CLI development, file system operations, state management, and Test-Driven Development (TDD).
 
 ## Branch Protection & Mirroring Setup
