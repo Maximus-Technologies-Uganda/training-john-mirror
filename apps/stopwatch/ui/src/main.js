@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var jsx_runtime_1 = require("react/jsx-runtime");
-var react_1 = require("react");
-var client_1 = require("react-dom/client");
-var App_1 = require("./App");
-var root = document.getElementById('root');
+const jsx_runtime_1 = require("react/jsx-runtime");
+const react_1 = require("react");
+const client_1 = require("react-dom/client");
+const App_1 = require("./App");
+const root = document.getElementById('root');
 if (!root) {
     throw new Error('Root element not found');
 }

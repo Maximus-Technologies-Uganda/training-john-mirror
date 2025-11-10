@@ -79,7 +79,8 @@ function parseCoverageData() {
     const fileCoverage = [];
     
     for (const [file, coverage] of Object.entries(coverageData)) {
-      const fileData = coverage as any;
+      /** @type {any} */
+      const fileData = coverage;
       
       const statements = fileData.s || {};
       const branches = fileData.b || {};
@@ -87,16 +88,16 @@ function parseCoverageData() {
       const lines = fileData.statementMap || {};
       
       const fileStatements = Object.keys(statements).length;
-      const fileCoveredStatements = Object.values(statements).filter((v: any) => v > 0).length;
+      const fileCoveredStatements = Object.values(statements).filter((v) => v > 0).length;
       
       const fileBranches = Object.keys(branches).length;
-      const fileCoveredBranches = Object.values(branches).filter((v: any) => Array.isArray(v) && v.some((b: any) => b > 0)).length;
+      const fileCoveredBranches = Object.values(branches).filter((v) => Array.isArray(v) && v.some((b) => b > 0)).length;
       
       const fileFunctions = Object.keys(functions).length;
-      const fileCoveredFunctions = Object.values(functions).filter((v: any) => v > 0).length;
+      const fileCoveredFunctions = Object.values(functions).filter((v) => v > 0).length;
       
       const fileLines = Object.keys(lines).length;
-      const fileCoveredLines = Object.values(statements).filter((v: any) => v > 0).length;
+      const fileCoveredLines = Object.values(statements).filter((v) => v > 0).length;
       
       totalStatements += fileStatements;
       coveredStatements += fileCoveredStatements;
@@ -143,7 +144,10 @@ function parseCoverageData() {
   }
 }
 
-function generateSummary(coverageData: any) {
+/**
+ * @param {any} coverageData
+ */
+function generateSummary(coverageData) {
   console.log('📝 Generating coverage summary...');
   
   const summary = `# Stopwatch UI - Coverage Summary
@@ -164,7 +168,7 @@ function generateSummary(coverageData: any) {
 
 | File | Statements | Branches | Functions | Lines |
 |------|------------|----------|-----------|-------|
-${coverageData.files.map((f: any) => 
+${coverageData.files.map((f) => 
   `| ${f.file} | ${f.statements}% | ${f.branches}% | ${f.functions}% | ${f.lines}% |`
 ).join('\n')}
 
