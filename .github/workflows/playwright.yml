@@ -1,0 +1,162 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test-expense:
+    name: Test Expense App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd apps/expense/ui
+          npm ci
+
+      - name: Install Playwright browsers
+        run: |
+          cd apps/expense/ui
+          npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: |
+          cd apps/expense/ui
+          npm run e2e
+        continue-on-error: true
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-expense-artifacts
+          path: apps/expense/ui/test-results/playwright/
+          retention-days: 30
+
+      - name: Upload to review-artifacts
+        if: always()
+        run: |
+          mkdir -p review-artifacts/playwright/expense
+          cp -r apps/expense/ui/test-results/playwright/* review-artifacts/playwright/expense/ || true
+
+  test-stopwatch:
+    name: Test Stopwatch App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd apps/stopwatch/ui
+          npm ci
+
+      - name: Install Playwright browsers
+        run: |
+          cd apps/stopwatch/ui
+          npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: |
+          cd apps/stopwatch/ui
+          npm run e2e
+        continue-on-error: true
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-stopwatch-artifacts
+          path: apps/stopwatch/ui/test-results/playwright/
+          retention-days: 30
+
+  test-temp:
+    name: Test Temp Converter App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd apps/temp/ui
+          npm ci
+
+      - name: Install Playwright browsers
+        run: |
+          cd apps/temp/ui
+          npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: |
+          cd apps/temp/ui
+          npm run e2e
+        continue-on-error: true
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-temp-artifacts
+          path: apps/temp/ui/test-results/playwright/
+          retention-days: 30
+
+  publish-artifacts:
+    name: Publish Test Artifacts
+    needs: [test-expense, test-stopwatch, test-temp]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create review-artifacts directory
+        run: mkdir -p review-artifacts/playwright
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: playwright-downloads
+
+      - name: Organize artifacts
+        run: |
+          mkdir -p review-artifacts/playwright/expense
+          mkdir -p review-artifacts/playwright/stopwatch
+          mkdir -p review-artifacts/playwright/temp
+          
+          if [ -d "playwright-downloads/playwright-expense-artifacts" ]; then
+            cp -r playwright-downloads/playwright-expense-artifacts/* review-artifacts/playwright/expense/ || true
+          fi
+          
+          if [ -d "playwright-downloads/playwright-stopwatch-artifacts" ]; then
+            cp -r playwright-downloads/playwright-stopwatch-artifacts/* review-artifacts/playwright/stopwatch/ || true
+          fi
+          
+          if [ -d "playwright-downloads/playwright-temp-artifacts" ]; then
+            cp -r playwright-downloads/playwright-temp-artifacts/* review-artifacts/playwright/temp/ || true
+          fi
+
+      - name: Upload final artifacts to review-artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: review-artifacts
+          path: review-artifacts/
+          retention-days: 90
+
