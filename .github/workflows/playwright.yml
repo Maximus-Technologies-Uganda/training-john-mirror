@@ -19,19 +19,16 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: |
-          cd apps/expense/ui
-          npm ci
+        working-directory: apps/expense/ui
+        run: npm ci
 
       - name: Install Playwright browsers
-        run: |
-          cd apps/expense/ui
-          npx playwright install --with-deps
+        working-directory: apps/expense/ui
+        run: npx playwright install --with-deps
 
       - name: Run Playwright tests
-        run: |
-          cd apps/expense/ui
-          npm run e2e
+        working-directory: apps/expense/ui
+        run: npm run e2e
         continue-on-error: true
 
       - name: Upload Playwright artifacts
@@ -60,19 +57,16 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: |
-          cd apps/stopwatch/ui
-          npm ci
+        working-directory: apps/stopwatch/ui
+        run: npm ci
 
       - name: Install Playwright browsers
-        run: |
-          cd apps/stopwatch/ui
-          npx playwright install --with-deps
+        working-directory: apps/stopwatch/ui
+        run: npx playwright install --with-deps
 
       - name: Run Playwright tests
-        run: |
-          cd apps/stopwatch/ui
-          npm run e2e
+        working-directory: apps/stopwatch/ui
+        run: npm run e2e
         continue-on-error: true
 
       - name: Upload Playwright artifacts
@@ -95,19 +89,16 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: |
-          cd apps/temp/ui
-          npm ci
+        working-directory: apps/temp/ui
+        run: npm ci
 
       - name: Install Playwright browsers
-        run: |
-          cd apps/temp/ui
-          npx playwright install --with-deps
+        working-directory: apps/temp/ui
+        run: npx playwright install --with-deps
 
       - name: Run Playwright tests
-        run: |
-          cd apps/temp/ui
-          npm run e2e
+        working-directory: apps/temp/ui
+        run: npm run e2e
         continue-on-error: true
 
       - name: Upload Playwright artifacts
