@@ -86,6 +86,31 @@ jobs:
           name: coverage-reports
           path: review-artifacts/
 
+      - name: Download Playwright Artifacts (from last successful run)
+        uses: actions/download-artifact@v4
+        if: always()
+        with:
+          name: review-artifacts
+          path: review-artifacts-playwright/
+        continue-on-error: true
+
+      - name: Copy Playwright artifacts to review directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          mkdir -p _review/review-artifacts/playwright
+          mkdir -p review-artifacts/playwright
+          
+          if [ -d "review-artifacts-playwright/playwright" ]; then
+            echo "✅ Found Playwright artifacts, copying to review packet..."
+            cp -r review-artifacts-playwright/playwright/* review-artifacts/playwright/ || true
+            cp -r review-artifacts-playwright/playwright/* _review/review-artifacts/playwright/ || true
+            echo "✅ Playwright artifacts copied successfully"
+          else
+            echo "⚠️ Playwright artifacts not found - tests may not have run or may have failed"
+          fi
+
       - name: Resolve PR number
         id: resolve
         shell: bash
@@ -223,6 +248,39 @@ jobs:
                 summaryLines.push('## Review focus (auto-detected)');
                 for (const r of risky) summaryLines.push(`- ${r}`);
               }
+              
+              // Add Playwright E2E Test Results Section
+              summaryLines.push('');
+              summaryLines.push('## Playwright E2E Tests');
+              
+              const playwrightDir = path.join(process.cwd(), '_review/review-artifacts/playwright');
+              if (fs.existsSync(playwrightDir)) {
+                try {
+                  const apps = fs.readdirSync(playwrightDir).filter(f => {
+                    return fs.statSync(path.join(playwrightDir, f)).isDirectory();
+                  });
+                  
+                  if (apps.length > 0) {
+                    for (const app of apps.sort()) {
+                      const appPath = path.join(playwrightDir, app);
+                      const indexPath = path.join(appPath, 'index.html');
+                      
+                      if (fs.existsSync(indexPath)) {
+                        summaryLines.push(`- **${app}**: ✅ E2E tests completed - [View Report](../review-artifacts/playwright/${app}/index.html)`);
+                      } else {
+                        summaryLines.push(`- **${app}**: ⚠️ Report pending`);
+                      }
+                    }
+                  } else {
+                    summaryLines.push('- **Status**: No E2E test reports found');
+                  }
+                } catch (err) {
+                  summaryLines.push(`- **Status**: Error reading E2E reports: ${err.message}`);
+                }
+              } else {
+                summaryLines.push('- **Status**: E2E tests did not run - check Playwright workflow');
+              }
+              
               summaryLines.push('');
               summaryLines.push('## Commits');
               for (const c of commits) {
