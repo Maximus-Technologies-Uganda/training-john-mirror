@@ -23,6 +23,8 @@ jobs:
           echo "changed_files=$CHANGED_FILES" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Issues
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Loop through each changed spec.md file
           for spec_file in ${{ steps.changed-files.outputs.changed_files }}; do
@@ -37,10 +39,16 @@ jobs:
 
 This GitHub Issue is automatically created when the specification file is updated."
 
-              # Create the GitHub Issue
-              gh issue create \
+              # Create the GitHub Issue and capture the issue URL
+              ISSUE_URL=$(gh issue create \
                 --title "$TITLE" \
                 --body "$BODY" \
-                --label "specification"
+                --label "spec-driven,todo" \
+                --json url --jq '.url')
+
+              # Add the issue to the project
+              if [ -n "$ISSUE_URL" ]; then
+                gh issue edit "$ISSUE_URL" --add-project "training-john"
+              fi
             fi
           done
