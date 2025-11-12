@@ -170,6 +170,58 @@ npx playwright test
 
 ---
 
+## 📁 Data Directory Structure
+
+Runtime data files are organized under the `data/` directory to maintain a clean, professional project structure.
+
+### Directory Layout
+
+```
+data/
+├── time.json                    # Stopwatch state (do not commit)
+├── persistence/
+│   ├── todos.json              # Todo list items (do not commit)
+│   ├── expenses.json           # Expense records (do not commit)
+│   └── example.json            # Template file (tracked)
+└── example.json                # Template file (tracked)
+```
+
+### Do Not Commit These Files
+
+All `.json` files in the `data/` directory except templates are automatically ignored by `.gitignore`. Never manually commit:
+- `data/time.json` - Contains active stopwatch state
+- `data/persistence/todos.json` - Contains user tasks
+- `data/persistence/expenses.json` - Contains user expenses
+
+These files are runtime data and are specific to each user's environment.
+
+### CLI Storage Configuration
+
+All CLI tools support the `--storage` parameter to specify a custom data file path. This is essential for testing and CI/CD environments.
+
+**Usage:**
+
+```bash
+# Use default path (data/persistence/expenses.json)
+node expenses list
+
+# Use custom path (useful for testing)
+node expenses list --storage /tmp/test-expenses.json
+
+# Use environment variable
+export EXPENSES_DATA_FILE=/custom/path/expenses.json
+node expenses list
+```
+
+**Storage Path Priority:**
+1. **CLI `--storage` argument** - Highest priority (e.g., `--storage /tmp/test.json`)
+2. **Environment variable** - `EXPENSES_DATA_FILE` or app-specific var
+3. **Default path** - `data/persistence/<filename>.json`
+
+This allows developers to easily configure storage paths for different environments (development, testing, CI/CD).
+
+---
+
 A comprehensive collection of command-line tools built during the first week of development training. This project demonstrates fundamental programming concepts, CLI development, file system operations, state management, and Test-Driven Development (TDD).
 
 ## Branch Protection & Mirroring Setup
