@@ -54,6 +54,12 @@ This is your main entry point for coverage review. It displays:
 2. Open `review-artifacts/index.html` in your web browser
 3. Click on individual app links to see detailed coverage
 
+**Per-App Coverage Paths:**
+- **Expense UI**: `review-artifacts/ui-coverage-expense/index.html` | LCOV: `review-artifacts/coverage-expense/lcov-report/index.html`
+- **Stopwatch UI**: `review-artifacts/ui-coverage-stopwatch/index.html` | LCOV: `review-artifacts/coverage-stopwatch/lcov-report/index.html`
+- **Temp Converter UI**: `review-artifacts/ui-coverage-temp/index.html` | LCOV: `review-artifacts/coverage-temp/lcov-report/index.html`
+- **To-Do UI**: `review-artifacts/ui-coverage-todo/index.html` | LCOV: `review-artifacts/coverage-todo/lcov-report/index.html`
+
 ### 🧪 Individual UI Application Coverage
 
 Each UI app has dedicated coverage tracking at minimum targets:
@@ -88,10 +94,17 @@ Includes:
 6. Review test execution videos and screenshots
 7. Check for any failed assertions or errors
 
-**Direct paths to Playwright reports:**
-- Expense: `review-artifacts/playwright/expense/index.html`
-- Stopwatch: `review-artifacts/playwright/stopwatch/index.html`
-- Temp Converter: `review-artifacts/playwright/temp/index.html`
+**Playwright Artifact Locations:**
+- **Traces/Screenshots/Videos**: `review-artifacts/playwright/<app>/` (contains all test artifacts)
+  - **Expense reports**: `review-artifacts/playwright/expense/index.html`
+  - **Stopwatch reports**: `review-artifacts/playwright/stopwatch/index.html`
+  - **Temp Converter reports**: `review-artifacts/playwright/temp/index.html`
+- **What's included in each app's directory**:
+  - 📋 `index.html` - Main Playwright HTML report with test results
+  - 🎥 `data/` - Videos of test execution (on failure)
+  - 📸 `.png` files - Screenshots captured during test failures
+  - 🔍 `.trace` files - Browser traces for detailed debugging
+  - `.md` files - Error context and step-by-step test details
 
 ### 📝 Review Packet Summary
 
