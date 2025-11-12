@@ -9,7 +9,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const defaultDataFile = path.resolve(__dirname, '..', '..', 'data', 'persistence', 'expenses.json');
 
-function resolveDataFile() {
+function resolveDataFile(storageOption) {
+  // Priority: CLI argument > environment variable > default
+  if (storageOption && String(storageOption).trim().length > 0) {
+    return path.resolve(storageOption);
+  }
+
   const override = process.env.EXPENSES_DATA_FILE;
   if (override && String(override).trim().length > 0) {
     return path.resolve(override);
@@ -18,7 +23,8 @@ function resolveDataFile() {
   return defaultDataFile;
 }
 
-const dataFile = resolveDataFile();
+// Will be initialized after parsing arguments
+let dataFile;
 
 function ensureFileReady(targetFile) {
   const directory = path.dirname(targetFile);
@@ -95,6 +101,12 @@ function parseArgs(argv = process.argv) {
   const parser = yargs(hideBin(argv))
     .scriptName('expenses')
     .usage('Usage: $0 [options]')
+    .option('storage', {
+      alias: 's',
+      type: 'string',
+      describe: 'Custom storage file path (default: data/persistence/expenses.json)',
+      global: true
+    })
     .option('month', {
       alias: 'm',
       type: 'number',
@@ -147,7 +159,11 @@ function formatSummary(result, { month, category }) {
 
 export function run(argv = process.argv) {
   const args = parseArgs(argv);
-  const { month, category } = args;
+  const { month, category, storage } = args;
+  
+  // Initialize dataFile based on --storage argument
+  dataFile = resolveDataFile(storage);
+  
   const _allExpenses = loadExpenses();
   const result = getExpenses(_allExpenses, { month, category });
 

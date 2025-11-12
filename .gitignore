@@ -60,9 +60,16 @@ logs
 ehthumbs.db
 Thumbs.db
 
-# Project specific
+# Project specific - Runtime persistence files
+# All JSON files in data directory are runtime data and should not be committed
 data/**/*.json
 !data/example.json
+!data/persistence/example.json
+
+# Runtime data files at root (legacy, being moved to /data)
+expenses.json
+todo.json
+stopwatch.json
 
 # CI/CD artifacts
 review-packet/
