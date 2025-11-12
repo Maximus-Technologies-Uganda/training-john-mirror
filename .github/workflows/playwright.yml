@@ -33,8 +33,7 @@ jobs:
 
       - name: Start the dev server in background
         run: |
-          cd apps/expense/ui
-          npm run dev > /tmp/expense-server.log 2>&1 &
+          (cd apps/expense/ui && npm run dev > /tmp/expense-server.log 2>&1) &
           echo $! > /tmp/expense-server.pid
           sleep 3
           if ! ps -p $(cat /tmp/expense-server.pid) > /dev/null; then
@@ -94,8 +93,7 @@ jobs:
 
       - name: Start the dev server in background
         run: |
-          cd apps/stopwatch/ui
-          npm run dev > /tmp/stopwatch-server.log 2>&1 &
+          (cd apps/stopwatch/ui && npm run dev > /tmp/stopwatch-server.log 2>&1) &
           echo $! > /tmp/stopwatch-server.pid
           sleep 3
           if ! ps -p $(cat /tmp/stopwatch-server.pid) > /dev/null; then
@@ -149,8 +147,7 @@ jobs:
 
       - name: Start the dev server in background
         run: |
-          cd apps/temp/ui
-          npm run dev > /tmp/temp-server.log 2>&1 &
+          (cd apps/temp/ui && npm run dev > /tmp/temp-server.log 2>&1) &
           echo $! > /tmp/temp-server.pid
           sleep 3
           if ! ps -p $(cat /tmp/temp-server.pid) > /dev/null; then
