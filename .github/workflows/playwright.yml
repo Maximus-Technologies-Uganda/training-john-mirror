@@ -32,8 +32,8 @@ jobs:
         run: npm run build
 
       - name: Start the dev server in background
-        working-directory: apps/expense/ui
         run: |
+          cd apps/expense/ui
           npm run dev > /tmp/expense-server.log 2>&1 &
           echo $! > /tmp/expense-server.pid
           sleep 3
@@ -93,8 +93,8 @@ jobs:
         run: npm run build
 
       - name: Start the dev server in background
-        working-directory: apps/stopwatch/ui
         run: |
+          cd apps/stopwatch/ui
           npm run dev > /tmp/stopwatch-server.log 2>&1 &
           echo $! > /tmp/stopwatch-server.pid
           sleep 3
@@ -148,8 +148,8 @@ jobs:
         run: npm run build
 
       - name: Start the dev server in background
-        working-directory: apps/temp/ui
         run: |
+          cd apps/temp/ui
           npm run dev > /tmp/temp-server.log 2>&1 &
           echo $! > /tmp/temp-server.pid
           sleep 3
