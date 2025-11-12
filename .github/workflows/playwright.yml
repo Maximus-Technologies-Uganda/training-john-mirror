@@ -33,14 +33,22 @@ jobs:
 
       - name: Start the dev server in background
         working-directory: apps/expense/ui
-        run: npm run dev &
+        run: |
+          npm run dev > /tmp/expense-server.log 2>&1 &
+          echo $! > /tmp/expense-server.pid
+          sleep 3
+          if ! ps -p $(cat /tmp/expense-server.pid) > /dev/null; then
+            echo "Server failed to start!"
+            cat /tmp/expense-server.log
+            exit 1
+          fi
         env:
           CI: true
 
       - name: Wait for server to be ready
         run: |
           npm install -g wait-on
-          wait-on http://localhost:3000 --timeout 60000
+          wait-on http://localhost:3000 --timeout 120000 || (echo "Server is not responding. Log:"; cat /tmp/expense-server.log; exit 1)
 
       - name: Run Playwright tests
         working-directory: apps/expense/ui
@@ -86,14 +94,22 @@ jobs:
 
       - name: Start the dev server in background
         working-directory: apps/stopwatch/ui
-        run: npm run dev &
+        run: |
+          npm run dev > /tmp/stopwatch-server.log 2>&1 &
+          echo $! > /tmp/stopwatch-server.pid
+          sleep 3
+          if ! ps -p $(cat /tmp/stopwatch-server.pid) > /dev/null; then
+            echo "Server failed to start!"
+            cat /tmp/stopwatch-server.log
+            exit 1
+          fi
         env:
           CI: true
 
       - name: Wait for server to be ready
         run: |
           npm install -g wait-on
-          wait-on http://localhost:5173 --timeout 60000
+          wait-on http://localhost:5173 --timeout 120000 || (echo "Server is not responding. Log:"; cat /tmp/stopwatch-server.log; exit 1)
 
       - name: Run Playwright tests
         working-directory: apps/stopwatch/ui
@@ -133,14 +149,22 @@ jobs:
 
       - name: Start the dev server in background
         working-directory: apps/temp/ui
-        run: npm run dev &
+        run: |
+          npm run dev > /tmp/temp-server.log 2>&1 &
+          echo $! > /tmp/temp-server.pid
+          sleep 3
+          if ! ps -p $(cat /tmp/temp-server.pid) > /dev/null; then
+            echo "Server failed to start!"
+            cat /tmp/temp-server.log
+            exit 1
+          fi
         env:
           CI: true
 
       - name: Wait for server to be ready
         run: |
           npm install -g wait-on
-          wait-on http://localhost:5173 --timeout 60000
+          wait-on http://localhost:5173 --timeout 120000 || (echo "Server is not responding. Log:"; cat /tmp/temp-server.log; exit 1)
 
       - name: Run Playwright tests
         working-directory: apps/temp/ui
