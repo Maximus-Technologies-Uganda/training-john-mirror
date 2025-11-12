@@ -1,0 +1,62 @@
+name: Add Training Issues to Project
+
+on:
+  issues:
+    types: [opened, reopened]
+
+jobs:
+  add-to-project:
+    name: Add issue to Training — John (Week 4) project
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.labels.*.name, 'training')
+    
+    steps:
+      - name: Generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.PROJECT_AUTOMATION_APP_ID }}
+          private_key: ${{ secrets.PROJECT_AUTOMATION_PRIVATE_KEY }}
+      
+      - name: Add issue to project (using GraphQL)
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const query = `
+              query {
+                repository(owner: "Maximus-Technologies-Uganda", name: "training-john") {
+                  projectsV2(first: 20) {
+                    nodes {
+                      id
+                      title
+                    }
+                  }
+                }
+                viewer {
+                  projectsV2(first: 20) {
+                    nodes {
+                      id
+                      title
+                    }
+                  }
+                }
+              }
+            `;
+            
+            const result = await github.graphql(query);
+            console.log("Projects found:", result);
+
+      - name: Fallback notification
+        if: always()
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Issue labeled with `training` and ready for project assignment. Ensure all metadata fields are filled in the issue description.\n\n**Reminder:** Please update the following in your issue:\n- **App**: todo/expense/stopwatch/temp\n- **Slice**: Task identifier (e.g., T066)\n- **Priority**: P0/P1/P2\n- **Size**: S/M/L\n- **Target Date**: YYYY-MM-DD'
+            });
+

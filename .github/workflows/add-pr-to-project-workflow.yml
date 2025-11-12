@@ -1,0 +1,99 @@
+name: Add PR to Project
+
+on:
+  pull_request:
+    types: [opened, reopened]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull Request Number (leave empty for current PR)'
+        required: false
+      project_name:
+        description: 'Project Name'
+        required: false
+        default: 'training-john'
+
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      projects: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Determine PR Number
+        id: pr
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            PR_NUMBER="${{ github.event.inputs.pr_number }}"
+            if [ -z "$PR_NUMBER" ]; then
+              echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+            else
+              echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Determine Project Name
+        id: project
+        run: |
+          PROJECT_NAME="${{ github.event.inputs.project_name }}"
+          if [ -z "$PROJECT_NAME" ]; then
+            PROJECT_NAME="training-john"
+          fi
+          echo "PROJECT_NAME=$PROJECT_NAME" >> $GITHUB_OUTPUT
+
+      - name: Display Configuration
+        run: |
+          echo "Configuration:"
+          echo "  PR Number: ${{ steps.pr.outputs.PR_NUMBER }}"
+          echo "  Project Name: ${{ steps.project.outputs.PROJECT_NAME }}"
+          echo "  Repository: ${{ github.repository }}"
+
+      - name: Verify PR Exists
+        run: |
+          gh pr view ${{ steps.pr.outputs.PR_NUMBER }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: List Available Projects
+        run: |
+          echo "Available projects:"
+          gh project list
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add PR to Project
+        run: |
+          gh pr edit ${{ steps.pr.outputs.PR_NUMBER }} \
+            --add-project "${{ steps.project.outputs.PROJECT_NAME }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify Success
+        run: |
+          echo "✓ Successfully added PR #${{ steps.pr.outputs.PR_NUMBER }} to project '${{ steps.project.outputs.PROJECT_NAME }}'"
+          gh pr view ${{ steps.pr.outputs.PR_NUMBER }} --web
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report Status
+        if: success()
+        run: |
+          echo "::notice title=PR Added to Project::PR #${{ steps.pr.outputs.PR_NUMBER }} has been added to project '${{ steps.project.outputs.PROJECT_NAME }}'"
+
+      - name: Handle Failure
+        if: failure()
+        run: |
+          echo "::error title=Failed to Add PR to Project::Could not add PR #${{ steps.pr.outputs.PR_NUMBER }} to project '${{ steps.project.outputs.PROJECT_NAME }}'"
+          echo ""
+          echo "Troubleshooting:"
+          echo "  1. Check PR number exists: gh pr list"
+          echo "  2. List projects: gh project list"
+          echo "  3. Verify GITHUB_TOKEN has 'projects: write' permission"
+          echo "  4. Check project name matches exactly"
+          exit 1
+

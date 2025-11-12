@@ -9,6 +9,8 @@
   "scripts": {
     "test": "node scripts/run-vitest.mjs",
     "test:ci": "npm run test -- --run --coverage",
+    "e2e": "npm run e2e -w expense-ui && npm run e2e -w @training-john/stopwatch-ui && npm run e2e -w @training-john/temp-converter-ui && npm run e2e -w todo-ui",
+    "e2e:single": "npm run e2e -w",
     "lint": "eslint .",
     "sync:linear": "node scripts/sync-linear-subtasks.mjs",
     "sync:specs": "node scripts/sync-spec-to-linear.mjs",
