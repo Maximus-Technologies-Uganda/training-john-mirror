@@ -12,11 +12,19 @@
  * - Responsive placeholder text
  */
 
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useId } from 'react';
+import { sanitizeInput } from '@/utils/validation';
+import { parseTemperatureInput } from '@/utils/formatting';
 
 export interface TemperatureInputProps {
   /** Current temperature value */
   value: number | string;
+
+  /** Unique identifier for the input element */
+  id?: string;
+
+  /** Visible label text */
+  label?: string;
   
   /** Callback when input value changes */
   onChange: (value: string) => void;
@@ -85,17 +93,38 @@ export const TemperatureInput = forwardRef<HTMLInputElement, TemperatureInputPro
       max,
       ariaLabel = 'Temperature input field',
       disabled = false,
+      id,
+      label = 'Temperature Value',
     },
     ref
   ) => {
+    const generatedId = useId();
+    const inputId = id ?? generatedId;
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      onChange(event.target.value);
+      const sanitizedValue = sanitizeInput(event.target.value);
+      onChange(sanitizedValue);
     };
 
     const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
       // Call optional onBlur callback for validation
       if (onBlur) {
         onBlur(event);
+      }
+
+      const rawValue = event.currentTarget.value;
+      const sanitizedValue = sanitizeInput(rawValue);
+      const parsedValue = parseTemperatureInput(sanitizedValue);
+
+      let nextValue = sanitizedValue;
+
+      if (parsedValue !== null) {
+        nextValue = parsedValue.toString();
+      }
+
+      if (nextValue !== rawValue) {
+        onChange(nextValue);
+        event.currentTarget.value = nextValue;
       }
       
       // Update styling
@@ -113,7 +142,27 @@ export const TemperatureInput = forwardRef<HTMLInputElement, TemperatureInputPro
     };
 
     // Convert value to string for controlled component
-    const stringValue = typeof value === 'number' ? value.toString() : value;
+    let displayValue: string | number = '';
+
+    if (typeof value === 'number') {
+      displayValue = value;
+    } else if (typeof value === 'string') {
+      const sanitizedPropValue = sanitizeInput(value);
+
+      if (sanitizedPropValue === '') {
+        displayValue = '';
+      } else {
+        const parsedPropValue = parseTemperatureInput(sanitizedPropValue);
+        if (
+          parsedPropValue !== null &&
+          sanitizedPropValue === parsedPropValue.toString()
+        ) {
+          displayValue = parsedPropValue;
+        } else {
+          displayValue = sanitizedPropValue;
+        }
+      }
+    }
 
     return (
       <div
@@ -124,11 +173,27 @@ export const TemperatureInput = forwardRef<HTMLInputElement, TemperatureInputPro
           gap: '8px',
         }}
       >
+        <label
+          htmlFor={inputId}
+          style={{
+            display: 'block',
+            fontSize: '14px',
+            fontWeight: 600,
+            color: '#555',
+          }}
+        >
+          {label}
+          {required && <span style={{ color: '#f44336' }}>*</span>}
+        </label>
         <input
           ref={ref}
-          type="text"
+          id={inputId}
+          type="number"
           inputMode="decimal"
-          value={stringValue}
+          step={step}
+          min={min}
+          max={max}
+          value={displayValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}

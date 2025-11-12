@@ -253,10 +253,40 @@ export function createInitialErrorState(errorType: ConversionErrorType): {
  * @returns Trimmed input string
  */
 export function sanitizeInput(input: string): string {
-  if (!input || typeof input !== 'string') {
+  if (typeof input !== 'string') {
     return '';
   }
-  return input.trim();
+
+  const trimmed = input.trim();
+
+  // Allow empty string so the user can clear the field
+  if (trimmed === '') {
+    return '';
+  }
+
+  // Split scientific notation parts (base and exponent)
+  const parts = trimmed.split(/e/i);
+  if (parts.length > 2) {
+    return '';
+  }
+
+  const [base, exponent] = parts;
+
+  // Base allows optional leading minus, digits, and a single decimal point.
+  const basePattern = /^-?\d*(?:\.\d*)?$/;
+  if (!basePattern.test(base)) {
+    return '';
+  }
+
+  if (parts.length === 2) {
+    // Exponent allows optional leading minus and digits (including empty while typing)
+    const exponentPattern = /^-?\d*$/;
+    if (!exponentPattern.test(exponent)) {
+      return '';
+    }
+  }
+
+  return trimmed;
 }
 
 /**

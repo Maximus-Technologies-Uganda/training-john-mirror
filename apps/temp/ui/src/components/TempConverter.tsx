@@ -265,31 +265,19 @@ export const TempConverter: React.FC<TempConverterProps> = ({
         }}
       >
         {/* Input Field */}
-        <div style={{ width: '100%' }}>
-          <label
-            htmlFor="temp-input"
-            style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: '600',
-              marginBottom: '8px',
-              color: '#555',
-            }}
-          >
-            Temperature Value {required && <span style={{ color: '#f44336' }}>*</span>}
-          </label>
-          <TemperatureInput
-            ref={inputRef}
-            value={inputValue}
-            onChange={setInputValue}
-            onBlur={handleInputBlur}
-            placeholder="Enter temperature value"
-            required={required}
-            min={min}
-            max={max}
-            step={0.1}
-          />
-        </div>
+        <TemperatureInput
+          ref={inputRef}
+          id="temp-input"
+          value={inputValue}
+          onChange={setInputValue}
+          onBlur={handleInputBlur}
+          placeholder="Enter temperature value"
+          required={required}
+          min={min}
+          max={max}
+          step={0.1}
+          label="Temperature Value"
+        />
 
         {/* Unit Selectors */}
         <UnitSelectors
