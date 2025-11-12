@@ -11,6 +11,26 @@ This project collects test coverage for all applications during the CI run. [cit
 
 This section provides reviewers with everything needed to verify the quality and completeness of the UI applications built during this training.
 
+### 🚀 Quick Start: View Coverage & Playwright Tests
+
+**3-Step Process:**
+
+1. **Download Review Packet artifact** from the GitHub Actions run
+   - Look for: `review-packet-*` artifact in the workflow summary
+
+2. **Open Coverage Index** in your browser
+   - Navigate to: `review-artifacts/index.html`
+   - This shows overall coverage and links to detailed reports
+
+3. **View Playwright E2E Test Reports**
+   - Scroll to: **Playwright E2E Tests** section in the Coverage Index
+   - Click: **[View Report]** link for each app
+   - See: Videos, screenshots, traces, and test results
+
+**That's it!** All coverage metrics and test artifacts are available from the main Coverage Index page.
+
+---
+
 ### 📦 Review Artifacts Location
 
 All review artifacts are available in the **Review Packet** artifact from the latest GitHub Actions run:
@@ -53,12 +73,25 @@ Includes:
 - Browser traces (`.trace` files) for debugging test execution
 - Screenshots of key test steps
 - Videos of full test runs (if configured)
-- Detailed test reports
+- Detailed test reports with links to view each trace
 
 **To review E2E tests:**
-1. Open `review-artifacts/playwright/temp/report/index.html` (or relevant app)
-2. Review test execution videos and screenshots
-3. Check for any failed assertions or errors
+1. Download and unzip the **Review Packet** artifact
+2. Open `review-artifacts/index.html` → **Coverage Index**
+3. Scroll to **Playwright E2E Tests** section
+4. Click the **[View Report]** link for each app (expense, stopwatch, temp)
+5. This opens the **Playwright trace report** showing:
+   - ✅ Test results and pass/fail status
+   - 🎥 Video recordings of test execution
+   - 📸 Screenshots at test failure points
+   - 🔍 Detailed trace information for debugging
+6. Review test execution videos and screenshots
+7. Check for any failed assertions or errors
+
+**Direct paths to Playwright reports:**
+- Expense: `review-artifacts/playwright/expense/index.html`
+- Stopwatch: `review-artifacts/playwright/stopwatch/index.html`
+- Temp Converter: `review-artifacts/playwright/temp/index.html`
 
 ### 📝 Review Packet Summary
 
