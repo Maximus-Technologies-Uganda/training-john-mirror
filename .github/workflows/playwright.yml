@@ -27,6 +27,21 @@ jobs:
         working-directory: apps/expense/ui
         run: npx playwright install --with-deps
 
+      - name: Build the app
+        working-directory: apps/expense/ui
+        run: npm run build
+
+      - name: Start the dev server in background
+        working-directory: apps/expense/ui
+        run: npm run dev &
+        env:
+          CI: true
+
+      - name: Wait for server to be ready
+        run: |
+          npm install -g wait-on
+          wait-on http://localhost:3000 --timeout 60000
+
       - name: Run Playwright tests
         working-directory: apps/expense/ui
         run: npm run e2e
@@ -65,6 +80,21 @@ jobs:
         working-directory: apps/stopwatch/ui
         run: npx playwright install --with-deps
 
+      - name: Build the app
+        working-directory: apps/stopwatch/ui
+        run: npm run build
+
+      - name: Start the dev server in background
+        working-directory: apps/stopwatch/ui
+        run: npm run dev &
+        env:
+          CI: true
+
+      - name: Wait for server to be ready
+        run: |
+          npm install -g wait-on
+          wait-on http://localhost:5173 --timeout 60000
+
       - name: Run Playwright tests
         working-directory: apps/stopwatch/ui
         run: npm run e2e
@@ -96,6 +126,21 @@ jobs:
       - name: Install Playwright browsers
         working-directory: apps/temp/ui
         run: npx playwright install --with-deps
+
+      - name: Build the app
+        working-directory: apps/temp/ui
+        run: npm run build
+
+      - name: Start the dev server in background
+        working-directory: apps/temp/ui
+        run: npm run dev &
+        env:
+          CI: true
+
+      - name: Wait for server to be ready
+        run: |
+          npm install -g wait-on
+          wait-on http://localhost:5173 --timeout 60000
 
       - name: Run Playwright tests
         working-directory: apps/temp/ui
