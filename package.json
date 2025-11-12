@@ -7,6 +7,7 @@
   ],
   "type": "module",
   "scripts": {
+    "build": "echo 'Root build skipped - see individual app builds in CI'",
     "test": "node scripts/run-vitest.mjs",
     "test:ci": "npm run test -- --run --coverage",
     "lint": "eslint .",
