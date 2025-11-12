@@ -1,0 +1,46 @@
+name: Auto-Add PR to Project
+
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches:
+      - development
+      - main
+
+jobs:
+  add-to-project:
+    name: Add PR to training-john Project
+    runs-on: ubuntu-latest
+    
+    permissions:
+      # Required for PR operations
+      pull-requests: write
+      # Required for project operations (via PAT)
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Add PR to Project
+        env:
+          # Using PAT instead of GITHUB_TOKEN for project access
+          GH_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # Add PR to training-john project
+          gh pr edit $PR_NUMBER \
+            --add-project "training-john" \
+            --repo ${{ github.repository }}
+      
+      - name: Log Success
+        if: success()
+        run: |
+          echo "✅ PR #${{ github.event.pull_request.number }} added to training-john project"
+      
+      - name: Log Failure
+        if: failure()
+        run: |
+          echo "⚠️ Failed to add PR to project (this may be normal if using GITHUB_TOKEN)"
+          echo "See ADD_PR_TO_PROJECT_NOW.md for manual setup instructions"
+
