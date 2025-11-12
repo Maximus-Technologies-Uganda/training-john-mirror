@@ -32,8 +32,9 @@ jobs:
         run: npm run build
 
       - name: Start the dev server in background
+        working-directory: apps/expense/ui
         run: |
-          npm --prefix apps/expense/ui run dev > /tmp/expense-server.log 2>&1 &
+          npm run dev > /tmp/expense-server.log 2>&1 &
           echo $! > /tmp/expense-server.pid
           sleep 3
           if ! ps -p $(cat /tmp/expense-server.pid) > /dev/null; then
@@ -92,8 +93,9 @@ jobs:
         run: npm run build
 
       - name: Start the dev server in background
+        working-directory: apps/stopwatch/ui
         run: |
-          npm --prefix apps/stopwatch/ui run dev > /tmp/stopwatch-server.log 2>&1 &
+          npm run dev > /tmp/stopwatch-server.log 2>&1 &
           echo $! > /tmp/stopwatch-server.pid
           sleep 3
           if ! ps -p $(cat /tmp/stopwatch-server.pid) > /dev/null; then
@@ -146,8 +148,9 @@ jobs:
         run: npm run build
 
       - name: Start the dev server in background
+        working-directory: apps/temp/ui
         run: |
-          npm --prefix apps/temp/ui run dev > /tmp/temp-server.log 2>&1 &
+          npm run dev > /tmp/temp-server.log 2>&1 &
           echo $! > /tmp/temp-server.pid
           sleep 3
           if ! ps -p $(cat /tmp/temp-server.pid) > /dev/null; then

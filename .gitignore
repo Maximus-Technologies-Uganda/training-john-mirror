@@ -38,7 +38,7 @@ build/artifacts/coverage/
 
 # Temporary folders
 tmp/
-temp/
+/temp/
 
 # Logs
 logs
@@ -73,6 +73,7 @@ stopwatch.json
 
 # CI/CD artifacts
 review-packet/
+review-artifacts/
 *.tgz
 
 # Test artifacts
