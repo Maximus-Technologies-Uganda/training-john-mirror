@@ -11,6 +11,26 @@ This project collects test coverage for all applications during the CI run. [cit
 
 This section provides reviewers with everything needed to verify the quality and completeness of the UI applications built during this training.
 
+### 🚀 Quick Start: View Coverage & Playwright Tests
+
+**3-Step Process:**
+
+1. **Download Review Packet artifact** from the GitHub Actions run
+   - Look for: `review-packet-*` artifact in the workflow summary
+
+2. **Open Coverage Index** in your browser
+   - Navigate to: `review-artifacts/index.html`
+   - This shows overall coverage and links to detailed reports
+
+3. **View Playwright E2E Test Reports**
+   - Scroll to: **Playwright E2E Tests** section in the Coverage Index
+   - Click: **[View Report]** link for each app
+   - See: Videos, screenshots, traces, and test results
+
+**That's it!** All coverage metrics and test artifacts are available from the main Coverage Index page.
+
+---
+
 ### 📦 Review Artifacts Location
 
 All review artifacts are available in the **Review Packet** artifact from the latest GitHub Actions run:
@@ -34,6 +54,12 @@ This is your main entry point for coverage review. It displays:
 2. Open `review-artifacts/index.html` in your web browser
 3. Click on individual app links to see detailed coverage
 
+**Per-App Coverage Paths:**
+- **Expense UI**: `review-artifacts/ui-coverage-expense/index.html` | LCOV: `review-artifacts/coverage-expense/lcov-report/index.html`
+- **Stopwatch UI**: `review-artifacts/ui-coverage-stopwatch/index.html` | LCOV: `review-artifacts/coverage-stopwatch/lcov-report/index.html`
+- **Temp Converter UI**: `review-artifacts/ui-coverage-temp/index.html` | LCOV: `review-artifacts/coverage-temp/lcov-report/index.html`
+- **To-Do UI**: `review-artifacts/ui-coverage-todo/index.html` | LCOV: `review-artifacts/coverage-todo/lcov-report/index.html`
+
 ### 🧪 Individual UI Application Coverage
 
 Each UI app has dedicated coverage tracking at minimum targets:
@@ -53,12 +79,32 @@ Includes:
 - Browser traces (`.trace` files) for debugging test execution
 - Screenshots of key test steps
 - Videos of full test runs (if configured)
-- Detailed test reports
+- Detailed test reports with links to view each trace
 
 **To review E2E tests:**
-1. Open `review-artifacts/playwright/temp/report/index.html` (or relevant app)
-2. Review test execution videos and screenshots
-3. Check for any failed assertions or errors
+1. Download and unzip the **Review Packet** artifact
+2. Open `review-artifacts/index.html` → **Coverage Index**
+3. Scroll to **Playwright E2E Tests** section
+4. Click the **[View Report]** link for each app (expense, stopwatch, temp)
+5. This opens the **Playwright trace report** showing:
+   - ✅ Test results and pass/fail status
+   - 🎥 Video recordings of test execution
+   - 📸 Screenshots at test failure points
+   - 🔍 Detailed trace information for debugging
+6. Review test execution videos and screenshots
+7. Check for any failed assertions or errors
+
+**Playwright Artifact Locations:**
+- **Traces/Screenshots/Videos**: `review-artifacts/playwright/<app>/` (contains all test artifacts)
+  - **Expense reports**: `review-artifacts/playwright/expense/index.html`
+  - **Stopwatch reports**: `review-artifacts/playwright/stopwatch/index.html`
+  - **Temp Converter reports**: `review-artifacts/playwright/temp/index.html`
+- **What's included in each app's directory**:
+  - 📋 `index.html` - Main Playwright HTML report with test results
+  - 🎥 `data/` - Videos of test execution (on failure)
+  - 📸 `.png` files - Screenshots captured during test failures
+  - 🔍 `.trace` files - Browser traces for detailed debugging
+  - `.md` files - Error context and step-by-step test details
 
 ### 📝 Review Packet Summary
 
@@ -121,6 +167,58 @@ npx playwright test
 - **Temp Converter UI README**: `apps/temp/ui/README.md` - Development guide and testing strategy
 - **Accessibility Audit**: `ACCESSIBILITY_AUDIT.md` - WCAG compliance details
 - **Test Coverage Report**: `TEST_COVERAGE_REPORT.md` - Detailed coverage analysis
+
+---
+
+## 📁 Data Directory Structure
+
+Runtime data files are organized under the `data/` directory to maintain a clean, professional project structure.
+
+### Directory Layout
+
+```
+data/
+├── time.json                    # Stopwatch state (do not commit)
+├── persistence/
+│   ├── todos.json              # Todo list items (do not commit)
+│   ├── expenses.json           # Expense records (do not commit)
+│   └── example.json            # Template file (tracked)
+└── example.json                # Template file (tracked)
+```
+
+### Do Not Commit These Files
+
+All `.json` files in the `data/` directory except templates are automatically ignored by `.gitignore`. Never manually commit:
+- `data/time.json` - Contains active stopwatch state
+- `data/persistence/todos.json` - Contains user tasks
+- `data/persistence/expenses.json` - Contains user expenses
+
+These files are runtime data and are specific to each user's environment.
+
+### CLI Storage Configuration
+
+All CLI tools support the `--storage` parameter to specify a custom data file path. This is essential for testing and CI/CD environments.
+
+**Usage:**
+
+```bash
+# Use default path (data/persistence/expenses.json)
+node expenses list
+
+# Use custom path (useful for testing)
+node expenses list --storage /tmp/test-expenses.json
+
+# Use environment variable
+export EXPENSES_DATA_FILE=/custom/path/expenses.json
+node expenses list
+```
+
+**Storage Path Priority:**
+1. **CLI `--storage` argument** - Highest priority (e.g., `--storage /tmp/test.json`)
+2. **Environment variable** - `EXPENSES_DATA_FILE` or app-specific var
+3. **Default path** - `data/persistence/<filename>.json`
+
+This allows developers to easily configure storage paths for different environments (development, testing, CI/CD).
 
 ---
 
