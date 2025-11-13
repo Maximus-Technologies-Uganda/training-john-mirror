@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
+const DEV_SERVER_URL = 'http://localhost:3000'
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -9,7 +11,7 @@ export default defineConfig({
   reporter: [['html'], ['json', { outputFile: 'test-results/results.json' }], ['list']],
   outputDir: 'test-results/playwright',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: DEV_SERVER_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -30,7 +32,7 @@ export default defineConfig({
   ],
   webServer: {
     command: 'npm run dev',
-    url: 'http://localhost:3000',
+    url: DEV_SERVER_URL,
     reuseExistingServer: true,
   },
 })
