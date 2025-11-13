@@ -60,14 +60,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-expense-artifacts
-          path: apps/expense/ui/test-results/playwright/
+          path: apps/expense/ui/playwright-report/
           retention-days: 30
 
       - name: Upload to review-artifacts
         if: always()
         run: |
           mkdir -p review-artifacts/playwright/expense
-          cp -r apps/expense/ui/test-results/playwright/* review-artifacts/playwright/expense/ || true
+          cp -r apps/expense/ui/playwright-report/* review-artifacts/playwright/expense/ || true
 
   test-stopwatch:
     name: Test Stopwatch App
@@ -121,7 +121,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-stopwatch-artifacts
-          path: apps/stopwatch/ui/test-results/playwright/
+          path: apps/stopwatch/ui/playwright-report/
           retention-days: 30
 
   test-temp:
@@ -176,7 +176,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-temp-artifacts
-          path: apps/temp/ui/test-results/playwright/
+          path: apps/temp/ui/playwright-report/
           retention-days: 30
 
   publish-artifacts:
