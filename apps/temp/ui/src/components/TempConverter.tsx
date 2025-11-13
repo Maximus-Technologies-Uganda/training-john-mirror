@@ -98,6 +98,7 @@ export const TempConverter: React.FC<TempConverterProps> = ({
     setSourceUnit,
     setTargetUnit,
     clearError,
+    setManualError,
   } = useTempConversion();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -142,6 +143,7 @@ export const TempConverter: React.FC<TempConverterProps> = ({
     
     // If validation fails, return early (error is already set by hook)
     if (validationError) {
+      setManualError(validationError.message);
       return;
     }
 

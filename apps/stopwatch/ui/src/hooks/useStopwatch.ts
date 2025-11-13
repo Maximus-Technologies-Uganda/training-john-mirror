@@ -54,6 +54,8 @@ export function useStopwatch(autoDismissErrorMs = 5000, updateIntervalMs = 100):
   const startTimeRef = useRef<number | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const lapTimesRef = useRef<number[]>([]);
+  const elapsedOffsetRef = useRef<number>(0);
+  const lastRenderElapsedRef = useRef<number>(initialState.elapsedMs);
 
   // Derive public status from state
   const status: StopwatchStatus = {
@@ -79,20 +81,38 @@ export function useStopwatch(autoDismissErrorMs = 5000, updateIntervalMs = 100):
 
   // Update elapsed time when running
   useEffect(() => {
+    lastRenderElapsedRef.current = state.elapsedMs;
+  }, [state.elapsedMs]);
+
+  useEffect(() => {
     if (state.mode === 'running' && startTimeRef.current !== null) {
       intervalRef.current = setInterval(() => {
         setState((prev) => {
-          const elapsed = Date.now() - (startTimeRef.current || 0) + prev.elapsedMs;
-          return { ...prev, elapsedMs: elapsed };
+          if (prev.mode !== 'running' || startTimeRef.current === null) {
+            return prev;
+          }
+
+          const elapsed =
+            elapsedOffsetRef.current + (Date.now() - startTimeRef.current);
+
+          if (elapsed === prev.elapsedMs) {
+            return prev;
+          }
+
+          return {
+            ...prev,
+            elapsedMs: elapsed,
+          };
         });
       }, updateIntervalMs);
-
-      return () => {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-        }
-      };
     }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
   }, [state.mode, updateIntervalMs]);
 
   // Start the stopwatch
@@ -110,6 +130,7 @@ export function useStopwatch(autoDismissErrorMs = 5000, updateIntervalMs = 100):
       // Set ref time only if not already set (defensive check)
       if (startTimeRef.current === null) {
         startTimeRef.current = Date.now();
+        elapsedOffsetRef.current = prev.elapsedMs;
       }
 
       // Clear error and transition to running
@@ -125,12 +146,10 @@ export function useStopwatch(autoDismissErrorMs = 5000, updateIntervalMs = 100):
 
   // Stop the stopwatch
   const stop = useCallback(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
+    let shouldFinalize = false;
+    let totalElapsed = elapsedOffsetRef.current;
 
     setState((prev) => {
-      // Validate FIRST before any other logic
       const error = validateStop(prev.mode);
       if (error) {
         return {
@@ -139,24 +158,28 @@ export function useStopwatch(autoDismissErrorMs = 5000, updateIntervalMs = 100):
         };
       }
 
-      // Calculate elapsed delta safely using nullish coalescing
-      const elapsedDelta = startTimeRef.current 
-        ? Date.now() - startTimeRef.current 
-        : 0;
+      totalElapsed = lastRenderElapsedRef.current;
+      shouldFinalize = true;
 
-      // Always transition to stopped when validation passes
       return {
         ...prev,
         mode: 'stopped',
-        elapsedMs: prev.elapsedMs + elapsedDelta,
+        elapsedMs: totalElapsed,
         hasError: false,
         errorMessage: undefined,
         errorTimestamp: undefined,
       };
     });
 
-    // ALWAYS clear the ref after setState completes
-    startTimeRef.current = null;
+    if (shouldFinalize) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+
+      elapsedOffsetRef.current = totalElapsed;
+      startTimeRef.current = null;
+    }
   }, []);
 
   // Record a lap
@@ -172,7 +195,11 @@ export function useStopwatch(autoDismissErrorMs = 5000, updateIntervalMs = 100):
       }
 
       // Calculate lap times
-      const totalMs = prev.elapsedMs + (startTimeRef.current ? Date.now() - startTimeRef.current : 0);
+      const now = Date.now();
+      const totalMs =
+        startTimeRef.current !== null
+          ? elapsedOffsetRef.current + (now - startTimeRef.current)
+          : elapsedOffsetRef.current;
       const prevTotalMs = lapTimesRef.current.length > 0 ? lapTimesRef.current[lapTimesRef.current.length - 1] : 0;
       const intervalMs = totalMs - prevTotalMs;
 
@@ -188,6 +215,7 @@ export function useStopwatch(autoDismissErrorMs = 5000, updateIntervalMs = 100):
       return {
         ...prev,
         laps: [...prev.laps, newLap],
+        elapsedMs: totalMs,
         hasError: false,
         errorMessage: undefined,
         errorTimestamp: undefined,
@@ -200,14 +228,13 @@ export function useStopwatch(autoDismissErrorMs = 5000, updateIntervalMs = 100):
     // Stop any running interval
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
-      intervalRef.current = null;  // Explicit null assignment for clarity
+      intervalRef.current = null;
     }
 
-    // Clear all refs
     startTimeRef.current = null;
+    elapsedOffsetRef.current = 0;
     lapTimesRef.current = [];
 
-    // Reset state to initial
     setState(initialState);
   }, []);
 

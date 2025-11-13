@@ -70,7 +70,9 @@ export const StopwatchControls: React.FC<StopwatchControlsProps> = ({
     disabled: boolean,
     handler: () => void
   ) => {
-    if (disabled) return;
+    if (disabled) {
+      return;
+    }
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       handler();
@@ -164,9 +166,8 @@ export const StopwatchControls: React.FC<StopwatchControlsProps> = ({
       {onLap && (
         <button
           onClick={handleLapClick}
-          onKeyDown={(e) => handleKeyDown(e, !isRunning, handleLapClick)}
+          onKeyDown={(e) => handleKeyDown(e, false, handleLapClick)}
           aria-label="Record lap"
-          disabled={!isRunning}
           type="button"
           data-testid="button-lap"
           style={{
@@ -177,7 +178,7 @@ export const StopwatchControls: React.FC<StopwatchControlsProps> = ({
             color: 'white',
             border: 'none',
             borderRadius: '4px',
-            cursor: isRunning ? 'pointer' : 'not-allowed',
+            cursor: 'pointer',
             opacity: isRunning ? 1 : 0.6,
             transition: 'background-color 0.2s, opacity 0.2s',
           }}

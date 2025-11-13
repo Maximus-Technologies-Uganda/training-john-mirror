@@ -75,6 +75,9 @@ export interface UseTempConversionReturn {
   
   /** Reset to initial state */
   reset: () => void;
+
+  /** Manually set error state with a custom message */
+  setManualError: (message: string) => void;
 }
 
 /**
@@ -339,6 +342,16 @@ export function useTempConversion(
   }, []);
 
   /**
+   * Manually set an error message
+   * Useful for imperative validation paths (e.g., form submit guard)
+   */
+  const handleManualError = useCallback((message: string) => {
+    setResult(null);
+    setHasError(true);
+    setErrorMessage(message);
+  }, []);
+
+  /**
    * Reset to initial state
    * T087: Use validated initial units
    */
@@ -373,5 +386,6 @@ export function useTempConversion(
     setTargetUnit: handleSetTargetUnit,
     clearError: handleClearError,
     reset: handleReset,
+    setManualError: handleManualError,
   };
 }

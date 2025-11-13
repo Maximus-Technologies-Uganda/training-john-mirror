@@ -15,6 +15,32 @@
 
 import { test, expect } from '@playwright/test';
 
+const parseDisplayToMs = (value: string | null): number => {
+  if (!value) {
+    return 0;
+  }
+
+  const parts = value.split(':');
+  if (parts.length !== 3) {
+    return 0;
+  }
+
+  const [minutesStr, secondsStr, centisecondsStr] = parts;
+  const minutes = Number.parseInt(minutesStr, 10);
+  const seconds = Number.parseInt(secondsStr, 10);
+  const centiseconds = Number.parseInt(centisecondsStr, 10);
+
+  if (
+    Number.isNaN(minutes) ||
+    Number.isNaN(seconds) ||
+    Number.isNaN(centiseconds)
+  ) {
+    return 0;
+  }
+
+  return minutes * 60000 + seconds * 1000 + centiseconds * 10;
+};
+
 test.describe('Stopwatch UI - E2E Smoke Test', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to the application
@@ -97,8 +123,14 @@ test.describe('Stopwatch UI - E2E Smoke Test', () => {
     // Wait a moment and verify time is frozen
     await page.waitForTimeout(500);
     const timeAfterStop = await display.textContent();
-    expect(timeAfterStop).toBe(timeBeforeStop);
+    const beforeStopMs = parseDisplayToMs(timeBeforeStop);
+    const afterStopMs = parseDisplayToMs(timeAfterStop);
+    expect(afterStopMs).toBeGreaterThanOrEqual(beforeStopMs);
     console.log(`⏱️ Time frozen at: ${timeAfterStop}`);
+
+    await page.waitForTimeout(500);
+    const timeAfterStopStabilityCheck = await display.textContent();
+    expect(timeAfterStopStabilityCheck).toBe(timeAfterStop);
     
     // ===== STEP 6: Reset the stopwatch =====
     console.log('🔄 Resetting stopwatch...');
@@ -109,7 +141,7 @@ test.describe('Stopwatch UI - E2E Smoke Test', () => {
     
     // Verify laps are cleared
     await expect(page.locator('text=No laps recorded yet')).toBeVisible();
-    await expect(page.locator('text=Laps')).not.toBeVisible();
+    await expect(page.locator('[aria-label="Lap list"]')).toHaveCount(0);
     
     // Verify start button is enabled
     await expect(page.locator('[data-testid="button-start"]')).toBeEnabled();

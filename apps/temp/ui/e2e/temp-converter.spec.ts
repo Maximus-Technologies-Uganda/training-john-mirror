@@ -110,7 +110,13 @@ test.describe('Temp Converter UI - E2E Smoke Test', () => {
     
     // ===== STEP 1: Enter non-numeric value =====
     console.log('⚠️ Entering non-numeric value "abc"...');
-    await input.fill('abc');
+    await input.fill('');
+    await input.evaluate((element, value) => {
+      const inputElement = element as HTMLInputElement;
+      inputElement.value = value;
+      inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+      inputElement.dispatchEvent(new Event('change', { bubbles: true }));
+    }, 'abc');
     
     // ===== STEP 2: Click Convert button =====
     console.log('🔄 Clicking Convert button...');
